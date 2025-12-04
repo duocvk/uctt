@@ -109,62 +109,39 @@ function draw2B(body){
     const edges = [];
     const colors = { 'Main':'red', 'Pro':'green', 'DP':'orange' };
 
-    const nodePositions = {};
-    let col = 0, row = 0;
-    const maxCol = 10;
-    let direction = 1;
-
-    const nodeToProv = {}; // map node -> province code từ cột A
-
-    // Tạo node và vị trí
     for(let i=1;i<lines.length;i++){
       const parts = lines[i].split(',');
       if(parts.length<5) continue;
+      const sourceNode = parts[1].trim();
+      const targetNode = parts[2].trim();
+      const types = parts[3].trim().split('/');
 
-      const provs = parts[0].trim().split('-'); // QBH-QTI
-      const node = parts[1].trim();
-      const linkTypes = parts[3].trim().split('/');
+      nodesSet.add(sourceNode);
+      nodesSet.add(targetNode);
 
-      nodesSet.add(node);
-      nodeToProv[node] = provs; // lưu tỉnh node thuộc
-
-      // position grid
-      if(!nodePositions[node]){
-        const x = 100 + col*120;
-        const y = 100 + row*100;
-        nodePositions[node] = {x,y};
-        col += direction;
-        if(col>=maxCol){ col=maxCol-1; row++; direction*=-1; }
-        if(col<0){ col=0; row++; direction*=-1; }
-      }
-    }
-
-    // Tạo edge dựa trên cột A và cột D
-    for(let i=1;i<lines.length;i++){
-      const parts = lines[i].split(',');
-      if(parts.length<5) continue;
-      const provs = parts[0].trim().split('-'); // QBH-QTI
-      const node = parts[1].trim();
-      const linkTypes = parts[3].trim().split('/');
-
-      const targetNode = [...nodesSet].find(n=>{
-        const p = nodeToProv[n];
-        return p && (p.includes(provs[1]) || p.includes(provs[0])) && n!==node;
-      });
-
-      if(!targetNode) continue;
-
-      linkTypes.forEach(type=>{
+      types.forEach(type=>{
         edges.push({
           data:{
-            source: node,
+            source: sourceNode,
             target: targetNode,
             label: type,
-            color: colors[type]||'#555'
+            color: colors[type] || '#555'
           }
         });
       });
     }
+
+    // Vị trí grid
+    const nodePositions = {};
+    let col=0,row=0,maxCol=10,direction=1;
+    nodesSet.forEach(n=>{
+      const x = 100 + col*120;
+      const y = 100 + row*100;
+      nodePositions[n] = {x,y};
+      col += direction;
+      if(col>=maxCol){ col=maxCol-1; row++; direction*=-1; }
+      if(col<0){ col=0; row++; direction*=-1; }
+    });
 
     const nodes = Array.from(nodesSet).map(n=>({data:{id:n,label:n}, position: nodePositions[n]}));
 
