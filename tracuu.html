@@ -7,8 +7,8 @@
 <style>
   body { font-family: Arial, sans-serif; margin:0; background:#f0f2f5; }
   header { background:#007bff; color:#fff; padding:20px; text-align:center; font-size:24px; font-weight:bold; }
-  .dashboard { display:flex; flex-wrap:wrap; justify-content:center; margin:40px 0; gap:20px; }
-  .menu-button { background:#28a745; color:#fff; padding:20px 40px; border:none; border-radius:8px; font-size:18px; cursor:pointer; transition:0.3s; }
+  .dashboard { display:flex; flex-wrap:wrap; justify-content:center; margin:20px 0; gap:20px; }
+  .menu-button { background:#28a745; color:#fff; padding:15px 30px; border:none; border-radius:8px; font-size:16px; cursor:pointer; transition:0.3s; }
   .menu-button:hover { background:#218838; }
   #main-content { margin:20px auto; width:90%; min-height:600px; border:1px solid #ccc; border-radius:8px; background:#fff; padding:20px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
   h2.panel-header { text-align:center; margin-bottom:20px; }
@@ -19,18 +19,8 @@
 <header>Welcome đến trang tra cứu UCTT DUOCVK</header>
 
 <div class="dashboard">
- <button class="menu-button" data-truc="2B">Trục 2B</button>
-  <button class="menu-button" data-truc="1A">Trục 1A</button>
-  <button class="menu-button" data-truc="1C">Trục 1C</button>
-  <button class="menu-button" data-truc="1E">Trục 1E</button>
-  <button class="menu-button" data-truc="ADC">Trục ADC</button>
+  <button class="menu-button" data-truc="2B">Trục 2B</button>
   <button class="menu-button" data-truc="PRT">Link PRT</button>
-  <button class="menu-button" data-truc="MT2">Liên tỉnh MT2</button>
-  <button class="menu-button" data-truc="MT3.4">Liên tỉnh MT3_4</button>
-  <button class="menu-button" data-truc="LH_Ciena">Liên huyện Ciena</button>
-  <button class="menu-button" data-truc="LH_HW">Liên huyện HW</button>
-  <button class="menu-button" data-truc="LH_AGG">Liên huyện AGG</button>
-  <button class="menu-button" data-truc="Link SRT">SRT</button>
 </div>
 
 <div id="main-content">
@@ -44,22 +34,16 @@ const mainContent = document.getElementById('main-content');
 buttons.forEach(btn=>{
   btn.addEventListener('click', ()=>{
     const truc = btn.getAttribute('data-truc');
-
-    // Xóa nội dung cũ
     mainContent.innerHTML = `<h2 class="panel-header">Thông tin tra cứu ${truc}</h2>
                              <div id="cy" style="width:100%; height:600px;"></div>`;
-
-    if(truc==='2B'){
-      draw2B(document.getElementById('cy'));
-    } else if(truc==='PRT'){
-      drawPRT(document.getElementById('cy'));
-    }
+    if(truc==='2B') draw2B(document.getElementById('cy'));
+    if(truc==='PRT') drawPRT(document.getElementById('cy'));
   });
 });
 
-// Hàm vẽ Trục 2B
+// ---- Trục 2B ----
 function draw2B(container){
-  const csvUrl = "YOUR_CSV_TRUC2B_URL"; // Thay bằng CSV public
+  const csvUrl = "YOUR_CSV_TRUC2B_URL"; // Thay CSV public
 
   fetch(csvUrl).then(res=>res.text()).then(csv=>{
     const lines = csv.trim().split("\n");
@@ -67,41 +51,34 @@ function draw2B(container){
     const edges = [];
     const colors = { 'Main':'red', 'Pro':'green', 'DP':'orange' };
 
-    // Tạo node và edge
+    // Lấy node và edge
     lines.forEach((line,i)=>{
-      if(i===0) return; // bỏ header
+      if(i===0) return; // header
       const parts = line.split(',');
       if(parts.length<3) return;
-      const nodeStr = parts[0].trim();  // HTH8102DWB21-QBH8101DWB21
-      const type = parts[1].trim();     // Main/Pro/DP
+      const nodeStr = parts[0].trim(); // HTH8102DWB21-QBH8101DWB21
+      const type = parts[1].trim();
       const [source, target] = nodeStr.split('-');
-
-      nodesSet.add(source);
-      nodesSet.add(target);
-
-      edges.push({data:{source, target, label:type, color:colors[type]||'#555'}});
+      nodesSet.add(source); nodesSet.add(target);
+      edges.push({data:{source,target,label:type,color:colors[type]||'#555'}});
     });
 
-    // Vị trí node: source bên trái, target bên phải
+    // Layout grid tự động
     const nodesArray = Array.from(nodesSet);
     const nodePositions = {};
-    const leftNodes = [];
-    const rightNodes = [];
-
-    edges.forEach(e=>{
-      if(!leftNodes.includes(e.data.source)) leftNodes.push(e.data.source);
-      if(!rightNodes.includes(e.data.target)) rightNodes.push(e.data.target);
+    const cols = 5;
+    const gapX = 200, gapY = 150;
+    nodesArray.forEach((n,i)=>{
+      const col = i % cols;
+      const row = Math.floor(i/cols);
+      nodePositions[n] = {x:150 + col*gapX, y:100 + row*gapY};
     });
-
-    const startY = 100, gapY = 100;
-    leftNodes.forEach((n,i)=>{ nodePositions[n] = {x:150, y:startY+i*gapY}; });
-    rightNodes.forEach((n,i)=>{ nodePositions[n] = {x:550, y:startY+i*gapY}; });
 
     const nodes = nodesArray.map(n=>({data:{id:n,label:n}, position:nodePositions[n]}));
 
     cytoscape({
       container,
-      elements:{nodes, edges},
+      elements:{nodes,edges},
       style:[
         {selector:'node', style:{'background-color':'#007bff','label':'data(id)','color':'#fff','text-valign':'center','text-halign':'center','font-size':12}},
         {selector:'edge', style:{'width':4,'line-color':'data(color)','curve-style':'bezier','label':'data(label)','font-size':12,'text-background-color':'#fff','text-background-opacity':1}}
@@ -111,9 +88,9 @@ function draw2B(container){
   });
 }
 
-// Hàm vẽ Link PRT
+// ---- Link PRT ----
 function drawPRT(container){
-  const csvUrl = "YOUR_CSV_LINKPRT_URL"; // Thay bằng CSV public
+  const csvUrl = "YOUR_CSV_LINKPRT_URL"; // Thay CSV public
 
   fetch(csvUrl).then(res=>res.text()).then(csv=>{
     const lines = csv.trim().split("\n");
@@ -121,7 +98,7 @@ function drawPRT(container){
     const edges = [];
 
     lines.forEach((line,i)=>{
-      if(i===0) return; // skip header
+      if(i===0) return;
       const regex = /(.*) \((.*)\) - \((.*)\) (.*)/;
       const match = line.match(regex);
       if(match){
@@ -129,11 +106,8 @@ function drawPRT(container){
         const portA = match[2].trim();
         const portB = match[3].trim();
         const nodeB = match[4].trim();
-
-        nodesSet.add(nodeA);
-        nodesSet.add(nodeB);
-
-        edges.push({data:{source:nodeA,target:nodeB,label:`${portA} ⇄ ${portB}`, color:'#555'}});
+        nodesSet.add(nodeA); nodesSet.add(nodeB);
+        edges.push({data:{source:nodeA,target:nodeB,label:`${portA} ⇄ ${portB}`,color:'#555'}});
       }
     });
 
@@ -141,7 +115,7 @@ function drawPRT(container){
 
     cytoscape({
       container,
-      elements:{nodes, edges},
+      elements:{nodes,edges},
       style:[
         {selector:'node', style:{'background-color':'#007bff','label':'data(id)','color':'#fff','text-valign':'center','text-halign':'center','font-size':12}},
         {selector:'edge', style:{'width':3,'line-color':'data(color)','curve-style':'bezier','label':'data(label)','font-size':10,'text-background-color':'#fff','text-background-opacity':1}}
