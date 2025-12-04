@@ -1,46 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Sơ đồ logic PRT</title>
-  <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; }
-    #cy {
-      width: 100%;
-      height: 700px;
-      border: 1px solid #ccc;
-      display: block;
-      margin: 20px 0;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Trang Tra cứu UCTT DUOCVK</title>
+<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; margin:0; background:#f0f2f5; }
+  header { background:#007bff; color:#fff; padding:20px; text-align:center; font-size:24px; font-weight:bold; }
+  .dashboard { display:flex; flex-wrap:wrap; justify-content:center; margin:40px 0; gap:20px; }
+  .menu-button { background:#28a745; color:#fff; padding:20px 40px; border:none; border-radius:8px; font-size:18px; cursor:pointer; transition:0.3s; }
+  .menu-button:hover { background:#218838; }
+  #main-content { margin:20px auto; width:90%; min-height:600px; border:1px solid #ccc; border-radius:8px; background:#fff; padding:20px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+</style>
 </head>
 <body>
-  <h2>Sơ đồ logic PRT</h2>
-  <div id="cy"></div>
 
-  <script>
-    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
+<header>Welcome đến trang tra cứu UCTT DUOCVK</header>
 
-    async function loadGraph() {
-      try {
-        const res = await fetch(csvUrl);
-        if(!res.ok) throw new Error("Không tải được CSV");
-        const csv = await res.text();
+<div class="dashboard">
+  <button class="menu-button" data-truc="2B">Trục 2B</button>
+  <button class="menu-button" data-truc="1C">Trục 1C</button>
+  <button class="menu-button" data-truc="1E">Trục 1E</button>
+  <button class="menu-button" data-truc="PRT">Sơ đồ Logic PRT</button>
+</div>
 
+<div id="main-content">
+  <p>Chọn một menu để bắt đầu tra cứu...</p>
+</div>
+
+<script>
+const buttons = document.querySelectorAll('.menu-button');
+const mainContent = document.getElementById('main-content');
+
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const truc = btn.getAttribute('data-truc');
+
+    if(truc === 'PRT') {
+      // Xóa nội dung cũ
+      mainContent.innerHTML = '<div id="cy" style="width:100%; height:600px;"></div>';
+
+      // Tải và vẽ sơ đồ logic PRT
+      const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
+
+      fetch(csvUrl).then(res => res.text()).then(csv => {
         const lines = csv.trim().split("\n");
         const nodesSet = new Set();
         const edges = [];
 
-        // Bỏ header (giả sử header ở dòng 0)
-        for(let i = 1; i < lines.length; i++) {
+        for(let i=1;i<lines.length;i++){
           const line = lines[i].trim();
           if(!line) continue;
-
-          // Regex: NodeA (PortA) - (PortB) NodeB
           const regex = /(.*) \((.*)\) - \((.*)\) (.*)/;
           const match = line.match(regex);
-          if(match) {
+          if(match){
             const nodeA = match[1].trim();
             const portA = match[2].trim();
             const portB = match[3].trim();
@@ -49,57 +62,31 @@
             nodesSet.add(nodeA);
             nodesSet.add(nodeB);
 
-            edges.push({
-              data: {
-                source: nodeA,
-                target: nodeB,
-                label: `${portA} ⇄ ${portB}`
-              }
-            });
+            edges.push({data:{source:nodeA,target:nodeB,label:`${portA} ⇄ ${portB}`}});
           }
         }
 
-        const nodes = Array.from(nodesSet).map(n => ({ data: { id: n, label: n } }));
+        const nodes = Array.from(nodesSet).map(n => ({data:{id:n,label:n}}));
 
-        const cy = cytoscape({
+        cytoscape({
           container: document.getElementById('cy'),
-          elements: { nodes, edges },
-          style: [
-            {
-              selector: 'node',
-              style: {
-                'background-color': '#007bff',
-                'label': 'data(id)',
-                'color': '#fff',
-                'text-valign': 'center',
-                'text-halign': 'center',
-                'font-size': 12
-              }
-            },
-            {
-              selector: 'edge',
-              style: {
-                'width': 2,
-                'line-color': '#555',
-                'target-arrow-shape': 'triangle',
-                'target-arrow-color': '#555',
-                'curve-style': 'bezier',
-                'label': 'data(label)',
-                'font-size': 10,
-                'text-background-color': '#fff',
-                'text-background-opacity': 1
-              }
-            }
+          elements:{nodes,edges},
+          style:[
+            {selector:'node', style:{'background-color':'#007bff','label':'data(id)','color':'#fff','text-valign':'center','text-halign':'center','font-size':12}},
+            {selector:'edge', style:{'width':2,'line-color':'#555','target-arrow-shape':'triangle','target-arrow-color':'#555','curve-style':'bezier','label':'data(label)','font-size':10,'text-background-color':'#fff','text-background-opacity':1}}
           ],
-          layout: { name: 'cose', padding: 30 }
+          layout:{name:'cose',padding:30}
         });
 
-      } catch(err) {
-        console.error("Lỗi:", err);
-      }
-    }
+      });
 
-    loadGraph();
-  </script>
+    } else {
+      // Các trục khác
+      mainContent.innerHTML = `<h2>Tra cứu Trục ${truc}</h2><p>Nội dung tra cứu sẽ hiển thị tại đây...</p>`;
+    }
+  });
+});
+</script>
+
 </body>
 </html>
