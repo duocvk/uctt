@@ -1,6 +1,105 @@
+<!DOCTYPE html>
 <html>
-<head><title>Trang tra cứu</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>Sơ đồ logic PRT</title>
+  <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #cy {
+      width: 100%;
+      height: 700px;
+      border: 1px solid #ccc;
+      display: block;
+      margin: 20px 0;
+    }
+  </style>
+</head>
 <body>
-  <h1>Welcome đến với Duocvk</h1>
+  <h2>Sơ đồ logic PRT</h2>
+  <div id="cy"></div>
+
+  <script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
+
+    async function loadGraph() {
+      try {
+        const res = await fetch(csvUrl);
+        if(!res.ok) throw new Error("Không tải được CSV");
+        const csv = await res.text();
+
+        const lines = csv.trim().split("\n");
+        const nodesSet = new Set();
+        const edges = [];
+
+        // Bỏ header (giả sử header ở dòng 0)
+        for(let i = 1; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if(!line) continue;
+
+          // Regex: NodeA (PortA) - (PortB) NodeB
+          const regex = /(.*) \((.*)\) - \((.*)\) (.*)/;
+          const match = line.match(regex);
+          if(match) {
+            const nodeA = match[1].trim();
+            const portA = match[2].trim();
+            const portB = match[3].trim();
+            const nodeB = match[4].trim();
+
+            nodesSet.add(nodeA);
+            nodesSet.add(nodeB);
+
+            edges.push({
+              data: {
+                source: nodeA,
+                target: nodeB,
+                label: `${portA} ⇄ ${portB}`
+              }
+            });
+          }
+        }
+
+        const nodes = Array.from(nodesSet).map(n => ({ data: { id: n, label: n } }));
+
+        const cy = cytoscape({
+          container: document.getElementById('cy'),
+          elements: { nodes, edges },
+          style: [
+            {
+              selector: 'node',
+              style: {
+                'background-color': '#007bff',
+                'label': 'data(id)',
+                'color': '#fff',
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'font-size': 12
+              }
+            },
+            {
+              selector: 'edge',
+              style: {
+                'width': 2,
+                'line-color': '#555',
+                'target-arrow-shape': 'triangle',
+                'target-arrow-color': '#555',
+                'curve-style': 'bezier',
+                'label': 'data(label)',
+                'font-size': 10,
+                'text-background-color': '#fff',
+                'text-background-opacity': 1
+              }
+            }
+          ],
+          layout: { name: 'cose', padding: 30 }
+        });
+
+      } catch(err) {
+        console.error("Lỗi:", err);
+      }
+    }
+
+    loadGraph();
+  </script>
 </body>
 </html>
