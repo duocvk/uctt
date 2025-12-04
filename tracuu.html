@@ -103,39 +103,52 @@ function draw2B(body){
   body.innerHTML = '<div id="cy" style="width:100%; height:600px;"></div>';
   const csvUrl = "YOUR_GOOGLE_SHEET_TRUC2B_CSV_URL"; // Thay bằng CSV thực tế
 
-  fetch(csvUrl).then(res=>res.text()).then(csv=>{
+  fetch(csvUrl).then(res => res.text()).then(csv => {
     const lines = csv.trim().split("\n");
     const nodesSet = new Set();
     const edges = [];
-    const colors = { 'Main':'red','Pro':'green','DP':'orange'};
+    const colors = { 'Main':'red', 'Pro':'green', 'DP':'orange' };
 
-    // Tạo layout grid
-    const nodePositions = {};
-    let col=0,row=0,maxCol=10;
-    
+    const nodePositions = {}; // giữ vị trí node
+    let col = 0, row = 0, maxCol = 10;
+    const direction = 1; // 1: trái→phải, -1: phải→trái
+
     for(let i=1;i<lines.length;i++){
       const line = lines[i].trim();
       if(!line) continue;
       const parts = line.split(',');
       if(parts.length<5) continue;
-      const prov = parts[0].trim();
-      const node = parts[1].trim();
-      const linkName = parts[2].trim();
-      const linkType = parts[3].trim();
-      const cable = parts[4].trim();
+
+      const prov = parts[0].trim();    // cột A: QBH-QTI
+      const node = parts[1].trim();    // cột B: mã node
+      const linkName = parts[2].trim(); // cột C
+      const linkTypes = parts[3].trim().split('/'); // cột D, có thể nhiều loại Main/Pro/DP
+      const cable = parts[4].trim();   // cột E
 
       nodesSet.add(node);
 
-      // Tính vị trí node (layout theo cột B)
+      // Tạo vị trí node nếu chưa có
       if(!nodePositions[node]){
-        const x = 200 + col*120;
+        const x = 100 + col*120;
         const y = 100 + row*100;
-        nodePositions[node] = {x,y};
-        col++;
-        if(col>=maxCol){ col=0; row++; }
+        nodePositions[node] = {x, y};
+        col += direction;
+        if(col>=maxCol){ col=maxCol-1; row++; direction*=-1; } // xuống dòng, đổi hướng
+        if(col<0){ col=0; row++; direction*=-1; }
       }
 
-      edges.push({data:{source:node, target:node, label:linkType, color:colors[linkType]||'#555'}});
+      // Tạo edge cho từng loại link
+      linkTypes.forEach(type=>{
+        const color = colors[type] || '#555';
+        edges.push({
+          data:{
+            source: node,
+            target: node, // tạm thời là node->node, bạn có thể map đúng theo cột A
+            label: type,
+            color: color
+          }
+        });
+      });
     }
 
     const nodes = Array.from(nodesSet).map(n=>({data:{id:n,label:n}, position: nodePositions[n]}));
@@ -149,7 +162,6 @@ function draw2B(body){
       ],
       layout:{name:'preset'}
     });
-
   });
 }
 
