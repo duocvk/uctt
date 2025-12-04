@@ -101,7 +101,8 @@ function drawPRT(body){
 // Vẽ Trục 2B
 function draw2B(body){
   body.innerHTML = '<div id="cy" style="width:100%; height:600px;"></div>';
-  const csvUrl = "YOUR_GOOGLE_SHEET_TRUC2B_CSV_URL"; // Thay CSV thực tế
+
+  const csvUrl = "YOUR_GOOGLE_SHEET_TRUC2B_CSV_URL"; // CSV public
 
   fetch(csvUrl).then(res=>res.text()).then(csv=>{
     const lines = csv.trim().split("\n");
@@ -109,48 +110,56 @@ function draw2B(body){
     const edges = [];
     const colors = { 'Main':'red', 'Pro':'green', 'DP':'orange' };
 
-    for(let i=1;i<lines.length;i++){
-      const parts = lines[i].split(',');
-      if(parts.length<5) continue;
-      const sourceNode = parts[1].trim();
-      const targetNode = parts[2].trim();
-      const types = parts[3].trim().split('/');
-
-      nodesSet.add(sourceNode);
-      nodesSet.add(targetNode);
-
-      types.forEach(type=>{
-        edges.push({
-          data:{
-            source: sourceNode,
-            target: targetNode,
-            label: type,
-            color: colors[type] || '#555'
-          }
-        });
-      });
-    }
-
-    // Vị trí grid
-    const nodePositions = {};
-    let col=0,row=0,maxCol=10,direction=1;
-    nodesSet.forEach(n=>{
-      const x = 100 + col*120;
-      const y = 100 + row*100;
-      nodePositions[n] = {x,y};
-      col += direction;
-      if(col>=maxCol){ col=maxCol-1; row++; direction*=-1; }
-      if(col<0){ col=0; row++; direction*=-1; }
+    // Lấy tất cả node từ cột C
+    lines.forEach((line, i)=>{
+      if(i===0) return; // skip header
+      const parts = line.split(',');
+      if(parts.length<3) return;
+      const nodeStr = parts[0].trim(); // HTH8102DWB21-QBH8101DWB21
+      const nodes = nodeStr.split('-');
+      nodesSet.add(nodes[0]);
+      nodesSet.add(nodes[1]);
     });
 
-    const nodes = Array.from(nodesSet).map(n=>({data:{id:n,label:n}, position: nodePositions[n]}));
+    // Tạo position cho node: trái→phải
+    const nodeArray = Array.from(nodesSet);
+    const nodePositions = {};
+    const startX = 150, startY = 200;
+    const gapX = 400;
+    nodeArray.forEach((n,i)=>{
+      nodePositions[n] = { x: startX + (i%2)*gapX, y: startY }; // 2 node, 1 trái 1 phải
+    });
+
+    // Tạo edge dựa trên cột D (loại link)
+    lines.forEach((line, i)=>{
+      if(i===0) return;
+      const parts = line.split(',');
+      if(parts.length<3) return;
+
+      const nodeStr = parts[0].trim();
+      const type = parts[1].trim();
+      const cable = parts[2].trim();
+
+      const [source, target] = nodeStr.split('-');
+
+      edges.push({
+        data: {
+          source: source,
+          target: target,
+          label: type,
+          color: colors[type] || '#555'
+        }
+      });
+    });
+
+    const nodes = nodeArray.map(n=>({data:{id:n,label:n}, position: nodePositions[n]}));
 
     cytoscape({
       container: document.getElementById('cy'),
-      elements:{nodes,edges},
+      elements:{nodes, edges},
       style:[
         {selector:'node', style:{'background-color':'#007bff','label':'data(id)','color':'#fff','text-valign':'center','text-halign':'center','font-size':12}},
-        {selector:'edge', style:{'width':3,'line-color':'data(color)','curve-style':'bezier','label':'data(label)','font-size':10,'text-background-color':'#fff','text-background-opacity':1}}
+        {selector:'edge', style:{'width':4,'line-color':'data(color)','curve-style':'bezier','label':'data(label)','font-size':12,'text-background-color':'#fff','text-background-opacity':1}}
       ],
       layout:{name:'preset'}
     });
