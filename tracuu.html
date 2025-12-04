@@ -101,51 +101,66 @@ function drawPRT(body){
 // Vẽ Trục 2B
 function draw2B(body){
   body.innerHTML = '<div id="cy" style="width:100%; height:600px;"></div>';
-  const csvUrl = "YOUR_GOOGLE_SHEET_TRUC2B_CSV_URL"; // Thay bằng CSV thực tế
+  const csvUrl = "YOUR_GOOGLE_SHEET_TRUC2B_CSV_URL"; // Thay CSV thực tế
 
-  fetch(csvUrl).then(res => res.text()).then(csv => {
+  fetch(csvUrl).then(res=>res.text()).then(csv=>{
     const lines = csv.trim().split("\n");
     const nodesSet = new Set();
     const edges = [];
     const colors = { 'Main':'red', 'Pro':'green', 'DP':'orange' };
 
-    const nodePositions = {}; // giữ vị trí node
-    let col = 0, row = 0, maxCol = 10;
-    const direction = 1; // 1: trái→phải, -1: phải→trái
+    const nodePositions = {};
+    let col = 0, row = 0;
+    const maxCol = 10;
+    let direction = 1;
 
+    const nodeToProv = {}; // map node -> province code từ cột A
+
+    // Tạo node và vị trí
     for(let i=1;i<lines.length;i++){
-      const line = lines[i].trim();
-      if(!line) continue;
-      const parts = line.split(',');
+      const parts = lines[i].split(',');
       if(parts.length<5) continue;
 
-      const prov = parts[0].trim();    // cột A: QBH-QTI
-      const node = parts[1].trim();    // cột B: mã node
-      const linkName = parts[2].trim(); // cột C
-      const linkTypes = parts[3].trim().split('/'); // cột D, có thể nhiều loại Main/Pro/DP
-      const cable = parts[4].trim();   // cột E
+      const provs = parts[0].trim().split('-'); // QBH-QTI
+      const node = parts[1].trim();
+      const linkTypes = parts[3].trim().split('/');
 
       nodesSet.add(node);
+      nodeToProv[node] = provs; // lưu tỉnh node thuộc
 
-      // Tạo vị trí node nếu chưa có
+      // position grid
       if(!nodePositions[node]){
         const x = 100 + col*120;
         const y = 100 + row*100;
-        nodePositions[node] = {x, y};
+        nodePositions[node] = {x,y};
         col += direction;
-        if(col>=maxCol){ col=maxCol-1; row++; direction*=-1; } // xuống dòng, đổi hướng
+        if(col>=maxCol){ col=maxCol-1; row++; direction*=-1; }
         if(col<0){ col=0; row++; direction*=-1; }
       }
+    }
 
-      // Tạo edge cho từng loại link
+    // Tạo edge dựa trên cột A và cột D
+    for(let i=1;i<lines.length;i++){
+      const parts = lines[i].split(',');
+      if(parts.length<5) continue;
+      const provs = parts[0].trim().split('-'); // QBH-QTI
+      const node = parts[1].trim();
+      const linkTypes = parts[3].trim().split('/');
+
+      const targetNode = [...nodesSet].find(n=>{
+        const p = nodeToProv[n];
+        return p && (p.includes(provs[1]) || p.includes(provs[0])) && n!==node;
+      });
+
+      if(!targetNode) continue;
+
       linkTypes.forEach(type=>{
-        const color = colors[type] || '#555';
         edges.push({
           data:{
             source: node,
-            target: node, // tạm thời là node->node, bạn có thể map đúng theo cột A
+            target: targetNode,
             label: type,
-            color: color
+            color: colors[type]||'#555'
           }
         });
       });
