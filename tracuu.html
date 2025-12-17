@@ -5,140 +5,32 @@
 <title>UCTT DUOCVK</title>
 
 <style>
-/* ===== BASE ===== */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #f0f2f5;
-}
+body{font-family:Arial;margin:0;background:#f0f2f5}
+header{background:#007bff;color:#fff;padding:20px;text-align:center;font-size:24px;font-weight:bold}
 
-header {
-  background: #007bff;
-  color: #fff;
-  padding: 20px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-}
+/* LOGIN */
+#login-overlay{position:fixed;inset:0;background:#f0f2f5;display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:#fff;width:350px;padding:25px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.login-box h2{text-align:center;color:#007bff}
+.login-box input{width:100%;padding:10px;margin-bottom:12px}
+.login-box button{width:100%;padding:10px;background:#007bff;color:#fff;border:none;border-radius:6px;font-size:16px}
 
-/* ===== LOGIN ===== */
-#login-overlay {
-  position: fixed;
-  inset: 0;
-  background: #f0f2f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
+/* DASHBOARD */
+.layer{max-width:1200px;margin:20px auto;padding:15px 20px 25px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.layer-title{font-size:20px;font-weight:bold;margin-bottom:15px}
+.dashboard{display:flex;flex-wrap:wrap;gap:15px}
+.menu-button{padding:16px 32px;border:none;border-radius:8px;font-size:16px;color:#fff;cursor:pointer}
 
-.login-box {
-  background: #fff;
-  width: 350px;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-}
+/* COLORS */
+.layer-qg{background:#e7f1ff}.menu-qg{background:#0056b3}
+.layer-qt{background:#f2eaff}.menu-qt{background:#6f42c1}
+.layer-lt{background:#eaf7ef}.menu-lt{background:#28a745}
+.layer-lh{background:#fff1e5}.menu-lh{background:#fd7e14}
+.layer-srt{background:#fdeaea}.menu-srt{background:#dc3545}
 
-.login-box h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #007bff;
-}
-
-.login-box input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  font-size: 15px;
-}
-
-.login-box button {
-  width: 100%;
-  padding: 10px;
-  background: #007bff;
-  border: none;
-  color: #fff;
-  font-size: 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* ===== DASHBOARD ===== */
-#dashboard {
-  margin-bottom: 30px;
-}
-
-.dashboard {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.menu-button {
-  padding: 16px 32px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  color: #fff;
-}
-
-/* ===== LAYERS ===== */
-.layer {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 15px 20px 25px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-}
-
-.layer-title {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-/* ===== COLORS ===== */
-.layer-qg { background:#e7f1ff; }
-.layer-qg .layer-title { color:#0056b3; }
-.menu-qg { background:#0056b3; }
-
-.layer-qt { background:#f2eaff; }
-.layer-qt .layer-title { color:#6f42c1; }
-.menu-qt { background:#6f42c1; }
-
-.layer-lt { background:#eaf7ef; }
-.layer-lt .layer-title { color:#28a745; }
-.menu-lt { background:#28a745; }
-
-.layer-lh { background:#fff1e5; }
-.layer-lh .layer-title { color:#fd7e14; }
-.menu-lh { background:#fd7e14; }
-
-.layer-srt { background:#fdeaea; }
-.layer-srt .layer-title { color:#dc3545; }
-.menu-srt { background:#dc3545; }
-
-/* ===== PANELS ===== */
-.panel {
-  display: none;
-  max-width: 1200px;
-  margin: 20px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.back-btn {
-  background: #6c757d;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+/* PANEL */
+.panel{display:none;max-width:1200px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.back-btn{background:#6c757d;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer}
 </style>
 </head>
 
@@ -151,9 +43,7 @@ header {
     <input id="username" placeholder="User">
     <input id="password" type="password" placeholder="Password">
     <button onclick="login()">Đăng nhập</button>
-    <p id="login-error" style="color:red;text-align:center;display:none">
-      Sai tài khoản hoặc mật khẩu
-    </p>
+    <p id="login-error" style="color:red;text-align:center;display:none">Sai tài khoản hoặc mật khẩu</p>
   </div>
 </div>
 
@@ -209,78 +99,49 @@ header {
 
 </div>
 
-<!-- PANELS -->
-<div id="panel-2B" class="panel">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
-  <h2>Panel Trục 2B</h2>
-</div>
-
-<div id="panel-PRT" class="panel">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
-  <h2>Panel PRT</h2>
-</div>
-
-<div id="panel-SRT" class="panel">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
-  <h2>Panel SRT</h2>
-</div>
-
 <script>
-function login() {
-  const u = username.value.trim().toLowerCase();
-  const p = password.value.trim();
-
-  if (u === 'duocvk' && p === '120130') {
-    document.getElementById('login-overlay').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('app-header').style.display = 'block';
-    document.getElementById('login-error').style.display = 'none';
-  } else {
-    document.getElementById('login-error').style.display = 'block';
-  }
+function login(){
+  const u=username.value.trim().toLowerCase();
+  const p=password.value.trim();
+  if(u==='duocvk' && p==='120130'){
+    login-overlay.style.display='none';
+    dashboard.style.display='block';
+    app-header.style.display='block';
+    login-error.style.display='none';
+  }else login-error.style.display='block';
 }
-  document.addEventListener('keydown', function (e) {
-  if (e.key === 'Enter' && document.getElementById('login-overlay').style.display !== 'none') {
-    login();
-  }
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && login-overlay.style.display!=='none') login();
 });
-  function createPanel(id, title) {
-  const panel = document.createElement('div');
-  panel.id = id;
-  panel.className = 'panel';
-  panel.innerHTML = `
-    <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
-    <h2>${title}</h2>
-    <p>Nội dung đang được cập nhật…</p>
-  `;
-  document.body.appendChild(panel);
+
+function openPanel(id){
+  dashboard.style.display='none';
+  app-header.style.display='none';
+  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+  document.getElementById(id).style.display='block';
 }
 
-function openPanel(panelId) {
-  document.getElementById('dashboard').style.display = 'none';
-  document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-  document.getElementById(panelId).style.display = 'block';
+function backDashboard(){
+  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+  dashboard.style.display='block';
+  app-header.style.display='block';
 }
 
-function backDashboard() {
-  document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
-  document.getElementById('dashboard').style.display = 'block';
+function createPanel(id,title){
+  const d=document.createElement('div');
+  d.className='panel'; d.id=id;
+  d.innerHTML=`<button class="back-btn" onclick="backDashboard()">← Quay lại</button><h2>${title}</h2>`;
+  document.body.appendChild(d);
 }
-  [
-  ['panel-2B', 'Panel Trục 2B'],
-  ['panel-1A', 'Panel Trục 1A'],
-  ['panel-1C', 'Panel Trục 1C'],
-  ['panel-1E', 'Panel Trục 1E'],
-  ['panel-ADC', 'Panel ADC'],
-  ['panel-APG', 'Panel APG'],
-  ['panel-PRT', 'Panel PRT'],
-  ['panel-MT2', 'Panel MT2'],
-  ['panel-MT3', 'Panel MT3'],
-  ['panel-CIENA', 'Panel DWDM CIENA'],
-  ['panel-HW', 'Panel DWDM HW'],
-  ['panel-AGG', 'Panel DWDM AGG'],
-  ['panel-SRT', 'Panel SRT']
-].forEach(p => createPanel(p[0], p[1]));
+
+[
+ ['panel-2B','Panel Trục 2B'],['panel-1A','Panel Trục 1A'],['panel-1C','Panel Trục 1C'],
+ ['panel-1E','Panel Trục 1E'],['panel-ADC','Panel ADC'],['panel-APG','Panel APG'],
+ ['panel-PRT','Panel PRT'],['panel-MT2','Panel MT2'],['panel-MT3','Panel MT3'],
+ ['panel-CIENA','Panel DWDM CIENA'],['panel-HW','Panel DWDM HW'],
+ ['panel-AGG','Panel DWDM AGG'],['panel-SRT','Panel SRT']
+].forEach(p=>createPanel(p[0],p[1]));
 </script>
 
 </body>
