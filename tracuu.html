@@ -2,146 +2,98 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>UCTT DUOCVK</title>
-
+<title>Trang Tra cứu UCTT DUOCVK</title>
+<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
 <style>
-body{font-family:Arial;margin:0;background:#f0f2f5}
-header{background:#007bff;color:#fff;padding:20px;text-align:center;font-size:24px;font-weight:bold}
-
-/* LOGIN */
-#login-overlay{position:fixed;inset:0;background:#f0f2f5;display:flex;align-items:center;justify-content:center;z-index:9999}
-.login-box{background:#fff;width:350px;padding:25px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.2)}
-.login-box h2{text-align:center;color:#007bff}
-.login-box input{width:100%;padding:10px;margin-bottom:12px}
-.login-box button{width:100%;padding:10px;background:#007bff;color:#fff;border:none;border-radius:6px;font-size:16px}
-
-/* DASHBOARD */
-.layer{max-width:1200px;margin:20px auto;padding:15px 20px 25px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.12)}
-.layer-title{font-size:20px;font-weight:bold;margin-bottom:15px}
-.dashboard{display:flex;flex-wrap:wrap;gap:15px}
-.menu-button{padding:16px 32px;border:none;border-radius:8px;font-size:16px;color:#fff;cursor:pointer}
-
-/* COLORS */
-.layer-qg{background:#e7f1ff}.menu-qg{background:#0056b3}
-.layer-qt{background:#f2eaff}.menu-qt{background:#6f42c1}
-.layer-lt{background:#eaf7ef}.menu-lt{background:#28a745}
-.layer-lh{background:#fff1e5}.menu-lh{background:#fd7e14}
-.layer-srt{background:#fdeaea}.menu-srt{background:#dc3545}
-
-/* PANEL */
-.panel{display:none;max-width:1200px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-.back-btn{background:#6c757d;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer}
+  body { font-family: Arial, sans-serif; margin:0; background:#f0f2f5; }
+  header { background:#007bff; color:#fff; padding:20px; text-align:center; font-size:24px; font-weight:bold; }
+  .dashboard { display:flex; flex-wrap:wrap; justify-content:center; margin:40px 0; gap:20px; }
+  .menu-button { background:#28a745; color:#fff; padding:20px 40px; border:none; border-radius:8px; font-size:18px; cursor:pointer; transition:0.3s; }
+  .menu-button:hover { background:#218838; }
+  #main-content { margin:20px auto; width:90%; min-height:600px; border:1px solid #ccc; border-radius:8px; background:#fff; padding:20px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
 </style>
 </head>
-
 <body>
 
-<!-- LOGIN -->
-<div id="login-overlay">
-  <div class="login-box">
-    <h2>Đăng nhập UCTT</h2>
-    <input id="username" placeholder="User">
-    <input id="password" type="password" placeholder="Password">
-    <button onclick="login()">Đăng nhập</button>
-    <p id="login-error" style="color:red;text-align:center;display:none">Sai tài khoản hoặc mật khẩu</p>
-  </div>
+<header>Welcome đến trang tra cứu UCTT DUOCVK</header>
+
+<div class="dashboard">
+  <button class="menu-button" data-truc="2B">Trục 2B</button>
+  <button class="menu-button" data-truc="1A">Trục 1A</button>
+  <button class="menu-button" data-truc="1C">Trục 1C</button>
+  <button class="menu-button" data-truc="1E">Trục 1E</button>
+  <button class="menu-button" data-truc="ADC">Trục ADC</button>
+  <button class="menu-button" data-truc="PRT">Link PRT</button>
+  <button class="menu-button" data-truc="MT2">Liên tỉnh MT2</button>
+  <button class="menu-button" data-truc="MT3.4">Liên tỉnh MT3_4</button>
+  <button class="menu-button" data-truc="LH_Ciena">Liên huyện Ciena</button>
+  <button class="menu-button" data-truc="LH_HW">Liên huyện HW</button>
+  <button class="menu-button" data-truc="LH_AGG">Liên huyện AGG</button>
+  <button class="menu-button" data-truc="Link SRT">SRT</button>
 </div>
 
-<header id="app-header" style="display:none">
-  WELCOME ĐẾN TRANG TRA CỨU UCTT DUOCVK
-</header>
-
-<!-- DASHBOARD -->
-<div id="dashboard" style="display:none">
-
-  <div class="layer layer-qg">
-    <div class="layer-title">1️⃣ Trục Quốc gia</div>
-    <div class="dashboard">
-      <button class="menu-button menu-qg" onclick="openPanel('panel-2B')">2B</button>
-      <button class="menu-button menu-qg" onclick="openPanel('panel-1A')">1A</button>
-      <button class="menu-button menu-qg" onclick="openPanel('panel-1C')">1C</button>
-      <button class="menu-button menu-qg" onclick="openPanel('panel-1E')">1E</button>
-    </div>
-  </div>
-
-  <div class="layer layer-qt">
-    <div class="layer-title">2️⃣ Trục Quốc tế</div>
-    <div class="dashboard">
-      <button class="menu-button menu-qt" onclick="openPanel('panel-ADC')">ADC</button>
-      <button class="menu-button menu-qt" onclick="openPanel('panel-APG')">APG</button>
-    </div>
-  </div>
-
-  <div class="layer layer-lt">
-    <div class="layer-title">3️⃣ Liên tỉnh</div>
-    <div class="dashboard">
-      <button class="menu-button menu-lt" onclick="openPanel('panel-PRT')">PRT</button>
-      <button class="menu-button menu-lt" onclick="openPanel('panel-MT2')">MT2</button>
-      <button class="menu-button menu-lt" onclick="openPanel('panel-MT3')">MT3</button>
-    </div>
-  </div>
-
-  <div class="layer layer-lh">
-    <div class="layer-title">4️⃣ Liên huyện (DWDM)</div>
-    <div class="dashboard">
-      <button class="menu-button menu-lh" onclick="openPanel('panel-CIENA')">CIENA</button>
-      <button class="menu-button menu-lh" onclick="openPanel('panel-HW')">HW</button>
-      <button class="menu-button menu-lh" onclick="openPanel('panel-AGG')">AGG</button>
-    </div>
-  </div>
-
-  <div class="layer layer-srt">
-    <div class="layer-title">5️⃣ SRT</div>
-    <div class="dashboard">
-      <button class="menu-button menu-srt" onclick="openPanel('panel-SRT')">SRT</button>
-    </div>
-  </div>
-
+<div id="main-content">
+  <p>Chọn một menu để bắt đầu tra cứu...</p>
 </div>
 
 <script>
-function login(){
-  const u=username.value.trim().toLowerCase();
-  const p=password.value.trim();
-  if(u==='duocvk' && p==='120130'){
-    login-overlay.style.display='none';
-    dashboard.style.display='block';
-    app-header.style.display='block';
-    login-error.style.display='none';
-  }else login-error.style.display='block';
-}
+const buttons = document.querySelectorAll('.menu-button');
+const mainContent = document.getElementById('main-content');
 
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter' && login-overlay.style.display!=='none') login();
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const truc = btn.getAttribute('data-truc');
+
+    if(truc === 'PRT') {
+      // Xóa nội dung cũ
+      mainContent.innerHTML = '<div id="cy" style="width:100%; height:600px;"></div>';
+
+      // Tải và vẽ sơ đồ logic PRT
+      const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
+
+      fetch(csvUrl).then(res => res.text()).then(csv => {
+        const lines = csv.trim().split("\n");
+        const nodesSet = new Set();
+        const edges = [];
+
+        for(let i=1;i<lines.length;i++){
+          const line = lines[i].trim();
+          if(!line) continue;
+          const regex = /(.*) \((.*)\) - \((.*)\) (.*)/;
+          const match = line.match(regex);
+          if(match){
+            const nodeA = match[1].trim();
+            const portA = match[2].trim();
+            const portB = match[3].trim();
+            const nodeB = match[4].trim();
+
+            nodesSet.add(nodeA);
+            nodesSet.add(nodeB);
+
+            edges.push({data:{source:nodeA,target:nodeB,label:`${portA} ⇄ ${portB}`}});
+          }
+        }
+
+        const nodes = Array.from(nodesSet).map(n => ({data:{id:n,label:n}}));
+
+        cytoscape({
+          container: document.getElementById('cy'),
+          elements:{nodes,edges},
+          style:[
+            {selector:'node', style:{'background-color':'#007bff','label':'data(id)','color':'#fff','text-valign':'center','text-halign':'center','font-size':12}},
+            {selector:'edge', style:{'width':2,'line-color':'#555','target-arrow-shape':'triangle','target-arrow-color':'#555','curve-style':'bezier','label':'data(label)','font-size':10,'text-background-color':'#fff','text-background-opacity':1}}
+          ],
+          layout:{name:'cose',padding:30}
+        });
+
+      });
+
+    } else {
+      // Các trục khác
+      mainContent.innerHTML = `<h2>Tra cứu Trục ${truc}</h2><p>Nội dung tra cứu sẽ hiển thị tại đây...</p>`;
+    }
+  });
 });
-
-function openPanel(id){
-  dashboard.style.display='none';
-  app-header.style.display='none';
-  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
-  document.getElementById(id).style.display='block';
-}
-
-function backDashboard(){
-  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
-  dashboard.style.display='block';
-  app-header.style.display='block';
-}
-
-function createPanel(id,title){
-  const d=document.createElement('div');
-  d.className='panel'; d.id=id;
-  d.innerHTML=`<button class="back-btn" onclick="backDashboard()">← Quay lại</button><h2>${title}</h2>`;
-  document.body.appendChild(d);
-}
-
-[
- ['panel-2B','Panel Trục 2B'],['panel-1A','Panel Trục 1A'],['panel-1C','Panel Trục 1C'],
- ['panel-1E','Panel Trục 1E'],['panel-ADC','Panel ADC'],['panel-APG','Panel APG'],
- ['panel-PRT','Panel PRT'],['panel-MT2','Panel MT2'],['panel-MT3','Panel MT3'],
- ['panel-CIENA','Panel DWDM CIENA'],['panel-HW','Panel DWDM HW'],
- ['panel-AGG','Panel DWDM AGG'],['panel-SRT','Panel SRT']
-].forEach(p=>createPanel(p[0],p[1]));
 </script>
 
 </body>
