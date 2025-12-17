@@ -227,16 +227,33 @@ header {
 
 <script>
 function login() {
-  if (
-    username.value === 'Duocvk' &&
-    password.value === '120130'
-  ) {
+  const u = username.value.trim().toLowerCase();
+  const p = password.value.trim();
+
+  if (u === 'duocvk' && p === '120130') {
     document.getElementById('login-overlay').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     document.getElementById('app-header').style.display = 'block';
+    document.getElementById('login-error').style.display = 'none';
   } else {
     document.getElementById('login-error').style.display = 'block';
   }
+}
+  document.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && document.getElementById('login-overlay').style.display !== 'none') {
+    login();
+  }
+});
+  function createPanel(id, title) {
+  const panel = document.createElement('div');
+  panel.id = id;
+  panel.className = 'panel';
+  panel.innerHTML = `
+    <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
+    <h2>${title}</h2>
+    <p>Nội dung đang được cập nhật…</p>
+  `;
+  document.body.appendChild(panel);
 }
 
 function openPanel(panelId) {
@@ -249,6 +266,21 @@ function backDashboard() {
   document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
   document.getElementById('dashboard').style.display = 'block';
 }
+  [
+  ['panel-2B', 'Panel Trục 2B'],
+  ['panel-1A', 'Panel Trục 1A'],
+  ['panel-1C', 'Panel Trục 1C'],
+  ['panel-1E', 'Panel Trục 1E'],
+  ['panel-ADC', 'Panel ADC'],
+  ['panel-APG', 'Panel APG'],
+  ['panel-PRT', 'Panel PRT'],
+  ['panel-MT2', 'Panel MT2'],
+  ['panel-MT3', 'Panel MT3'],
+  ['panel-CIENA', 'Panel DWDM CIENA'],
+  ['panel-HW', 'Panel DWDM HW'],
+  ['panel-AGG', 'Panel DWDM AGG'],
+  ['panel-SRT', 'Panel SRT']
+].forEach(p => createPanel(p[0], p[1]));
 </script>
 
 </body>
