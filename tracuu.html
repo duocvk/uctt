@@ -4,18 +4,23 @@
 <meta charset="UTF-8">
 <title>UCTT DUOCVK</title>
 <style>
+ 
 /* ===== BASE ===== */
 body {
  font-family: Arial, sans-serif;
  margin: 0;
- background: #f0f2f5; }
+ background: #f0f2f5;
+}
+ 
 header {
  background: #007bff;
  color: #fff;
  padding: 20px;
  text-align: center;
  font-size: 24px;
- font-weight: bold; }
+ font-weight: bold; 
+}
+ 
 /* ===== LOGIN ===== */
 #login-overlay {
  position: fixed;
@@ -24,18 +29,23 @@ header {
  display: flex;
  align-items: center;
  justify-content: center;
- z-index: 9999; }
+ z-index: 9999; 
+}
+ 
 .login-box {
  background: #fff;
  width: 350px;
  padding: 25px;
  border-radius: 12px;
- box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+ box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
+}
+ 
 .login-box h2 {
  text-align: center;
  margin-bottom: 20px;
  color: #007bff;
 }
+ 
 .login-box input {
  width: 100%;
  padding: 10px;
@@ -49,49 +59,65 @@ header {
  color: #fff;
  font-size: 16px;
  border-radius: 6px;
- cursor: pointer; }
+ cursor: pointer; 
+}
+ 
 /* ===== DASHBOARD ===== */
 #dashboard {
- margin-bottom: 30px; }
+ margin-bottom: 30px; 
+}
+ 
 .dashboard {
  display: flex;
  flex-wrap: wrap;
- gap: 15px; }
+ gap: 15px; 
+}
+ 
 .menu-button {
  padding: 16px 32px;
  border: none;
  border-radius: 8px;
  font-size: 16px;
  cursor: pointer;
- color: #fff; }
-/* ===== L
-AYERS ===== */
+ color: #fff; 
+}
+ 
+/* ===== LAYERS ===== */
 .layer {
  max-width: 1200px;
  margin: 20px auto;
  padding: 15px 20px 25px;
  border-radius: 12px;
-box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
+box-shadow: 0 2px 6px rgba(0,0,0,0.12); 
+}
+ 
 .layer-title {
  font-size: 20px;
  font-weight: bold;
- margin-bottom: 15px; }
+ margin-bottom: 15px; 
+}
+ 
 /* ===== COLORS ===== */
 .layer-qg { background:#e7f1ff; }
 .layer-qg .layer-title { color:#0056b3; }
 .menu-qg { background:#0056b3; }
+ 
 .layer-qt { background:#f2eaff; }
 .layer-qt .layer-title { color:#6f42c1; }
 .menu-qt { background:#6f42c1; }
+ 
 .layer-lt { background:#eaf7ef; }
 .layer-lt .layer-title { color:#28a745; }
 .menu-lt { background:#28a745; }
+ 
 .layer-lh { background:#fff1e5; }
 .layer-lh .layer-title { color:#fd7e14; }
 .menu-lh { background:#fd7e14; }
+ 
 .layer-srt { background:#fdeaea; }
 .layer-srt .layer-title { color:#dc3545; }
 .menu-srt { background:#dc3545; }
+ 
 /* ===== PANELS ===== */
 .panel {
  display: none;
@@ -100,7 +126,9 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
  background: #fff;
  padding: 20px;
  border-radius: 12px;
- box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+ box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+}
+ 
 .back-btn {
  background: #6c757d;
  color: #fff;
@@ -112,6 +140,7 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
 </style>
 </head>
 <body>
+ 
 <!-- LOGIN -->
 <div id="login-overlay">
  <div class="login-box">
@@ -124,11 +153,14 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
  </p>
  </div>
 </div>
+ 
 <header id="app-header" style="display:none">
  WELCOME ĐẾN TRANG TRA CỨU UCTT DUOCVK
 </header>
+ 
 <!-- DASHBOARD -->
 <div id="dashboard" style="display:none">
+ 
  <div class="layer layer-qg">
  <div class="layer-title">1️⃣ Trục Quốc gia</div>
  <div class="dashboard">
@@ -136,6 +168,7 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
  <button class="menu-button menu-qg" onclick="openPanel('panel-1A')">1A</button>
  <button class="menu-button menu-qg" onclick="openPanel('panel-1C')">1C</button>
  <button class="menu-button menu-qg" onclick="openPanel('panel-1E')">1E</button>
+  <button class="menu-button menu-qg" onclick="openPanel('panel-map')">MAP</button>
  </div>
  </div>
  <div class="layer layer-qt">
@@ -145,42 +178,52 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
  <button class="menu-button menu-qt" onclick="openPanel('panel-APG')">APG</button>
  </div>
  </div>
+ 
 <div class="layer layer-lt">
  <div class="layer-title">3️⃣ Liên tỉnh</div>
  <div class="dashboard">
  <button class="menu-button menu-lt" onclick="openPanel('panel-PRT')">PRT</button>
  <button class="menu-button menu-lt" onclick="openPanel('panel-MT2')">MT2</button>
  <button class="menu-button menu-lt" onclick="openPanel('panel-MT3')">MT3</button>
+    <button class="menu-button menu-lt" onclick="openPanel('panel-map')">MAP</button>
  </div>
  </div>
+ 
  <div class="layer layer-lh">
  <div class="layer-title">4️⃣ Liên huyện (DWDM)</div>
  <div class="dashboard">
  <button class="menu-button menu-lh" onclick="openPanel('panel-CIENA')">CIENA</button>
  <button class="menu-button menu-lh" onclick="openPanel('panel-HW')">HW</button>
  <button class="menu-button menu-lh" onclick="openPanel('panel-AGG')">AGG</button>
+    <button class="menu-button menu-lh" onclick="openPanel('panel-map.lh')">MAP.LH</button>
  </div>
  </div>
+ 
  <div class="layer layer-srt">
  <div class="layer-title">5️⃣ SRT</div>
  <div class="dashboard">
  <button class="menu-button menu-srt" onclick="openPanel('panel-SRT')">SRT</button>
  </div>
  </div>
+ 
 </div>
+ 
 <!-- PANELS -->
 <div id="panel-2B" class="panel">
  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
  <h2>Panel Trục 2B</h2>
 </div>
+ 
 <div id="panel-PRT" class="panel">
  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
  <h2>Panel PRT</h2>
 </div>
+ 
 <div id="panel-SRT" class="panel">
  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
  <h2>Panel SRT</h2>
 </div>
+ 
 <script>
 function login() {
  const u = username.value.trim().toLowerCase();
@@ -194,11 +237,13 @@ function login() {
  document.getElementById('login-error').style.display = 'block';
  }
 }
+ 
  document.addEventListener('keydown', function (e) {
  if (e.key === 'Enter' && document.getElementById('login-overlay').style.display !== 'none') {
  login();
  }
 });
+ 
  function createPanel(id, title) {
  const panel = document.createElement('div');
  panel.id = id;
@@ -210,11 +255,13 @@ function login() {
  ;
  document.body.appendChild(panel);
 }
+ 
 function openPanel(panelId) {
  document.getElementById('dashboard').style.display = 'none';
  document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
  document.getElementById(panelId).style.display = 'block';
 }
+ 
 function backDashboard() {
  document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
  document.getElementById('dashboard').style.display = 'block';
