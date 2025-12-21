@@ -432,6 +432,200 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
 </style>
   
 <!-- ============= PANEL TRỤC 2B ============= -->
+
+
+  <!-- ============= PANEL TRỤC 1A ============= -->
+<div id="panel-1A" class="panel">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
+  <h2>Trục 1A</h2>
+
+  <!-- Filters với autocomplete -->
+  <div style="margin:10px 0">
+    <label for="filter-tinh-1A">Tỉnh:</label>
+    <input id="filter-tinh-1A" placeholder="Gõ tên tỉnh..." oninput="suggestAutocomplete('tinh')">
+
+    <label for="filter-section-1A">Section:</label>
+    <input id="filter-section-1A" placeholder="Gõ section..." oninput="suggestAutocomplete('section')">
+
+    <label for="filter-link-1A">Link:</label>
+    <input id="filter-link-1A" placeholder="Gõ link..." oninput="suggestAutocomplete('link')">
+
+    <div id="autocomplete-list" class="autocomplete-items" style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;"></div>
+  </div>
+
+  <!-- Table dữ liệu -->
+  <table id="table-1A" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+    <thead>
+      <tr>
+        <th>Tỉnh</th>
+        <th>Section</th>
+        <th>Link</th>
+        <th>Loại Link</th>
+        <th>Tuyến cáp</th>
+        <th>Loại cáp</th>
+        <th>Chiều dài</th>
+        <th>Sợi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+const csvUrl2B = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
+let data2B = [];
+
+// Load dữ liệu CSV
+function load1A(){
+  Papa.parse(csvUrl1A, {
+    download: true,
+    header: false,
+    complete: function(results){
+      data1A = results.data; // giữ nguyên tất cả dữ liệu để kiểm tra
+
+      // 👉 thêm đoạn log kiểm tra cột Tỉnh
+      data1A.forEach((row, idx) => {
+        console.log("Row", idx, JSON.stringify(row[0]));
+      });
+
+      renderTable1A();
+    }
+  });
+}
+
+// Autocomplete gợi ý
+function suggestAutocomplete(type){
+  const input = document.getElementById(`filter-${type}-1A`);
+  const val = input.value.toUpperCase();
+  const listDiv = document.getElementById("autocomplete-list");
+  listDiv.innerHTML = "";
+  if(!val) return;
+
+  // Lấy danh sách unique theo type
+  let items = [];
+  if(type==="tinh") data1A.forEach(r => {
+    if(r[0]) r[0].split("-").forEach(t => items.push(t.trim()));
+  });
+  else if(type==="section") data1A.forEach(r => { if(r[1]) items.push(r[1]); });
+  else if(type==="link") data1A.forEach(r => { if(r[2]) items.push(r[2]); });
+
+  const uniqueItems = [...new Set(items)];
+  uniqueItems.forEach(item => {
+    if(item.toUpperCase().includes(val)){
+      const div = document.createElement("div");
+      div.innerHTML = item;
+      div.style.padding = "4px";
+      div.style.cursor = "pointer";
+      div.addEventListener("click", () => {
+        input.value = item;
+        listDiv.innerHTML = "";
+        filter1A();
+      });
+      listDiv.appendChild(div);
+    }
+  });
+}
+
+// Lọc dữ liệu
+function filter1A() {
+  const tinhFilter = document.getElementById("filter-tinh-1A").value.toUpperCase();
+  const sectionFilter = document.getElementById("filter-section-1A").value.toUpperCase();
+  const linkFilter = document.getElementById("filter-link-1A").value.toUpperCase();
+
+  const tbody = document.getElementById("table-1A").querySelector("tbody");
+  tbody.innerHTML = "";
+
+  let i = 0;
+  while (i < data1A.length) {
+    const r = data1A[i];
+    const tinhCell = r[0] ? r[0].trim().toUpperCase() : "";
+    const sectionCell = r[1] ? r[1].trim().toUpperCase() : "";
+    const linkCell = r[2] ? r[2].trim().toUpperCase() : "";
+
+    const tinhList = tinhCell.split("-").map(t => t.trim());
+    const match =
+      (tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter))) &&
+      (sectionFilter === "" || sectionCell.includes(sectionFilter)) &&
+      (linkFilter === "" || linkCell.includes(linkFilter));
+
+    if (match && tinhCell !== "") {
+      // render dòng chính
+      renderRow(r);
+      i++;
+
+      // render các dòng phụ cho đến khi gặp dòng có Tỉnh mới
+      while (i < data1A.length && (!data1A[i][0] || data1A[i][0].trim() === "")) {
+        renderRow(data1A[i]);
+        i++;
+      }
+    } else {
+      i++;
+    }
+  }
+
+  // Clear filter sau khi render
+  setTimeout(() => {
+    document.getElementById("filter-tinh-1A").value = "";
+    document.getElementById("filter-section-1A").value = "";
+    document.getElementById("filter-link-1A").value = "";
+  }, 50);
+
+  // Ẩn autocomplete list
+  document.getElementById("autocomplete-list").innerHTML = "";
+}
+
+// Hàm render 1 dòng
+function renderRow(r) {
+  const tbody = document.getElementById("table-1A").querySelector("tbody");
+  const tinhCell = r[0] ? r[0].trim() : "";
+  const linkType = r[3] ? r[3].trim().toUpperCase() : "";
+
+  let rowClass = "";
+  if (tinhCell !== "") {
+    if (linkType === "MAIN") rowClass = "main-link";
+    else if (linkType === "PRO") rowClass = "pro-link";
+    else if (linkType === "DP") rowClass = "dp-link";
+  }
+
+  tbody.innerHTML += `<tr class="${rowClass}">
+    <td>${r[0] || ""}</td>
+    <td>${r[1] || ""}</td>
+    <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
+    <td>${r[3] || ""}</td>
+    <td>${r[4] || ""}</td>
+    <td>${r[5] || ""}</td>
+    <td>${r[6] || ""}</td>
+    <td>${r[7] || ""}</td>
+  </tr>`;
+}
+ 
+// Gọi load khi mở panel
+document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("click", load1A);
+</script>
+  
+<style>
+  #table-1A thead {
+    background-color: #004080;
+    color: white;
+    font-weight: bold;
+  }
+  #table-1A .main-link {
+    background-color: #cce5ff; /* xanh dương nhạt */
+    font-weight: bold;
+  }
+  #table-1A .pro-link {
+    background-color: #ffe5cc; /* cam nhạt */
+    font-weight: bold;
+  }
+  #table-1A .dp-link {
+    background-color: #e5ccff; /* tím nhạt */
+    font-weight: bold;
+  }
+</style>
+  
+<!-- ============= PANEL TRỤC 1A ============= -->
+
   
 <script>
 
