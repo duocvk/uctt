@@ -334,33 +334,31 @@ function filter2B() {
   const tinhFilter = document.getElementById("filter-tinh-2B").value.toUpperCase();
   const sectionFilter = document.getElementById("filter-section-2B").value.toUpperCase();
   const linkFilter = document.getElementById("filter-link-2B").value.toUpperCase();
-
   const tbody = document.getElementById("table-2B").querySelector("tbody");
   tbody.innerHTML = "";
 
   let i = 0;
   while (i < data2B.length) {
     const r = data2B[i];
-    const tinhCell = r[0] ? r[0].toUpperCase() : "";
-    const sectionCell = r[1] ? r[1].toUpperCase() : "";
-    const linkCell = r[2] ? r[2].toUpperCase() : "";
+    const tinh = r[0]?.toUpperCase() || "";
+    const section = r[1]?.toUpperCase() || "";
+    const link = r[2]?.toUpperCase() || "";
+    const tinhList = tinh.split("-").map(t => t.trim());
+    const match =
+      (tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter))) &&
+      (sectionFilter === "" || section.includes(sectionFilter)) &&
+      (linkFilter === "" || link.includes(linkFilter));
 
-    const tinhList = tinhCell.split("-").map(t => t.trim());
-    const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
-    const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
-    const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
-
-    if (tinhMatch && sectionMatch && linkMatch) {
-      // Render dòng match
+    if (match) {
+      // render dòng chính
       renderRow(r);
+      i++;
 
-      // Render tất cả các dòng trống bên dưới
-      let j = i + 1;
-      while (j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")) {
-        renderRow(data2B[j]);
-        j++;
+      // render các dòng phụ bên dưới
+      while (i < data2B.length && (!data2B[i][0] || data2B[i][0].trim() === "")) {
+        renderRow(data2B[i]);
+        i++;
       }
-      i = j; // nhảy tới dòng tiếp theo có Tỉnh mới
     } else {
       i++;
     }
