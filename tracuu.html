@@ -338,52 +338,52 @@ function filter2B(){
   const tbody = document.getElementById("table-2B").querySelector("tbody");
   tbody.innerHTML = "";
 
-let i = 0;
-while(i < data2B.length){
-  let r = data2B[i];
-  const tinhCell = r[0] ? r[0].toUpperCase() : "";
-  const sectionCell = r[1] ? r[1].toUpperCase() : "";
-  const linkCell = r[2] ? r[2].toUpperCase() : "";
+  let rowsToRender = [];
+  let i = 0;
 
-  const tinhList = tinhCell.split("-").map(t => t.trim());
-  const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
-  const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
-  const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
+  while(i < data2B.length){
+    let r = data2B[i];
+    const tinhCell = r[0] ? r[0].toUpperCase() : "";
+    const sectionCell = r[1] ? r[1].toUpperCase() : "";
+    const linkCell = r[2] ? r[2].toUpperCase() : "";
 
-  if(tinhMatch && sectionMatch && linkMatch){
-    // Thêm dòng match
+    const tinhList = tinhCell.split("-").map(t => t.trim());
+    const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
+    const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
+    const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
+
+    if(tinhMatch && sectionMatch && linkMatch){
+      rowsToRender.push(r);
+
+      // Thêm tất cả các dòng trống phía dưới
+      let j = i + 1;
+      while(j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")){
+        rowsToRender.push(data2B[j]);
+        j++;
+      }
+      i = j;
+    } else {
+      i++;
+    }
+  }
+
+  // Render toàn bộ mảng rowsToRender ra bảng
+  rowsToRender.forEach(r => {
     tbody.innerHTML += `<tr>
-      <td>${r[0]}</td><td>${r[1]}</td>
-      <td><a href="${r[2]}" target="_blank">${r[2]}</a></td>
-      <td>${r[3]}</td><td>${r[4] || ""}</td>
+      <td>${r[0] || ""}</td><td>${r[1] || ""}</td>
+      <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
+      <td>${r[3] || ""}</td><td>${r[4] || ""}</td>
       <td>${r[5] || ""}</td><td>${r[6] || ""}</td>
       <td>${r[7] || ""}</td>
     </tr>`;
+  });
 
-    // Lấy tất cả các dòng trống phía dưới
-    let j = i + 1;
-    while(j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")){
-      let rEmpty = data2B[j];
-      tbody.innerHTML += `<tr>
-        <td>${rEmpty[0] || ""}</td><td>${rEmpty[1] || ""}</td>
-        <td><a href="${rEmpty[2] || ""}" target="_blank">${rEmpty[2] || ""}</a></td>
-        <td>${rEmpty[3] || ""}</td><td>${rEmpty[4] || ""}</td>
-        <td>${rEmpty[5] || ""}</td><td>${rEmpty[6] || ""}</td>
-        <td>${rEmpty[7] || ""}</td>
-      </tr>`;
-      j++;
-    }
-    i = j; // nhảy sang dòng sau các dòng trống
-  } else {
-    i++;
-  }
+  // Clear filter + ẩn autocomplete sau khi render xong
+  document.getElementById("filter-tinh-2B").value = "";
+  document.getElementById("filter-section-2B").value = "";
+  document.getElementById("filter-link-2B").value = "";
+  document.getElementById("autocomplete-list").innerHTML = "";
 }
-
-// Clear filter ngay sau khi render
-document.getElementById("filter-tinh-2B").value = "";
-document.getElementById("filter-section-2B").value = "";
-document.getElementById("filter-link-2B").value = "";
-document.getElementById("autocomplete-list").innerHTML = "";
   
  
 // Gọi load khi mở panel
