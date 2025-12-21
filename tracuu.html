@@ -241,122 +241,100 @@ header {
 
 </div>
 
-//=============panel 2B=================
-<!-- Filter -->
-<label for="filter-tinh-2B">Tỉnh:</label>
-<input id="filter-tinh-2B" placeholder="Gõ ký tự để tìm tỉnh" list="tinh-options-2B">
+// =============panel 2B=================
+<!-- ============= PANEL TRỤC 2B ============= -->
+<div id="panel-2B" class="panel">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
+  <h2>Trục 2B</h2>
 
-<label for="filter-section-2B">Section:</label>
-<input id="filter-section-2B" placeholder="Gõ ký tự để tìm section" list="section-options-2B">
+  <!-- Filters -->
+  <div style="margin:10px 0">
+    <label for="filter-tinh-2B">Tỉnh:</label>
+    <input id="filter-tinh-2B" placeholder="Gõ tên tỉnh để chọn..." oninput="populateFilterOptions2B('tinh')">
+    
+    <label for="filter-section-2B">Section:</label>
+    <input id="filter-section-2B" placeholder="Gõ section..." oninput="populateFilterOptions2B('section')">
+    
+    <label for="filter-link-2B">Link:</label>
+    <input id="filter-link-2B" placeholder="Gõ link..." oninput="populateFilterOptions2B('link')">
+  </div>
 
-<label for="filter-link-2B">Link:</label>
-<input id="filter-link-2B" placeholder="Gõ ký tự để tìm link" list="link-options-2B">
-
-<datalist id="tinh-options-2B"></datalist>
-<datalist id="section-options-2B"></datalist>
-<datalist id="link-options-2B"></datalist>
-
-<!-- Bảng dữ liệu -->
-<table id="table-2B" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
-<thead>
-<tr>
-<th>Tỉnh</th><th>Section</th><th>Link</th><th>Loại Link</th><th>Tuyến cáp</th><th>Loại cáp</th><th>Chiều dài</th><th>Sợi</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
+  <!-- Table dữ liệu -->
+  <table id="table-2B" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+    <thead>
+      <tr>
+        <th>Tỉnh</th>
+        <th>Section</th>
+        <th>Link</th>
+        <th>Loại Link</th>
+        <th>Tuyến cáp</th>
+        <th>Loại cáp</th>
+        <th>Chiều dài</th>
+        <th>Sợi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
 const csvUrl2B = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
 let data2B = [];
 
+// Load dữ liệu CSV
 function load2B(){
   Papa.parse(csvUrl2B, {
     download: true,
     header: false,
-    skipEmptyLines: false,
     complete: function(results){
-      data2B = results.data;
-      populateFilters2B();
+      data2B = results.data.filter(r => r[0] !== ""); // loại bỏ dòng rỗng
       renderTable2B();
     }
   });
 }
 
-// Tạo danh sách gợi ý filter (dùng datalist)
-function populateFilters2B(){
-  const tinhSet = new Set();
-  const sectionSet = new Set();
-  const linkSet = new Set();
-  data2B.forEach(r => { if(r[0]) tinhSet.add(r[0]); if(r[1]) sectionSet.add(r[1]); if(r[2]) linkSet.add(r[2]); });
-
-  document.getElementById("tinh-options-2B").innerHTML = [...tinhSet].map(t => `<option value="${t}">`).join("");
-  document.getElementById("section-options-2B").innerHTML = [...sectionSet].map(s => `<option value="${s}">`).join("");
-  document.getElementById("link-options-2B").innerHTML = [...linkSet].map(l => `<option value="${l}">`).join("");
-}
-
-// Hàm lọc dữ liệu theo input tỉnh, section, link
+// Lọc dữ liệu theo filter
 function renderTable2B(){
-  let tinhFilter = document.getElementById("filter-tinh-2B").value.trim().toUpperCase();
-  let sectionFilter = document.getElementById("filter-section-2B").value.trim().toUpperCase();
-  let linkFilter = document.getElementById("filter-link-2B").value.trim().toUpperCase();
+  const tinhFilter = document.getElementById("filter-tinh-2B").value.toUpperCase();
+  const sectionFilter = document.getElementById("filter-section-2B").value.toUpperCase();
+  const linkFilter = document.getElementById("filter-link-2B").value.toUpperCase();
 
   const tbody = document.getElementById("table-2B").querySelector("tbody");
   tbody.innerHTML = "";
 
-  let showNextEmpty = false;
-  let filterUsed = false;
-
-  // Nếu có filter nào được dùng thì bật flag
-  if(tinhFilter || sectionFilter || linkFilter) filterUsed = true;
-
   data2B.forEach(r => {
-    let rowTinh = r[0] ? r[0].toUpperCase() : "";
-    let rowSection = r[1] ? r[1].toUpperCase() : "";
-    let rowLink = r[2] ? r[2].toUpperCase() : "";
+    const tinhCell = r[0] ? r[0].toUpperCase() : "";
+    const sectionCell = r[1] ? r[1].toUpperCase() : "";
+    const linkCell = r[2] ? r[2].toUpperCase() : "";
 
-    let matchTinh = !tinhFilter || rowTinh.includes(tinhFilter);
-    let matchSection = !sectionFilter || rowSection.includes(sectionFilter);
-    let matchLink = !linkFilter || rowLink.includes(linkFilter);
+    const tinhMatch = tinhFilter === "" || tinhCell.includes(tinhFilter);
+    const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
+    const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
 
-    if(matchTinh && matchSection && matchLink){
-      showNextEmpty = true;
-      tbody.innerHTML += createRowHTML(r);
-    } else if(showNextEmpty && r[0]=="" && r[1]=="" && r[2]=="") {
-      // dòng trống kề
-      tbody.innerHTML += createRowHTML(r);
-    } else {
-      showNextEmpty = false;
+    if(tinhMatch && sectionMatch && linkMatch){
+      tbody.innerHTML += `<tr>
+        <td>${r[0]}</td><td>${r[1]}</td>
+        <td><a href="${r[2]}" target="_blank">${r[2]}</a></td>
+        <td>${r[3]}</td><td>${r[4] || ""}</td>
+        <td>${r[5] || ""}</td><td>${r[6] || ""}</td>
+        <td>${r[7] || ""}</td>
+      </tr>`;
     }
   });
-
-  // Sau khi render xong, nếu có filter đã dùng, clear toàn bộ input
-  if(filterUsed){
-    document.getElementById("filter-tinh-2B").value = "";
-    document.getElementById("filter-section-2B").value = "";
-    document.getElementById("filter-link-2B").value = "";
-  }
 }
 
-// Hàm tạo HTML cho 1 dòng
-function createRowHTML(r){
-  return `<tr>
-    <td>${r[0] || ""}</td><td>${r[1] || ""}</td><td><a href="${r[2]||""}" target="_blank">${r[2]||""}</a></td>
-    <td>${r[3] || ""}</td><td>${r[4] || ""}</td><td>${r[5] || ""}</td>
-    <td>${r[6] || ""}</td><td>${r[7] || ""}</td>
-  </tr>`;
+// Clear filter sau khi chọn (chỉ dùng khi filter theo link)
+function populateFilterOptions2B(type){
+  // Khi gõ tỉnh, section hoặc link thì tự động render lại bảng
+  renderTable2B();
 }
 
 // Gọi load khi mở panel
 document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
-
-// Re-render khi gõ input
-document.getElementById("filter-tinh-2B").addEventListener("change", renderTable2B);
-document.getElementById("filter-section-2B").addEventListener("change", renderTable2B);
-document.getElementById("filter-link-2B").addEventListener("change", renderTable2B);
 </script>
-//=============panel 2B=================
+<!-- ============= END PANEL TRỤC 2B ============= -->
+// =============panel 2B=================
   
 <script>
 
