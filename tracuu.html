@@ -386,8 +386,17 @@ function filter2B() {
 // Hàm render 1 dòng
 function renderRow(r) {
   const tbody = document.getElementById("table-2B").querySelector("tbody");
-  const isMain = r[0] && r[0].trim() !== "";
-  tbody.innerHTML += `<tr class="${isMain ? 'main-row' : ''}">
+  const tinhCell = r[0] ? r[0].trim() : "";
+  const linkType = r[3] ? r[3].trim().toUpperCase() : "";
+
+  let rowClass = "";
+  if (tinhCell !== "") {
+    if (linkType === "MAIN") rowClass = "main-link";
+    else if (linkType === "PRO") rowClass = "pro-link";
+    else if (linkType === "DP") rowClass = "dp-link";
+  }
+
+  tbody.innerHTML += `<tr class="${rowClass}">
     <td>${r[0] || ""}</td>
     <td>${r[1] || ""}</td>
     <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
@@ -409,8 +418,16 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
     color: white;
     font-weight: bold;
   }
-  #table-2B .main-row {
-    background-color: #e6f2ff;
+  #table-2B .main-link {
+    background-color: #cce5ff; /* xanh dương nhạt */
+    font-weight: bold;
+  }
+  #table-2B .pro-link {
+    background-color: #ffe5cc; /* cam nhạt */
+    font-weight: bold;
+  }
+  #table-2B .dp-link {
+    background-color: #e5ccff; /* tím nhạt */
     font-weight: bold;
   }
 </style>
