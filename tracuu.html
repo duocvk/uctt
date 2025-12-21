@@ -247,16 +247,18 @@ header {
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
   <h2>Trục 2B</h2>
 
-  <!-- Filters -->
+  <!-- Filters với autocomplete -->
   <div style="margin:10px 0">
     <label for="filter-tinh-2B">Tỉnh:</label>
-    <input id="filter-tinh-2B" placeholder="Gõ tên tỉnh..." oninput="filter2B()">
-    
+    <input id="filter-tinh-2B" placeholder="Gõ tên tỉnh..." oninput="suggestAutocomplete('tinh')">
+
     <label for="filter-section-2B">Section:</label>
-    <input id="filter-section-2B" placeholder="Gõ section..." oninput="filter2B()">
-    
+    <input id="filter-section-2B" placeholder="Gõ section..." oninput="suggestAutocomplete('section')">
+
     <label for="filter-link-2B">Link:</label>
-    <input id="filter-link-2B" placeholder="Gõ link..." oninput="filter2B()">
+    <input id="filter-link-2B" placeholder="Gõ link..." oninput="suggestAutocomplete('link')">
+
+    <div id="autocomplete-list" class="autocomplete-items" style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;"></div>
   </div>
 
   <!-- Table dữ liệu -->
@@ -294,6 +296,39 @@ function load2B(){
   });
 }
 
+// Autocomplete gợi ý
+function suggestAutocomplete(type){
+  const input = document.getElementById(`filter-${type}-2B`);
+  const val = input.value.toUpperCase();
+  const listDiv = document.getElementById("autocomplete-list");
+  listDiv.innerHTML = "";
+  if(!val) return;
+
+  // Lấy danh sách unique theo type
+  let items = [];
+  if(type==="tinh") data2B.forEach(r => {
+    if(r[0]) r[0].split("-").forEach(t => items.push(t.trim()));
+  });
+  else if(type==="section") data2B.forEach(r => { if(r[1]) items.push(r[1]); });
+  else if(type==="link") data2B.forEach(r => { if(r[2]) items.push(r[2]); });
+
+  const uniqueItems = [...new Set(items)];
+  uniqueItems.forEach(item => {
+    if(item.toUpperCase().includes(val)){
+      const div = document.createElement("div");
+      div.innerHTML = item;
+      div.style.padding = "4px";
+      div.style.cursor = "pointer";
+      div.addEventListener("click", () => {
+        input.value = item;
+        listDiv.innerHTML = "";
+        filter2B();
+      });
+      listDiv.appendChild(div);
+    }
+  });
+}
+
 // Lọc dữ liệu
 function filter2B(){
   const tinhFilter = document.getElementById("filter-tinh-2B").value.toUpperCase();
@@ -310,15 +345,13 @@ function filter2B(){
     const sectionCell = r[1] ? r[1].toUpperCase() : "";
     const linkCell = r[2] ? r[2].toUpperCase() : "";
 
-    // Tách cột A ra các tỉnh riêng lẻ
     const tinhList = tinhCell.split("-").map(t => t.trim());
-
     const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
     const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
     const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
 
     if(tinhMatch && sectionMatch && linkMatch){
-      // Nếu trúng, thêm dòng hiện tại
+      // Thêm dòng trúng
       tbody.innerHTML += `<tr>
         <td>${r[0]}</td><td>${r[1]}</td>
         <td><a href="${r[2]}" target="_blank">${r[2]}</a></td>
@@ -327,7 +360,7 @@ function filter2B(){
         <td>${r[7] || ""}</td>
       </tr>`;
 
-      // Lấy các dòng trống phía sau
+      // Lấy tất cả các dòng trống phía dưới
       let j = i + 1;
       while(j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")){
         let rEmpty = data2B[j];
@@ -344,7 +377,7 @@ function filter2B(){
     i++;
   }
 
-  // Sau khi render xong, clear các filter đã chọn để có thể tìm tiếp
+  // Clear filter sau khi render
   if(tinhFilter || sectionFilter || linkFilter){
     setTimeout(() => {
       document.getElementById("filter-tinh-2B").value = "";
@@ -352,6 +385,9 @@ function filter2B(){
       document.getElementById("filter-link-2B").value = "";
     }, 100);
   }
+
+  // Ẩn autocomplete list
+  document.getElementById("autocomplete-list").innerHTML = "";
 }
 
 // Gọi load khi mở panel
