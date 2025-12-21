@@ -346,16 +346,17 @@ function filter2B() {
     const linkCell = r[2] ? r[2].trim().toUpperCase() : "";
 
     const tinhList = tinhCell.split("-").map(t => t.trim());
-    const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
-    const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
-    const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
+    const match =
+      (tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter))) &&
+      (sectionFilter === "" || sectionCell.includes(sectionFilter)) &&
+      (linkFilter === "" || linkCell.includes(linkFilter));
 
-    if (tinhMatch && sectionMatch && linkMatch) {
+    if (match && tinhCell !== "") {
       // render dòng chính
       renderRow(r);
       i++;
 
-      // render tất cả các dòng phụ ngay bên dưới (cho đến khi gặp dòng có Tỉnh mới)
+      // render các dòng phụ cho đến khi gặp dòng có Tỉnh mới
       while (i < data2B.length && (!data2B[i][0] || data2B[i][0].trim() === "")) {
         renderRow(data2B[i]);
         i++;
@@ -364,8 +365,6 @@ function filter2B() {
       i++;
     }
   }
-  
-
 
   // Clear filter sau khi render
   setTimeout(() => {
