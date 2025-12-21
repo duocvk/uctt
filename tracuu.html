@@ -220,7 +220,7 @@ header {
   <div class="layer layer-srt">
     <div class="layer-title">5️⃣ Access</div>
     <div class="dashboard">
-      <button class="menu-button menu-srt" onclick="openPanel('panel-SRT')">SRT</button>
+      <button class="menu-button menu-srt" onclick="openPanel('panel-QNM')">QNM</button>
       <button class="menu-button menu-srt" onclick="openPanel('panel-srt.DP1')">Dự phòng 1</button>
       <button class="menu-button menu-srt" onclick="openPanel('panel-srt.DP2')">Dự phòng 2</button>
       <button class="menu-button menu-srt" onclick="openPanel('panel-srt.DP3')">Dự phòng 3</button>
@@ -232,26 +232,6 @@ header {
 
 </div>
 
-<script>
-function login() {
-  const u = document.getElementById('username').value.trim().toLowerCase();
-  const p = document.getElementById('password').value.trim();
-  if (u === 'duocvk' && p === '120130') {
-    document.getElementById('login-overlay').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('app-header').style.display = 'block';
-    document.getElementById('login-error').style.display = 'none';
-  } else {
-    document.getElementById('login-error').style.display = 'block';
-  }
-}
-
-// Enter đăng nhập
-document.addEventListener('keydown', function(e){
-  if(e.key==='Enter' && document.getElementById('login-overlay').style.display!=='none'){
-    login();
-  }
-});
 
 // Panel tạo động
 function createPanel(id, title){
@@ -297,6 +277,9 @@ function login() {
   const u = document.getElementById('username').value.trim().toLowerCase();
   const p = document.getElementById('password').value.trim();
   if (u === 'duocvk' && p === '120130') {
+    
+    sessionStorage.setItem('login', 'ok'); // ⭐ LƯU TRẠNG THÁI
+    
     document.getElementById('login-overlay').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     document.getElementById('app-header').style.display = 'block';
@@ -317,6 +300,34 @@ document.addEventListener('keydown', function(e){
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('username').focus();
 });
+
+//========ko cần login lại======
+  
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('username').focus();
+
+  if (sessionStorage.getItem('login') === 'ok') {
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('app-header').style.display = 'block';
+  }
+});
+
+  //========hết đoạn ko cần login lại======
+
+  //=======tùy chọn nút đăng xuất=========
+
+  <button onclick="logout()" style="position:fixed;top:10px;right:10px">
+  Đăng xuất
+</button>
+
+  function logout(){
+  sessionStorage.removeItem('login');
+  location.reload();
+}
+
+  //======= hết tùy chọn nút đăng xuất=========
+  
 </script>
 </body>
 </html>
