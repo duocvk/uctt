@@ -386,7 +386,8 @@ function filter2B() {
 // Hàm render 1 dòng
 function renderRow(r) {
   const tbody = document.getElementById("table-2B").querySelector("tbody");
-  tbody.innerHTML += `<tr>
+  const isMain = r[0] && r[0].trim() !== "";
+  tbody.innerHTML += `<tr class="${isMain ? 'main-row' : ''}">
     <td>${r[0] || ""}</td>
     <td>${r[1] || ""}</td>
     <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
@@ -401,6 +402,19 @@ function renderRow(r) {
 // Gọi load khi mở panel
 document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
 </script>
+  
+<style>
+  #table-2B thead {
+    background-color: #004080;
+    color: white;
+    font-weight: bold;
+  }
+  #table-2B .main-row {
+    background-color: #e6f2ff;
+    font-weight: bold;
+  }
+</style>
+  
 /*/ =============panel 2B=================*/
   
 <script>
