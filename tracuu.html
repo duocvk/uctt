@@ -360,22 +360,25 @@ function filter2B(){
         <td>${r[7] || ""}</td>
       </tr>`;
 
-      // Lấy tất cả các dòng trống phía dưới
-      let j = i + 1;
-      while(j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")){
-        let rEmpty = data2B[j];
-        tbody.innerHTML += `<tr>
-          <td>${rEmpty[0] || ""}</td><td>${rEmpty[1] || ""}</td>
-          <td><a href="${rEmpty[2] || ""}" target="_blank">${rEmpty[2] || ""}</a></td>
-          <td>${rEmpty[3] || ""}</td><td>${rEmpty[4] || ""}</td>
-          <td>${rEmpty[5] || ""}</td><td>${rEmpty[6] || ""}</td>
-          <td>${rEmpty[7] || ""}</td>
-        </tr>`;
-        j++;
-      }
-    }
-    i++;
+      // Lấy tất cả các dòng trống liền kề phía dưới
+let j = i + 1;
+while(j < data2B.length){
+  let nextRow = data2B[j];
+  // Nếu cột A trống hoặc null -> dòng trống
+  if(!nextRow[0] || nextRow[0].trim() === ""){
+    tbody.innerHTML += `<tr>
+      <td>${nextRow[0] || ""}</td><td>${nextRow[1] || ""}</td>
+      <td><a href="${nextRow[2] || ""}" target="_blank">${nextRow[2] || ""}</a></td>
+      <td>${nextRow[3] || ""}</td><td>${nextRow[4] || ""}</td>
+      <td>${nextRow[5] || ""}</td><td>${nextRow[6] || ""}</td>
+      <td>${nextRow[7] || ""}</td>
+    </tr>`;
+    j++;
+  } else {
+    break; // Dừng khi gặp dòng mới có cột A khác trống
   }
+}
+i = j; // Nhảy sang dòng tiếp theo sau các dòng trống
 
   // Clear filter sau khi render
   if(tinhFilter || sectionFilter || linkFilter){
