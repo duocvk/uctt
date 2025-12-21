@@ -274,15 +274,16 @@ header {
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
-const csvUrl2B = "LINK_CSV_TRUC_2B"; // thay bằng link CSV của sheet Trục 2B
+const csvUrl2B = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
 let data2B = [];
 
 function load2B(){
   Papa.parse(csvUrl2B, {
     download: true,
     header: false,
+    skipEmptyLines: true,
     complete: function(results){
-      data2B = results.data.filter(r => r[0] !== ""); // loại bỏ dòng rỗng
+      data2B = results.data.filter(r => r[0] !== "" && r.length >= 2);
       populateFilters2B();
       renderTable2B();
     }
@@ -297,12 +298,11 @@ function populateFilters2B(){
   const selectTinh = document.getElementById("filter-tinh-2B");
   const selectSection = document.getElementById("filter-section-2B");
 
-  // Xóa option cũ
   selectTinh.innerHTML = '<option value="">Tất cả</option>';
   selectSection.innerHTML = '<option value="">Tất cả</option>';
 
-  tinhSet.forEach(t => { selectTinh.innerHTML += `<option value="${t}">${t}</option>`; });
-  sectionSet.forEach(s => { selectSection.innerHTML += `<option value="${s}">${s}</option>`; });
+  [...tinhSet].forEach(t => { selectTinh.innerHTML += `<option value="${t}">${t}</option>`; });
+  [...sectionSet].forEach(s => { selectSection.innerHTML += `<option value="${s}">${s}</option>`; });
 }
 
 function filter2B(){
@@ -326,7 +326,7 @@ function renderTable2B(tinhFilter = "", sectionFilter = ""){
   });
 }
 
-// Gọi load khi mở panel
+// Gọi load khi nhấn button
 document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
 </script>
 //=============panel 2B=================
