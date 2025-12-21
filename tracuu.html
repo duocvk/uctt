@@ -172,6 +172,7 @@ header {
       
     </div>
   </div>
+
   
   <div class="layer layer-qg">
     <div class="layer-title">1️⃣ Trục Quốc gia</div>
@@ -240,6 +241,96 @@ header {
 
 </div>
 
+//=============panel 2B=================
+<!-- PANEL TRỤC 2B -->
+<div id="panel-2B" class="panel">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
+  <h2>Trục 2B</h2>
+  
+  <!-- Filter -->
+  <label for="filter-tinh-2B">Tỉnh:</label>
+  <select id="filter-tinh-2B" onchange="filter2B()"><option value="">Tất cả</option></select>
+  
+  <label for="filter-section-2B">Section:</label>
+  <select id="filter-section-2B" onchange="filter2B()"><option value="">Tất cả</option></select>
+  
+  <!-- Bảng dữ liệu -->
+  <table id="table-2B" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+    <thead>
+      <tr>
+        <th>Tỉnh</th>
+        <th>Section</th>
+        <th>Link</th>
+        <th>Loại Link</th>
+        <th>Cột E</th>
+        <th>Cột F</th>
+        <th>Cột G</th>
+        <th>Cột H</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+const csvUrl2B = "LINK_CSV_TRUC_2B"; // thay bằng link CSV của sheet Trục 2B
+let data2B = [];
+
+function load2B(){
+  Papa.parse(csvUrl2B, {
+    download: true,
+    header: false,
+    complete: function(results){
+      data2B = results.data.filter(r => r[0] !== ""); // loại bỏ dòng rỗng
+      populateFilters2B();
+      renderTable2B();
+    }
+  });
+}
+
+function populateFilters2B(){
+  const tinhSet = new Set();
+  const sectionSet = new Set();
+  data2B.forEach(r => { tinhSet.add(r[0]); sectionSet.add(r[1]); });
+
+  const selectTinh = document.getElementById("filter-tinh-2B");
+  const selectSection = document.getElementById("filter-section-2B");
+
+  // Xóa option cũ
+  selectTinh.innerHTML = '<option value="">Tất cả</option>';
+  selectSection.innerHTML = '<option value="">Tất cả</option>';
+
+  tinhSet.forEach(t => { selectTinh.innerHTML += `<option value="${t}">${t}</option>`; });
+  sectionSet.forEach(s => { selectSection.innerHTML += `<option value="${s}">${s}</option>`; });
+}
+
+function filter2B(){
+  const tinh = document.getElementById("filter-tinh-2B").value;
+  const section = document.getElementById("filter-section-2B").value;
+  renderTable2B(tinh, section);
+}
+
+function renderTable2B(tinhFilter = "", sectionFilter = ""){
+  const tbody = document.getElementById("table-2B").querySelector("tbody");
+  tbody.innerHTML = "";
+  data2B.forEach(r => {
+    if ((tinhFilter === "" || r[0] === tinhFilter) &&
+        (sectionFilter === "" || r[1] === sectionFilter)){
+      tbody.innerHTML += `<tr>
+        <td>${r[0]}</td><td>${r[1]}</td><td><a href="${r[2]}" target="_blank">${r[2]}</a></td>
+        <td>${r[3]}</td><td>${r[4] || ""}</td><td>${r[5] || ""}</td>
+        <td>${r[6] || ""}</td><td>${r[7] || ""}</td>
+      </tr>`;
+    }
+  });
+}
+
+// Gọi load khi mở panel
+document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
+</script>
+//=============panel 2B=================
+  
 <script>
 
 function login() {
