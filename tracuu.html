@@ -339,33 +339,35 @@ function filter2B(){
   tbody.innerHTML = "";
 
   let rowsToRender = [];
+  
   let i = 0;
+while(i < data2B.length){
+  let r = data2B[i];
+  const tinhCell = r[0] ? r[0].toUpperCase() : "";
+  const sectionCell = r[1] ? r[1].toUpperCase() : "";
+  const linkCell = r[2] ? r[2].toUpperCase() : "";
 
-  while(i < data2B.length){
-    let r = data2B[i];
-    const tinhCell = r[0] ? r[0].toUpperCase() : "";
-    const sectionCell = r[1] ? r[1].toUpperCase() : "";
-    const linkCell = r[2] ? r[2].toUpperCase() : "";
+  const tinhList = tinhCell.split("-").map(t => t.trim());
+  const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
+  const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
+  const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
 
-    const tinhList = tinhCell.split("-").map(t => t.trim());
-    const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
-    const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
-    const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
+  if(tinhMatch && sectionMatch && linkMatch){
+    // Thêm dòng match
+    rowsToRender.push(r);
 
-    if(tinhMatch && sectionMatch && linkMatch){
-      rowsToRender.push(r);
-
-      // Thêm tất cả các dòng trống phía dưới
-      let j = i + 1;
-      while(j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")){
-        rowsToRender.push(data2B[j]);
-        j++;
-      }
-      i = j;
-    } else {
-      i++;
+    // Lấy tất cả các dòng trống phía dưới
+    let j = i + 1;
+    while(j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")){
+      rowsToRender.push(data2B[j]);
+      j++;
     }
+
+    i = j; // nhảy i tới dòng đầu tiên có tỉnh mới
+  } else {
+    i++;
   }
+}
 
   // Render toàn bộ mảng rowsToRender ra bảng
   rowsToRender.forEach(r => {
