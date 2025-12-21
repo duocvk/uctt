@@ -290,7 +290,13 @@ function load2B(){
     download: true,
     header: false,
     complete: function(results){
-      data2B = results.data.filter(r => r[0] !== ""); // loại bỏ dòng rỗng đầu
+      data2B = results.data; // giữ nguyên tất cả dữ liệu để kiểm tra
+
+      // 👉 thêm đoạn log kiểm tra cột Tỉnh
+      data2B.forEach((row, idx) => {
+        console.log("Row", idx, JSON.stringify(row[0]));
+      });
+
       renderTable2B();
     }
   });
