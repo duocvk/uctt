@@ -330,7 +330,7 @@ function suggestAutocomplete(type){
 }
 
 // Lọc dữ liệu
-function filter2B(){
+function filter2B() {
   const tinhFilter = document.getElementById("filter-tinh-2B").value.toUpperCase();
   const sectionFilter = document.getElementById("filter-section-2B").value.toUpperCase();
   const linkFilter = document.getElementById("filter-link-2B").value.toUpperCase();
@@ -338,55 +338,60 @@ function filter2B(){
   const tbody = document.getElementById("table-2B").querySelector("tbody");
   tbody.innerHTML = "";
 
-  let rowsToRender = [];
-  
   let i = 0;
-while(i < data2B.length){
-  let r = data2B[i];
-  const tinhCell = r[0] ? r[0].toUpperCase() : "";
-  const sectionCell = r[1] ? r[1].toUpperCase() : "";
-  const linkCell = r[2] ? r[2].toUpperCase() : "";
+  while (i < data2B.length) {
+    const r = data2B[i];
+    const tinhCell = r[0] ? r[0].toUpperCase() : "";
+    const sectionCell = r[1] ? r[1].toUpperCase() : "";
+    const linkCell = r[2] ? r[2].toUpperCase() : "";
 
-  const tinhList = tinhCell.split("-").map(t => t.trim());
-  const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
-  const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
-  const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
+    const tinhList = tinhCell.split("-").map(t => t.trim());
+    const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
+    const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
+    const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
 
-  if(tinhMatch && sectionMatch && linkMatch){
-    // Thêm dòng match
-    rowsToRender.push(r);
+    if (tinhMatch && sectionMatch && linkMatch) {
+      // Render dòng match
+      renderRow(r);
 
-    // Lấy tất cả các dòng trống phía dưới
-    let j = i + 1;
-    while(j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")){
-      rowsToRender.push(data2B[j]);
-      j++;
+      // Render tất cả các dòng trống phía dưới
+      let j = i + 1;
+      while (j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")) {
+        renderRow(data2B[j]);
+        j++;
+      }
+
+      i = j; // nhảy tới dòng đầu tiên có Tỉnh mới
+    } else {
+      i++;
     }
-
-    i = j; // nhảy i tới dòng đầu tiên có tỉnh mới
-  } else {
-    i++;
   }
-}
 
-  // Render toàn bộ mảng rowsToRender ra bảng
-  rowsToRender.forEach(r => {
-    tbody.innerHTML += `<tr>
-      <td>${r[0] || ""}</td><td>${r[1] || ""}</td>
-      <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
-      <td>${r[3] || ""}</td><td>${r[4] || ""}</td>
-      <td>${r[5] || ""}</td><td>${r[6] || ""}</td>
-      <td>${r[7] || ""}</td>
-    </tr>`;
-  });
+  // Clear filters
+  setTimeout(() => {
+    document.getElementById("filter-tinh-2B").value = "";
+    document.getElementById("filter-section-2B").value = "";
+    document.getElementById("filter-link-2B").value = "";
+  }, 50);
 
-  // Clear filter + ẩn autocomplete sau khi render xong
-  document.getElementById("filter-tinh-2B").value = "";
-  document.getElementById("filter-section-2B").value = "";
-  document.getElementById("filter-link-2B").value = "";
+  // Ẩn autocomplete list
   document.getElementById("autocomplete-list").innerHTML = "";
 }
-  
+
+// Hàm render 1 dòng
+function renderRow(r) {
+  const tbody = document.getElementById("table-2B").querySelector("tbody");
+  tbody.innerHTML += `<tr>
+    <td>${r[0] || ""}</td>
+    <td>${r[1] || ""}</td>
+    <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
+    <td>${r[3] || ""}</td>
+    <td>${r[4] || ""}</td>
+    <td>${r[5] || ""}</td>
+    <td>${r[6] || ""}</td>
+    <td>${r[7] || ""}</td>
+  </tr>`;
+}
  
 // Gọi load khi mở panel
 document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
