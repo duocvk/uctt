@@ -351,16 +351,16 @@ function filter2B() {
     const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
 
     if (tinhMatch && sectionMatch && linkMatch) {
-      // Thêm dòng match
+      // Render dòng match
       renderRow(r);
 
-      // Lấy tất cả các dòng trống phía dưới
+      // Render tất cả các dòng trống bên dưới
       let j = i + 1;
       while (j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")) {
         renderRow(data2B[j]);
         j++;
       }
-      i = j; // nhảy tới dòng đầu tiên có Tỉnh mới
+      i = j; // nhảy tới dòng tiếp theo có Tỉnh mới
     } else {
       i++;
     }
