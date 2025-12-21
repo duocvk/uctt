@@ -242,35 +242,29 @@ header {
 </div>
 
 //=============panel 2B=================
-<!-- PANEL TRỤC 2B -->
-<div id="panel-2B" class="panel">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
-  <h2>Trục 2B</h2>
-  
-  <!-- Filter -->
-  <label for="filter-tinh-2B">Tỉnh:</label>
-  <select id="filter-tinh-2B" onchange="filter2B()"><option value="">Tất cả</option></select>
-  
-  <label for="filter-section-2B">Section:</label>
-  <select id="filter-section-2B" onchange="filter2B()"><option value="">Tất cả</option></select>
-  
-  <!-- Bảng dữ liệu -->
-  <table id="table-2B" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
-    <thead>
-      <tr>
-        <th>Tỉnh</th>
-        <th>Section</th>
-        <th>Link</th>
-        <th>Loại Link</th>
-        <th>Cột E</th>
-        <th>Cột F</th>
-        <th>Cột G</th>
-        <th>Cột H</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
+<!-- Filter -->
+<label for="filter-tinh-2B">Tỉnh:</label>
+<input id="filter-tinh-2B" placeholder="Gõ ký tự để tìm tỉnh" list="tinh-options-2B">
+
+<label for="filter-section-2B">Section:</label>
+<input id="filter-section-2B" placeholder="Gõ ký tự để tìm section" list="section-options-2B">
+
+<label for="filter-link-2B">Link:</label>
+<input id="filter-link-2B" placeholder="Gõ ký tự để tìm link" list="link-options-2B">
+
+<datalist id="tinh-options-2B"></datalist>
+<datalist id="section-options-2B"></datalist>
+<datalist id="link-options-2B"></datalist>
+
+<!-- Bảng dữ liệu -->
+<table id="table-2B" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+<thead>
+<tr>
+<th>Tỉnh</th><th>Section</th><th>Link</th><th>Loại Link</th><th>Tuyến cáp</th><th>Loại cáp</th><th>Chiều dài</th><th>Sợi</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
@@ -281,53 +275,86 @@ function load2B(){
   Papa.parse(csvUrl2B, {
     download: true,
     header: false,
-    skipEmptyLines: true,
+    skipEmptyLines: false,
     complete: function(results){
-      data2B = results.data.filter(r => r[0] !== "" && r.length >= 2);
+      data2B = results.data;
       populateFilters2B();
       renderTable2B();
     }
   });
 }
 
+// Tạo danh sách gợi ý filter (dùng datalist)
 function populateFilters2B(){
   const tinhSet = new Set();
   const sectionSet = new Set();
-  data2B.forEach(r => { tinhSet.add(r[0]); sectionSet.add(r[1]); });
+  const linkSet = new Set();
+  data2B.forEach(r => { if(r[0]) tinhSet.add(r[0]); if(r[1]) sectionSet.add(r[1]); if(r[2]) linkSet.add(r[2]); });
 
-  const selectTinh = document.getElementById("filter-tinh-2B");
-  const selectSection = document.getElementById("filter-section-2B");
-
-  selectTinh.innerHTML = '<option value="">Tất cả</option>';
-  selectSection.innerHTML = '<option value="">Tất cả</option>';
-
-  [...tinhSet].forEach(t => { selectTinh.innerHTML += `<option value="${t}">${t}</option>`; });
-  [...sectionSet].forEach(s => { selectSection.innerHTML += `<option value="${s}">${s}</option>`; });
+  document.getElementById("tinh-options-2B").innerHTML = [...tinhSet].map(t => `<option value="${t}">`).join("");
+  document.getElementById("section-options-2B").innerHTML = [...sectionSet].map(s => `<option value="${s}">`).join("");
+  document.getElementById("link-options-2B").innerHTML = [...linkSet].map(l => `<option value="${l}">`).join("");
 }
 
-function filter2B(){
-  const tinh = document.getElementById("filter-tinh-2B").value;
-  const section = document.getElementById("filter-section-2B").value;
-  renderTable2B(tinh, section);
-}
+// Hàm lọc dữ liệu theo input tỉnh, section, link
+function renderTable2B(){
+  let tinhFilter = document.getElementById("filter-tinh-2B").value.trim().toUpperCase();
+  let sectionFilter = document.getElementById("filter-section-2B").value.trim().toUpperCase();
+  let linkFilter = document.getElementById("filter-link-2B").value.trim().toUpperCase();
 
-function renderTable2B(tinhFilter = "", sectionFilter = ""){
   const tbody = document.getElementById("table-2B").querySelector("tbody");
   tbody.innerHTML = "";
+
+  let showNextEmpty = false;
+  let filterUsed = false;
+
+  // Nếu có filter nào được dùng thì bật flag
+  if(tinhFilter || sectionFilter || linkFilter) filterUsed = true;
+
   data2B.forEach(r => {
-    if ((tinhFilter === "" || r[0] === tinhFilter) &&
-        (sectionFilter === "" || r[1] === sectionFilter)){
-      tbody.innerHTML += `<tr>
-        <td>${r[0]}</td><td>${r[1]}</td><td><a href="${r[2]}" target="_blank">${r[2]}</a></td>
-        <td>${r[3]}</td><td>${r[4] || ""}</td><td>${r[5] || ""}</td>
-        <td>${r[6] || ""}</td><td>${r[7] || ""}</td>
-      </tr>`;
+    let rowTinh = r[0] ? r[0].toUpperCase() : "";
+    let rowSection = r[1] ? r[1].toUpperCase() : "";
+    let rowLink = r[2] ? r[2].toUpperCase() : "";
+
+    let matchTinh = !tinhFilter || rowTinh.includes(tinhFilter);
+    let matchSection = !sectionFilter || rowSection.includes(sectionFilter);
+    let matchLink = !linkFilter || rowLink.includes(linkFilter);
+
+    if(matchTinh && matchSection && matchLink){
+      showNextEmpty = true;
+      tbody.innerHTML += createRowHTML(r);
+    } else if(showNextEmpty && r[0]=="" && r[1]=="" && r[2]=="") {
+      // dòng trống kề
+      tbody.innerHTML += createRowHTML(r);
+    } else {
+      showNextEmpty = false;
     }
   });
+
+  // Sau khi render xong, nếu có filter đã dùng, clear toàn bộ input
+  if(filterUsed){
+    document.getElementById("filter-tinh-2B").value = "";
+    document.getElementById("filter-section-2B").value = "";
+    document.getElementById("filter-link-2B").value = "";
+  }
 }
 
-// Gọi load khi nhấn button
+// Hàm tạo HTML cho 1 dòng
+function createRowHTML(r){
+  return `<tr>
+    <td>${r[0] || ""}</td><td>${r[1] || ""}</td><td><a href="${r[2]||""}" target="_blank">${r[2]||""}</a></td>
+    <td>${r[3] || ""}</td><td>${r[4] || ""}</td><td>${r[5] || ""}</td>
+    <td>${r[6] || ""}</td><td>${r[7] || ""}</td>
+  </tr>`;
+}
+
+// Gọi load khi mở panel
 document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
+
+// Re-render khi gõ input
+document.getElementById("filter-tinh-2B").addEventListener("change", renderTable2B);
+document.getElementById("filter-section-2B").addEventListener("change", renderTable2B);
+document.getElementById("filter-link-2B").addEventListener("change", renderTable2B);
 </script>
 //=============panel 2B=================
   
