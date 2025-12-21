@@ -19,17 +19,7 @@ header {
   font-weight: bold;
 }
 
-  //=======tùy chọn nút đăng xuất=========
-
-  <button onclick="logout()" style="position:fixed;top:10px;right:10px">
-  Đăng xuất</button>
-
-  function logout(){
-  sessionStorage.removeItem('login');
-  location.reload();
-}
-
-  //======= hết tùy chọn nút đăng xuất=========
+ 
   
 /* ===== LOGIN ===== */
 #login-overlay {
@@ -317,6 +307,30 @@ function backDashboard(){
   document.getElementById('app-header').style.display='block';
 }
 
+ //=======tùy chọn nút đăng xuất=========
+
+  <button onclick="logout()" style="position:fixed;top:10px;right:10px">
+  Đăng xuất</button>
+
+  function logout(){
+  sessionStorage.removeItem('login');
+  location.reload();
+}
+
+  //======= hết tùy chọn nút đăng xuất=========
+
+  function logout(){
+  sessionStorage.removeItem('login');
+  location.reload();
+}
+
+document.getElementById('logout-btn').style.display = 'block';
+  if (sessionStorage.getItem('login') === 'ok') {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('app-header').style.display = 'block';
+  document.getElementById('logout-btn').style.display = 'block';
+  
 </script>
 </body>
 </html>
