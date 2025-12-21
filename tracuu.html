@@ -19,6 +19,18 @@ header {
   font-weight: bold;
 }
 
+  //=======tùy chọn nút đăng xuất=========
+
+  <button onclick="logout()" style="position:fixed;top:10px;right:10px">
+  Đăng xuất</button>
+
+  function logout(){
+  sessionStorage.removeItem('login');
+  location.reload();
+}
+
+  //======= hết tùy chọn nút đăng xuất=========
+  
 /* ===== LOGIN ===== */
 #login-overlay {
   position: fixed;
@@ -259,33 +271,13 @@ document.addEventListener('keydown', function(e){
 // ===== FOCUS Ô USER KHI MỞ TRANG =====
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('username').focus();
-});
-
-  //========ko cần login lại======
-  
-window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('username').focus();
-
-  if (sessionStorage.getItem('login') === 'ok') {
+    if (sessionStorage.getItem('login') === 'ok') {
     document.getElementById('login-overlay').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     document.getElementById('app-header').style.display = 'block';
-  }
 });
 
-  //========hết đoạn ko cần login lại======
 
-  //=======tùy chọn nút đăng xuất=========
-
-  <button onclick="logout()" style="position:fixed;top:10px;right:10px">
-  Đăng xuất</button>
-
-  function logout(){
-  sessionStorage.removeItem('login');
-  location.reload();
-}
-
-  //======= hết tùy chọn nút đăng xuất=========
   
 // Panel tạo động
 function createPanel(id, title){
@@ -324,13 +316,7 @@ function backDashboard(){
   document.getElementById('dashboard').style.display='block';
   document.getElementById('app-header').style.display='block';
 }
-</script>
-<script>
 
-  //=================hàm login trùng bị xóa=======
-
-
-  
 </script>
 </body>
 </html>
