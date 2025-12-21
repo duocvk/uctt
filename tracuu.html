@@ -351,23 +351,22 @@ function filter2B() {
     const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
 
     if (tinhMatch && sectionMatch && linkMatch) {
-      // Render dòng match
+      // Thêm dòng match
       renderRow(r);
 
-      // Render tất cả các dòng trống phía dưới
+      // Lấy tất cả các dòng trống phía dưới
       let j = i + 1;
       while (j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")) {
         renderRow(data2B[j]);
         j++;
       }
-
       i = j; // nhảy tới dòng đầu tiên có Tỉnh mới
     } else {
       i++;
     }
   }
 
-  // Clear filters
+  // Clear filter sau khi render
   setTimeout(() => {
     document.getElementById("filter-tinh-2B").value = "";
     document.getElementById("filter-section-2B").value = "";
