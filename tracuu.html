@@ -241,7 +241,7 @@ header {
 
 </div>
 
-// =============panel 2B=================
+/*/ =============panel 2B=================*/
 <!-- ============= PANEL TRỤC 2B ============= -->
 <div id="panel-2B" class="panel">
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
@@ -250,13 +250,13 @@ header {
   <!-- Filters -->
   <div style="margin:10px 0">
     <label for="filter-tinh-2B">Tỉnh:</label>
-    <input id="filter-tinh-2B" placeholder="Gõ tên tỉnh để chọn..." oninput="populateFilterOptions2B('tinh')">
+    <input id="filter-tinh-2B" placeholder="Gõ tên tỉnh..." oninput="filter2B()">
     
     <label for="filter-section-2B">Section:</label>
-    <input id="filter-section-2B" placeholder="Gõ section..." oninput="populateFilterOptions2B('section')">
+    <input id="filter-section-2B" placeholder="Gõ section..." oninput="filter2B()">
     
     <label for="filter-link-2B">Link:</label>
-    <input id="filter-link-2B" placeholder="Gõ link..." oninput="populateFilterOptions2B('link')">
+    <input id="filter-link-2B" placeholder="Gõ link..." oninput="filter2B()">
   </div>
 
   <!-- Table dữ liệu -->
@@ -288,14 +288,14 @@ function load2B(){
     download: true,
     header: false,
     complete: function(results){
-      data2B = results.data.filter(r => r[0] !== ""); // loại bỏ dòng rỗng
+      data2B = results.data.filter(r => r[0] !== ""); // loại bỏ dòng rỗng đầu
       renderTable2B();
     }
   });
 }
 
-// Lọc dữ liệu theo filter
-function renderTable2B(){
+// Lọc dữ liệu
+function filter2B(){
   const tinhFilter = document.getElementById("filter-tinh-2B").value.toUpperCase();
   const sectionFilter = document.getElementById("filter-section-2B").value.toUpperCase();
   const linkFilter = document.getElementById("filter-link-2B").value.toUpperCase();
@@ -303,16 +303,22 @@ function renderTable2B(){
   const tbody = document.getElementById("table-2B").querySelector("tbody");
   tbody.innerHTML = "";
 
-  data2B.forEach(r => {
+  let i = 0;
+  while(i < data2B.length){
+    let r = data2B[i];
     const tinhCell = r[0] ? r[0].toUpperCase() : "";
     const sectionCell = r[1] ? r[1].toUpperCase() : "";
     const linkCell = r[2] ? r[2].toUpperCase() : "";
 
-    const tinhMatch = tinhFilter === "" || tinhCell.includes(tinhFilter);
+    // Tách cột A ra các tỉnh riêng lẻ
+    const tinhList = tinhCell.split("-").map(t => t.trim());
+
+    const tinhMatch = tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter));
     const sectionMatch = sectionFilter === "" || sectionCell.includes(sectionFilter);
     const linkMatch = linkFilter === "" || linkCell.includes(linkFilter);
 
     if(tinhMatch && sectionMatch && linkMatch){
+      // Nếu trúng, thêm dòng hiện tại
       tbody.innerHTML += `<tr>
         <td>${r[0]}</td><td>${r[1]}</td>
         <td><a href="${r[2]}" target="_blank">${r[2]}</a></td>
@@ -320,21 +326,38 @@ function renderTable2B(){
         <td>${r[5] || ""}</td><td>${r[6] || ""}</td>
         <td>${r[7] || ""}</td>
       </tr>`;
-    }
-  });
-}
 
-// Clear filter sau khi chọn (chỉ dùng khi filter theo link)
-function populateFilterOptions2B(type){
-  // Khi gõ tỉnh, section hoặc link thì tự động render lại bảng
-  renderTable2B();
+      // Lấy các dòng trống phía sau
+      let j = i + 1;
+      while(j < data2B.length && (!data2B[j][0] || data2B[j][0].trim() === "")){
+        let rEmpty = data2B[j];
+        tbody.innerHTML += `<tr>
+          <td>${rEmpty[0] || ""}</td><td>${rEmpty[1] || ""}</td>
+          <td><a href="${rEmpty[2] || ""}" target="_blank">${rEmpty[2] || ""}</a></td>
+          <td>${rEmpty[3] || ""}</td><td>${rEmpty[4] || ""}</td>
+          <td>${rEmpty[5] || ""}</td><td>${rEmpty[6] || ""}</td>
+          <td>${rEmpty[7] || ""}</td>
+        </tr>`;
+        j++;
+      }
+    }
+    i++;
+  }
+
+  // Sau khi render xong, clear các filter đã chọn để có thể tìm tiếp
+  if(tinhFilter || sectionFilter || linkFilter){
+    setTimeout(() => {
+      document.getElementById("filter-tinh-2B").value = "";
+      document.getElementById("filter-section-2B").value = "";
+      document.getElementById("filter-link-2B").value = "";
+    }, 100);
+  }
 }
 
 // Gọi load khi mở panel
 document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
 </script>
-<!-- ============= END PANEL TRỤC 2B ============= -->
-// =============panel 2B=================
+/*/ =============panel 2B=================*/
   
 <script>
 
