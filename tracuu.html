@@ -250,16 +250,16 @@ header {
   <!-- Bộ lọc -->
   <div style="margin:10px 0; position:relative">
     <label for="filter-tinh_Site">Tỉnh (A):</label>
-    <input id="filter-tinh_Site" placeholder="Gõ tỉnh..." oninput="suggestAutocomplete_Site('tinh')">
+    <input id="filter-tinh_Site" placeholder="Gõ tỉnh..." oninput="suggestAutocomplete_Site('Province')">
 
     <label for="filter-site_Site" style="margin-left:10px">Site (B):</label>
-    <input id="filter-site_Site" placeholder="Gõ mã site..." oninput="suggestAutocomplete_Site('site')">
+    <input id="filter-site_Site" placeholder="Gõ mã site..." oninput="suggestAutocomplete_Site('Site code')">
 
     <label for="filter-info_Site" style="margin-left:10px">Thông tin (C):</label>
-    <input id="filter-info_Site" placeholder="Gõ thông tin..." oninput="suggestAutocomplete_Site('info')">
+    <input id="filter-info_Site" placeholder="Gõ thông tin..." oninput="suggestAutocomplete_Site('Note')">
 
     <label for="filter-global_Site" style="margin-left:10px">Tìm nhanh tỉnh:</label>
-    <input id="filter-global_Site" placeholder="Gõ chữ (vd: Q)..." oninput="suggestAutocomplete_Site('global')">
+    <input id="filter-global_Site" placeholder="Gõ chữ (vd: Q)..." oninput="suggestAutocomplete_Site('Province')">
 
     <div id="autocomplete-list_Site"
          style="border:1px solid #ccc; position:absolute; background:#fff; max-height:220px; overflow:auto; z-index:9999;"></div>
@@ -324,29 +324,24 @@ function backDashboard(){
 function load_Site(){
   Papa.parse(csvUrl_Site, {
     download: true,
-    header: false,
+    header: true,   // dùng header để lấy theo tên cột
     skipEmptyLines: true,
     complete: function(results){
-      data_Site = results.data.filter(r => r && r.length >= 2);
+      data_Site = results.data;
       renderTable_Site(data_Site);
     }
   });
 }
 
 // Autocomplete
-function suggestAutocomplete_Site(type){
-  const input = document.getElementById(`filter-${type}_Site`);
+function suggestAutocomplete_Site(column){
+  const input = document.getElementById(`filter-${column.replace(" ","_")}_Site`);
   const val = (input.value || "").toUpperCase();
   const listDiv = document.getElementById("autocomplete-list_Site");
   listDiv.innerHTML = "";
   if(!val) return;
 
-  let items = [];
-  if(type === "tinh"){ data_Site.forEach(r => { if(r[0]) items.push(r[0].trim()); }); }
-  else if(type === "site"){ data_Site.forEach(r => { if(r[1]) items.push(r[1].trim()); }); }
-  else if(type === "info"){ data_Site.forEach(r => { if(r[2]) items.push(r[2].trim()); }); }
-  else if(type === "global"){ data_Site.forEach(r => { if(r[0]) items.push(r[0].trim()); }); }
-
+  let items = data_Site.map(r => r[column]).filter(Boolean);
   [...new Set(items)].forEach(item => {
     if(item.toUpperCase().includes(val)){
       const div = document.createElement("div");
@@ -356,7 +351,7 @@ function suggestAutocomplete_Site(type){
       div.addEventListener("click", () => {
         input.value = item;
         listDiv.innerHTML = "";
-        if(type === "global"){ filterByProvince_Site(item); }
+        if(column === "Province"){ filterByProvince_Site(item); }
         else { filter_Site(); }
       });
       listDiv.appendChild(div);
@@ -366,14 +361,14 @@ function suggestAutocomplete_Site(type){
 
 // Lọc theo input
 function filter_Site() {
-  const tinhFilter = (document.getElementById("filter-tinh_Site").value || "").toUpperCase();
-  const siteFilter = (document.getElementById("filter-site_Site").value || "").toUpperCase();
-  const infoFilter = (document.getElementById("filter-info_Site").value || "").toUpperCase();
+  const tinhFilter = (document.getElementById("filter-Province_Site").value || "").toUpperCase();
+  const siteFilter = (document.getElementById("filter-Site_code_Site").value || "").toUpperCase();
+  const infoFilter = (document.getElementById("filter-Note_Site").value || "").toUpperCase();
 
   const filtered = data_Site.filter(r => {
-    const tinhCell = r[0] ? r[0].trim().toUpperCase() : "";
-    const siteCell = r[1] ? r[1].trim().toUpperCase() : "";
-    const infoCell = r[2] ? r[2].trim().toUpperCase() : "";
+    const tinhCell = (r["Province"] || "").toUpperCase();
+    const siteCell = (r["Site code"] || "").toUpperCase();
+    const infoCell = (r["Note"] || "").toUpperCase();
     return (
       (tinhFilter === "" || tinhCell.includes(tinhFilter)) &&
       (siteFilter === "" || siteCell.includes(siteFilter)) &&
@@ -385,13 +380,13 @@ function filter_Site() {
 
 // Lọc theo tỉnh (global)
 function filterByProvince_Site(province){
-  const filtered = data_Site.filter(r => r[0] && r[0].trim().toUpperCase() === province.trim().toUpperCase());
+  const filtered = data_Site.filter(r => (r["Province"] || "").toUpperCase() === province.toUpperCase());
   renderTable_Site(filtered);
 }
 
 // Clear input
 function clearAllInputs_Site(){
-  ["filter-tinh_Site","filter-site_Site","filter-info_Site","filter-global_Site"].forEach(id => {
+  ["filter-Province_Site","filter-Site_code_Site","filter-Note_Site","filter-global_Site"].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.value = "";
   });
@@ -404,17 +399,17 @@ function renderTable_Site(data){
   const tbody = document.getElementById("table_Site").querySelector("tbody");
   tbody.innerHTML = "";
 
-  data.forEach((r, index) => {
-    const siteCode = r[1] || "";
-    const siteName = r[2] || "";
-    const nickName = r[3] || "";
-    const note = r[4] || "";
-    const lat = r[5] ? String(r[5]).trim() : "";
-    const long = r[6] ? String(r[6]).trim() : "";
+  data.forEach((row, index) => {
+    const siteCode = row["Site code"] || "";
+    const siteName = row["Site name"] || "";
+    const nickName = row["Nick name"] || "";
+    const note = row["Note"] || "";
+    const lat = row["Lat"] || "";
+    const long = row["Long"] || "";
 
     let mapCell = "";
     if(lat && long){
-      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat)},${encodeURIComponent(long)}(${encodeURIComponent(siteCode)})`;
+      const url = `https://www.google.com/maps/search/?api=1&query=${lat},${long}(${siteCode})`;
       mapCell = `<button class="map-btn" onclick="window.open('${url}','_blank')">Xem</button>`;
     }
 
