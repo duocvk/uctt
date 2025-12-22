@@ -618,6 +618,154 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
   
 <!-- ============= PANEL TRỤC 1A ============= -->
 
+
+<!-- ============= PANEL TRỤC 1C ============= -->
+<div id="panel-1C" class="panel">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
+  <h2>Trục 1C</h2>
+
+  <!-- Filters -->
+  <div style="margin:10px 0">
+    <label>Tỉnh:</label>
+    <input id="filter-tinh_1C" oninput="suggestAutocomplete_1C('tinh')">
+
+    <label>Section:</label>
+    <input id="filter-section_1C" oninput="suggestAutocomplete_1C('section')">
+
+    <label>Link:</label>
+    <input id="filter-link_1C" oninput="suggestAutocomplete_1C('link')">
+
+    <div id="autocomplete-list_1C"
+         style="position:absolute;background:#fff;border:1px solid #ccc;
+                max-height:200px;overflow:auto;z-index:9999"></div>
+  </div>
+
+  <!-- Table -->
+  <table id="table_1C" border="1" style="width:100%;border-collapse:collapse">
+    <thead>
+      <tr>
+        <th>Tỉnh</th>
+        <th>Section</th>
+        <th>Link</th>
+        <th>Loại Link</th>
+        <th>Tuyến cáp</th>
+        <th>Loại cáp</th>
+        <th>Chiều dài</th>
+        <th>Sợi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+  <style>
+#table_1C thead{
+  background:#004080;
+  color:#fff;
+  font-weight:bold;
+}
+#table_1C .main-link{ background:#cce5ff; font-weight:bold; }
+#table_1C .pro-link{  background:#ffe5cc; font-weight:bold; }
+#table_1C .dp-link{   background:#e5ccff; font-weight:bold; }
+</style>
+
+  <script>
+const csvUrl_1C =
+  "https://docs.google.com/spreadsheets/d/e/XXXXX/pub?output=csv&gid=821612693"; 
+// 👉 thay YYYYY = gid sheet “Trục 1C”
+
+let data_1C = [];
+
+function load_1C(){
+  Papa.parse(csvUrl_1C,{
+    download:true,
+    complete:res=>{
+      data_1C = res.data;
+      filter_1C();
+    }
+  });
+}
+
+function suggestAutocomplete_1C(type){
+  const input = document.getElementById(`filter-${type}_1C`);
+  const list  = document.getElementById("autocomplete-list_1C");
+  list.innerHTML="";
+  const val = input.value.toUpperCase();
+  if(!val) return;
+
+  let items=[];
+  data_1C.forEach(r=>{
+    if(type==="tinh" && r[0]) r[0].split("-").forEach(t=>items.push(t.trim()));
+    if(type==="section" && r[1]) items.push(r[1]);
+    if(type==="link" && r[2]) items.push(r[2]);
+  });
+
+  [...new Set(items)].forEach(it=>{
+    if(it.toUpperCase().includes(val)){
+      const d=document.createElement("div");
+      d.textContent=it;
+      d.onclick=()=>{ input.value=it; list.innerHTML=""; filter_1C(); };
+      list.appendChild(d);
+    }
+  });
+}
+
+function filter_1C(){
+  const t = document.getElementById("filter-tinh_1C").value.toUpperCase();
+  const s = document.getElementById("filter-section_1C").value.toUpperCase();
+  const l = document.getElementById("filter-link_1C").value.toUpperCase();
+  const tbody = document.querySelector("#table_1C tbody");
+  tbody.innerHTML="";
+
+  let i=0;
+  while(i<data_1C.length){
+    const r=data_1C[i];
+    const tinh=(r[0]||"").toUpperCase();
+    const sec =(r[1]||"").toUpperCase();
+    const link=(r[2]||"").toUpperCase();
+
+    const match =
+      (!t || tinh.split("-").some(x=>x.includes(t))) &&
+      (!s || sec.includes(s)) &&
+      (!l || link.includes(l));
+
+    if(match && tinh){
+      renderRow_1C(r); i++;
+      while(i<data_1C.length && !data_1C[i][0]){
+        renderRow_1C(data_1C[i]); i++;
+      }
+    } else i++;
+  }
+}
+
+function renderRow_1C(r){
+  const tbody=document.querySelector("#table_1C tbody");
+  const type=(r[3]||"").toUpperCase();
+  let cls="";
+  if(type==="MAIN") cls="main-link";
+  else if(type==="PRO") cls="pro-link";
+  else if(type==="DP") cls="dp-link";
+
+  tbody.innerHTML+=`
+  <tr class="${cls}">
+    <td>${r[0]||""}</td>
+    <td>${r[1]||""}</td>
+    <td><a href="${r[2]||""}" target="_blank">${r[2]||""}</a></td>
+    <td>${r[3]||""}</td>
+    <td>${r[4]||""}</td>
+    <td>${r[5]||""}</td>
+    <td>${r[6]||""}</td>
+    <td>${r[7]||""}</td>
+  </tr>`;
+}
+
+// Load khi mở panel
+document
+ .querySelector('[onclick="openPanel(\'panel-1C\')"]')
+ .addEventListener("click", load_1C);
+</script>
+
+  <!-- END ============= PANEL TRỤC 1C ============= -->
   
 <script>
 
