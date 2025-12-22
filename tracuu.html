@@ -241,6 +241,233 @@ header {
 
 </div>
 
+<!-- START================= Panel Site ==================== -->
+  
+<div id="panel-1.Site" class="panel" style="display:none">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
+  <h2>Danh sách Site</h2>
+
+  <!-- Filters với autocomplete -->
+  <div style="margin:10px 0; position:relative">
+    <label for="filter-tinh_Site">Tỉnh (cột A):</label>
+    <input id="filter-tinh_Site" placeholder="Gõ tỉnh (vd: QNM, DNG)..." oninput="suggestAutocomplete_Site('tinh')">
+
+    <label for="filter-site_Site" style="margin-left:10px">Site (cột B):</label>
+    <input id="filter-site_Site" placeholder="Gõ mã site (vd: QNM0002)..." oninput="suggestAutocomplete_Site('site')">
+
+    <label for="filter-info_Site" style="margin-left:10px">Thông tin khác (cột C):</label>
+    <input id="filter-info_Site" placeholder="Gõ thông tin (vd: N6, S11)..." oninput="suggestAutocomplete_Site('info')">
+
+    <label for="filter-global_Site" style="margin-left:10px">Tìm nhanh theo tỉnh:</label>
+    <input id="filter-global_Site" placeholder="Gõ chữ (vd: Q) để chọn tỉnh..." oninput="suggestAutocomplete_Site('global')">
+
+    <!-- Danh sách gợi ý -->
+    <div id="autocomplete-list_Site"
+         class="autocomplete-items"
+         style="border:1px solid #ccc; position:absolute; background:#fff; max-height:220px; overflow:auto; z-index:9999; top:100%; left:0; right:0;"></div>
+  </div>
+
+  <!-- Bảng dữ liệu (giống ảnh mẫu) -->
+  <table id="table_Site" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+    <thead>
+      <tr style="background-color:gold; font-weight:bold; text-align:center">
+        <th>STT</th>
+        <th>Site code</th>
+        <th>Site name</th>
+        <th>Nick name</th>
+        <th>Note</th>
+        <th>Map</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr id="countRow_Site" style="background:#f7f7f7; font-weight:bold">
+        <td colspan="6">Tổng số site: 0</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- ===== CSS ===== -->
+<style>
+  .map-btn {
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  #table_Site tbody tr:nth-child(even){
+    background: #fafafa;
+  }
+  #table_Site td, #table_Site th {
+    padding: 6px 8px;
+  }
+</style>
+
+<!-- ===== JS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+/*
+  Sheet cấu trúc cột:
+  A: Tỉnh
+  B: Site code
+  C: Site name
+  D: Nick name
+  E: Note (ví dụ huyện)
+  F: Lat (ẩn)
+  G: Long (ẩn)
+*/
+const csvUrl_Site = "https://docs.google.com/spreadsheets/d/12jTqk-lfyCL_sB3G5WlcnQ_aySIT3DywGYJbB08S0vg/pub?output=csv&gid=1561746109";
+let data_Site = [];
+
+// Load dữ liệu CSV khi mở panel
+function load_Site(){
+  Papa.parse(csvUrl_Site, {
+    download: true,
+    header: false,
+    skipEmptyLines: true,
+    complete: function(results){
+      // Bỏ dòng header nếu có
+      data_Site = results.data.filter(r => r && r.length > 1);
+      renderTable_Site(data_Site);
+      // Clear input & gợi ý
+      clearAllInputs_Site();
+      document.getElementById("autocomplete-list_Site").innerHTML = "";
+    }
+  });
+}
+
+// Autocomplete gợi ý
+function suggestAutocomplete_Site(type){
+  const input = document.getElementById(`filter-${type}_Site`);
+  const val = (input.value || "").toUpperCase();
+  const listDiv = document.getElementById("autocomplete-list_Site");
+  listDiv.innerHTML = "";
+  if(!val) return;
+
+  let items = [];
+  if(type === "tinh"){
+    data_Site.forEach(r => { if(r[0]) items.push(r[0].trim()); });
+  } else if(type === "site"){
+    data_Site.forEach(r => { if(r[1]) items.push(r[1].trim()); });
+  } else if(type === "info"){
+    data_Site.forEach(r => { if(r[2]) items.push(r[2].trim()); });
+  } else if(type === "global"){
+    // Global: chỉ gợi ý theo tỉnh (yêu cầu của bạn)
+    data_Site.forEach(r => { if(r[0]) items.push(r[0].trim()); });
+  }
+
+  const uniqueItems = [...new Set(items)];
+  uniqueItems.forEach(item => {
+    if(item.toUpperCase().includes(val)){
+      const div = document.createElement("div");
+      div.innerHTML = item;
+      div.style.padding = "6px 8px";
+      div.style.cursor = "pointer";
+      div.addEventListener("click", () => {
+        input.value = item;
+        listDiv.innerHTML = "";
+        if(type === "global"){
+          // Lọc toàn bộ site theo tỉnh đã chọn
+          filterByProvince_Site(item);
+          clearAllInputs_Site();
+        } else {
+          filter_Site();
+          // Clear sau khi hiển thị kết quả theo yêu cầu
+          clearAllInputs_Site();
+        }
+      });
+      listDiv.appendChild(div);
+    }
+  });
+}
+
+// Lọc dữ liệu theo 3 input: tỉnh/site/info
+function filter_Site() {
+  const tinhFilter = (document.getElementById("filter-tinh_Site").value || "").toUpperCase();
+  const siteFilter = (document.getElementById("filter-site_Site").value || "").toUpperCase();
+  const infoFilter = (document.getElementById("filter-info_Site").value || "").toUpperCase();
+
+  const filtered = data_Site.filter(r => {
+    const tinhCell = r[0] ? r[0].trim().toUpperCase() : "";
+    const siteCell = r[1] ? r[1].trim().toUpperCase() : "";
+    const infoCell = r[2] ? r[2].trim().toUpperCase() : "";
+
+    return (
+      (tinhFilter === "" || tinhCell.includes(tinhFilter)) &&
+      (siteFilter === "" || siteCell.includes(siteFilter)) &&
+      (infoFilter === "" || infoCell.includes(infoFilter))
+    );
+  });
+
+  renderTable_Site(filtered);
+}
+
+// Lọc toàn bộ site theo tỉnh (cho ô tìm nhanh/global)
+function filterByProvince_Site(province){
+  const filtered = data_Site.filter(r => r[0] && r[0].trim().toUpperCase() === province.trim().toUpperCase());
+  renderTable_Site(filtered);
+}
+
+// Clear tất cả input
+function clearAllInputs_Site(){
+  ["filter-tinh_Site","filter-site_Site","filter-info_Site","filter-global_Site"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = "";
+  });
+}
+
+// Render bảng theo format: STT, Site code, Site name, Nick name, Note, Map
+function renderTable_Site(data){
+  const tbody = document.getElementById("table_Site").querySelector("tbody");
+  tbody.innerHTML = "";
+
+  data.forEach((r, index) => {
+    const siteCode = r[1] || "";
+    const siteName = r[2] || "";
+    const nickName = r[3] || "";
+    const note = r[4] || "";
+    const lat = r[5] ? r[5].toString().trim() : "";
+    const long = r[6] ? r[6].toString().trim() : "";
+
+    let mapCell = "";
+    if(lat && long){
+      // Mở Google Maps, hiển thị vị trí với nhãn là Site code
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat)},${encodeURIComponent(long)}(${encodeURIComponent(siteCode)})`;
+      mapCell = `<button class="map-btn" onclick="window.open('${url}','_blank')">Xem</button>`;
+    } else {
+      mapCell = ""; // Không có lat/long thì để trống
+    }
+
+    tbody.innerHTML += `<tr>
+      <td style="text-align:center">${index + 1}</td>
+      <td>${siteCode}</td>
+      <td>${siteName}</td>
+      <td>${nickName}</td>
+      <td>${note}</td>
+      <td style="text-align:center">${mapCell}</td>
+    </tr>`;
+  });
+
+  updateCount_Site(data);
+}
+
+// Cập nhật COUNT (giống COUNT trong Excel)
+function updateCount_Site(data){
+  const countRow = document.getElementById("countRow_Site");
+  const totalSites = data.length;
+  countRow.innerHTML = `<td colspan="6">Tổng số site: ${totalSites}</td>`;
+}
+
+// Khi bấm nút "Site" trên dashboard thì load CSV vào panel Site
+// Lưu ý: phải có phần tử button: <button class="menu-button menu-1" onclick="openPanel('panel-1.Site')">Site</button>
+document.querySelector('[onclick="openPanel(\'panel-1.Site\')"]').addEventListener("click", load_Site);
+</script>
+
+<!-- END================= Panel Site ==================== -->
+  
 <!-- START ============= PANEL TRỤC 2B ============= -->
 <div id="panel-2B" class="panel">
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
