@@ -275,11 +275,11 @@ header {
   <table id="table_Site" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
       <tr style="background-color:gold; font-weight:bold; text-align:center">
-        <th>STT</th>
+        <th>Province</th>
         <th>Site code</th>
         <th>Site name</th>
         <th>Nick name</th>
-        <th>Note</th>
+        <th>District</th>
         <th>Map</th>
       </tr>
     </thead>
@@ -300,7 +300,7 @@ header {
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
-const csvUrl_Site = "https://docs.google.com/spreadsheets/d/12jTqk-lfyCL_sB3G5WlcnQ_aySIT3DywGYJbB08S0vg/pub?output=csv&gid=1561746109";
+const csvUrl_Site = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=1561746109";
 let data_Site = [];
 
 // Mở panel
@@ -363,12 +363,12 @@ function suggestAutocomplete_Site(column){
 function filter_Site() {
   const tinhFilter = (document.getElementById("filter-Province_Site").value || "").toUpperCase();
   const siteFilter = (document.getElementById("filter-Site_code_Site").value || "").toUpperCase();
-  const infoFilter = (document.getElementById("filter-Note_Site").value || "").toUpperCase();
+  const infoFilter = (document.getElementById("filter-District_Site").value || "").toUpperCase();
 
   const filtered = data_Site.filter(r => {
     const tinhCell = (r["Province"] || "").toUpperCase();
     const siteCell = (r["Site code"] || "").toUpperCase();
-    const infoCell = (r["Note"] || "").toUpperCase();
+    const infoCell = (r["District"] || "").toUpperCase();
     return (
       (tinhFilter === "" || tinhCell.includes(tinhFilter)) &&
       (siteFilter === "" || siteCell.includes(siteFilter)) &&
@@ -403,7 +403,7 @@ function renderTable_Site(data){
     const siteCode = row["Site code"] || "";
     const siteName = row["Site name"] || "";
     const nickName = row["Nick name"] || "";
-    const note = row["Note"] || "";
+    const district = row["District"] || "";
     const lat = row["Lat"] || "";
     const long = row["Long"] || "";
 
@@ -418,13 +418,14 @@ function renderTable_Site(data){
       <td>${siteCode}</td>
       <td>${siteName}</td>
       <td>${nickName}</td>
-      <td>${note}</td>
+      <td>${district}</td>
       <td style="text-align:center">${mapCell}</td>
     </tr>`;
   });
 
   updateCount_Site(data);
 }
+
 
 // Count
 function updateCount_Site(data){
