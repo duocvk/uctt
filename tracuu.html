@@ -758,7 +758,17 @@ function filter_1C(){
     }else i++;
   }
 
+
+  // Ẩn autocomplete
   document.getElementById("autocomplete-list_1C").innerHTML="";
+
+  // ✅ Clear filter sau khi render (BỔ SUNG)
+  setTimeout(() => {
+    document.getElementById("filter-tinh_1C").value = "";
+    document.getElementById("filter-section_1C").value = "";
+    document.getElementById("filter-link_1C").value = "";
+  }, 50);
+  
 }
 
 /* ===== RENDER ROW ===== */
