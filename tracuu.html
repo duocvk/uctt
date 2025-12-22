@@ -436,8 +436,67 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
 
   <!-- ============= PANEL TRỤC 1A ============= -->
 
-  <script>
-// URL CSV panel 1A
+ <!-- ============= PANEL TRỤC 1A ============= -->
+<div id="panel-1A" class="panel">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
+  <h2>Trục 1A</h2>
+
+  <!-- Filters với autocomplete -->
+  <div style="margin:10px 0">
+    <label for="filter-tinh_1A">Tỉnh:</label>
+    <input id="filter-tinh_1A" placeholder="Gõ tên tỉnh..." oninput="suggestAutocomplete_1A('tinh')">
+
+    <label for="filter-section_1A">Section:</label>
+    <input id="filter-section_1A" placeholder="Gõ section..." oninput="suggestAutocomplete_1A('section')">
+
+    <label for="filter-link_1A">Link:</label>
+    <input id="filter-link_1A" placeholder="Gõ link..." oninput="suggestAutocomplete_1A('link')">
+
+    <div id="autocomplete-list_1A" class="autocomplete-items" style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;"></div>
+  </div>
+
+  <!-- Table dữ liệu -->
+  <table id="table_1A" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+    <thead>
+      <tr>
+        <th>Tỉnh</th>
+        <th>Section</th>
+        <th>Link</th>
+        <th>Loại Link</th>
+        <th>Tuyến cáp</th>
+        <th>Loại cáp</th>
+        <th>Chiều dài</th>
+        <th>Sợi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- ===== CSS ===== -->
+<style>
+  #table_1A thead {
+    background-color: #004080;
+    color: white;
+    font-weight: bold;
+  }
+  #table_1A .main-link {
+    background-color: #cce5ff; /* xanh dương nhạt */
+    font-weight: bold;
+  }
+  #table_1A .pro-link {
+    background-color: #ffe5cc; /* cam nhạt */
+    font-weight: bold;
+  }
+  #table_1A .dp-link {
+    background-color: #e5ccff; /* tím nhạt */
+    font-weight: bold;
+  }
+</style>
+
+<!-- ===== JS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
 const csvUrl_1A = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
 let data_1A = [];
 
