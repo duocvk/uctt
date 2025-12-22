@@ -243,7 +243,6 @@ header {
 
 <!-- START================= Panel Site ==================== -->
 
-
 <div id="panel-1.Site" class="panel" style="display:none">
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
   <h2>Danh sách Site</h2>
@@ -264,6 +263,12 @@ header {
 
     <div id="autocomplete-list_Site"
          style="border:1px solid #ccc; position:absolute; background:#fff; max-height:220px; overflow:auto; z-index:9999;"></div>
+  </div>
+
+  <div style="margin:5px 0">
+    <button onclick="filter_Site()">Filter</button>
+    <button onclick="load_Site()">Reload CSV</button>
+    <button onclick="clearAllInputs_Site()">Clear Filters</button>
   </div>
 
   <!-- Bảng dữ liệu -->
@@ -287,21 +292,12 @@ header {
   </table>
 </div>
 
-<!-- ===== CSS ===== -->
 <style>
-  .map-btn {
-    background-color: #008CBA;
-    color: white;
-    border: none;
-    padding: 4px 8px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
+  .map-btn { background-color: #008CBA; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; }
   #table_Site tbody tr:nth-child(even){ background: #fafafa; }
   #table_Site td, #table_Site th { padding: 6px 8px; }
 </style>
 
-<!-- ===== JS ===== -->
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
 const csvUrl_Site = "https://docs.google.com/spreadsheets/d/12jTqk-lfyCL_sB3G5WlcnQ_aySIT3DywGYJbB08S0vg/pub?output=csv&gid=1561746109";
@@ -314,7 +310,7 @@ function openPanel(id){
   if(panel){
     document.getElementById('dashboard').style.display = 'none';
     panel.style.display = 'block';
-    if(id === 'panel-1.Site') load_Site();
+    if(id === 'panel-1.Site' && data_Site.length === 0) load_Site();
   }
 }
 
@@ -333,8 +329,6 @@ function load_Site(){
     complete: function(results){
       data_Site = results.data.filter(r => r && r.length >= 2);
       renderTable_Site(data_Site);
-      clearAllInputs_Site();
-      document.getElementById("autocomplete-list_Site").innerHTML = "";
     }
   });
 }
@@ -364,7 +358,6 @@ function suggestAutocomplete_Site(type){
         listDiv.innerHTML = "";
         if(type === "global"){ filterByProvince_Site(item); }
         else { filter_Site(); }
-        clearAllInputs_Site();
       });
       listDiv.appendChild(div);
     }
@@ -403,6 +396,7 @@ function clearAllInputs_Site(){
     if(el) el.value = "";
   });
   document.getElementById("autocomplete-list_Site").innerHTML = "";
+  renderTable_Site(data_Site);
 }
 
 // Render bảng
@@ -437,7 +431,7 @@ function renderTable_Site(data){
   updateCount_Site(data);
 }
 
-// Count (phần bị cắt trước đó)
+// Count
 function updateCount_Site(data){
   const totalSites = data.length;
   document.getElementById("countRow_Site").innerHTML =
