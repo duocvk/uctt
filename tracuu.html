@@ -243,6 +243,7 @@ header {
 
 <!-- START================= Panel Site ==================== -->
 
+
 <div id="panel-1.Site" class="panel" style="display:none">
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
   <h2>Danh sách Site</h2>
@@ -436,12 +437,14 @@ function renderTable_Site(data){
   updateCount_Site(data);
 }
 
-// Count
+// Count (phần bị cắt trước đó)
 function updateCount_Site(data){
   const totalSites = data.length;
-  document.getElementById("countRow_Site").innerHTML = `<td colspan="6">Tổng số site: ${totalSites}</td>`;
+  document.getElementById("countRow_Site").innerHTML =
+    `<td colspan="6">Tổng số site: ${totalSites}</td>`;
 }
 </script>
+
 
 
 <!-- END================= Panel Site ==================== -->
