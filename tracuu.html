@@ -442,13 +442,13 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
   <!-- Filters với autocomplete -->
   <div style="margin:10px 0">
     <label for="filter-tinh-1A">Tỉnh:</label>
-    <input id="filter-tinh-1A" placeholder="Gõ tên tỉnh..." oninput="suggestAutocomplete('tinh')">
+    <input id="filter-tinh-1A" placeholder="Gõ tên tỉnh..." oninput="suggestAutocomplete1A('tinh')">
 
     <label for="filter-section-1A">Section:</label>
-    <input id="filter-section-1A" placeholder="Gõ section..." oninput="suggestAutocomplete('section')">
+    <input id="filter-section-1A" placeholder="Gõ section..." oninput="suggestAutocomplete1A('section')">
 
     <label for="filter-link-1A">Link:</label>
-    <input id="filter-link-1A" placeholder="Gõ link..." oninput="suggestAutocomplete('link')">
+    <input id="filter-link-1A" placeholder="Gõ link..." oninput="suggestAutocomplete1A('link')">
 
     <div id="autocomplete-list" class="autocomplete-items" style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;"></div>
   </div>
@@ -499,7 +499,7 @@ function suggestAutocomplete1A(type){
   const input = document.getElementById(`filter-${type}-1A`);
   const val = input.value.toUpperCase();
   const listDiv1A = document.getElementById("autocomplete-list");
-  listDiv.innerHTML = "";
+  listDiv1A.innerHTML = "";
   if(!val) return;
 
   // Lấy danh sách unique theo type
@@ -519,10 +519,10 @@ function suggestAutocomplete1A(type){
       div.style.cursor = "pointer";
       div.addEventListener("click", () => {
         input.value = item;
-        listDiv.innerHTML = "";
+        listDiv1A.innerHTML = "";
         filter1A();
       });
-      listDiv.appendChild(div);
+      listDiv1A.appendChild(div);
     }
   });
 }
@@ -534,7 +534,7 @@ function filter1A() {
   const linkFilter1A = document.getElementById("filter-link-1A").value.toUpperCase();
 
   const tbody1A = document.getElementById("table-1A").querySelector("tbody");
-  tbody.innerHTML = "";
+  tbody1A.innerHTML = "";
 
   let i = 0;
   while (i < data1A.length) {
@@ -543,11 +543,11 @@ function filter1A() {
     const sectionCell1A = r[1] ? r[1].trim().toUpperCase() : "";
     const linkCell1A = r[2] ? r[2].trim().toUpperCase() : "";
 
-    const tinhList1A = tinhCell.split("-").map(t => t.trim());
+    const tinhList1A = tinhCell1A.split("-").map(t => t.trim());
     const match =
-      (tinhFilter1A === "" || tinhList.some(t => t.includes(tinhFilter1A))) &&
-      (sectionFilter1A === "" || sectionCell.includes(sectionFilter1A)) &&
-      (linkFilter1 === "" || linkCell.includes(linkFilterA));
+      (tinhFilter1A === "" || tinhList1A.some(t => t.includes(tinhFilter1A))) &&
+      (sectionFilter1A === "" || sectionCell1A.includes(sectionFilter1A)) &&
+      (linkFilter1A === "" || linkCell1A.includes(linkFilter1A));
 
     if (match && tinhCell1A !== "") {
       // render dòng chính
@@ -583,12 +583,12 @@ function renderRow1A(r) {
 
   let rowClass1A = "";
   if (tinhCell1A !== "") {
-    if (linkType1A === "MAIN") rowClass = "main-link";
-    else if (linkType1A === "PRO") rowClass = "pro-link";
-    else if (linkType1A === "DP") rowClass = "dp-link";
+    if (linkType1A === "MAIN") rowClass1A = "main-link";
+    else if (linkType1A === "PRO") rowClass1A = "pro-link";
+    else if (linkType1A === "DP") rowClass1A = "dp-link";
   }
 
-  tbody.innerHTML += `<tr class="${rowClass1A}">
+  tbody1A.innerHTML += `<tr class="${rowClass1A}">
     <td>${r[0] || ""}</td>
     <td>${r[1] || ""}</td>
     <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
