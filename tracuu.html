@@ -473,7 +473,7 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
-const csvUrl2B = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
+const csvUrl1A = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv";
 let data1A = [];
 
 // Load dữ liệu CSV
@@ -495,10 +495,10 @@ function load1A(){
 }
 
 // Autocomplete gợi ý
-function suggestAutocomplete(type){
+function suggestAutocomplete1A(type){
   const input = document.getElementById(`filter-${type}-1A`);
   const val = input.value.toUpperCase();
-  const listDiv = document.getElementById("autocomplete-list");
+  const listDiv1A = document.getElementById("autocomplete-list");
   listDiv.innerHTML = "";
   if(!val) return;
 
@@ -529,34 +529,34 @@ function suggestAutocomplete(type){
 
 // Lọc dữ liệu
 function filter1A() {
-  const tinhFilter = document.getElementById("filter-tinh-1A").value.toUpperCase();
-  const sectionFilter = document.getElementById("filter-section-1A").value.toUpperCase();
-  const linkFilter = document.getElementById("filter-link-1A").value.toUpperCase();
+  const tinhFilter1A = document.getElementById("filter-tinh-1A").value.toUpperCase();
+  const sectionFilter1A = document.getElementById("filter-section-1A").value.toUpperCase();
+  const linkFilter1A = document.getElementById("filter-link-1A").value.toUpperCase();
 
-  const tbody = document.getElementById("table-1A").querySelector("tbody");
+  const tbody1A = document.getElementById("table-1A").querySelector("tbody");
   tbody.innerHTML = "";
 
   let i = 0;
   while (i < data1A.length) {
     const r = data1A[i];
-    const tinhCell = r[0] ? r[0].trim().toUpperCase() : "";
-    const sectionCell = r[1] ? r[1].trim().toUpperCase() : "";
-    const linkCell = r[2] ? r[2].trim().toUpperCase() : "";
+    const tinhCell1A = r[0] ? r[0].trim().toUpperCase() : "";
+    const sectionCell1A = r[1] ? r[1].trim().toUpperCase() : "";
+    const linkCell1A = r[2] ? r[2].trim().toUpperCase() : "";
 
-    const tinhList = tinhCell.split("-").map(t => t.trim());
+    const tinhList1A = tinhCell.split("-").map(t => t.trim());
     const match =
-      (tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter))) &&
-      (sectionFilter === "" || sectionCell.includes(sectionFilter)) &&
-      (linkFilter === "" || linkCell.includes(linkFilter));
+      (tinhFilter1A === "" || tinhList.some(t => t.includes(tinhFilter1A))) &&
+      (sectionFilter1A === "" || sectionCell.includes(sectionFilter1A)) &&
+      (linkFilter1 === "" || linkCell.includes(linkFilterA));
 
-    if (match && tinhCell !== "") {
+    if (match && tinhCell1A !== "") {
       // render dòng chính
-      renderRow(r);
+      renderRow1A(r);
       i++;
 
       // render các dòng phụ cho đến khi gặp dòng có Tỉnh mới
       while (i < data1A.length && (!data1A[i][0] || data1A[i][0].trim() === "")) {
-        renderRow(data1A[i]);
+        renderRow1A(data1A[i]);
         i++;
       }
     } else {
@@ -576,19 +576,19 @@ function filter1A() {
 }
 
 // Hàm render 1 dòng
-function renderRow(r) {
-  const tbody = document.getElementById("table-1A").querySelector("tbody");
-  const tinhCell = r[0] ? r[0].trim() : "";
-  const linkType = r[3] ? r[3].trim().toUpperCase() : "";
+function renderRow1A(r) {
+  const tbody1A = document.getElementById("table-1A").querySelector("tbody");
+  const tinhCell1A = r[0] ? r[0].trim() : "";
+  const linkType1A = r[3] ? r[3].trim().toUpperCase() : "";
 
-  let rowClass = "";
-  if (tinhCell !== "") {
-    if (linkType === "MAIN") rowClass = "main-link";
-    else if (linkType === "PRO") rowClass = "pro-link";
-    else if (linkType === "DP") rowClass = "dp-link";
+  let rowClass1A = "";
+  if (tinhCell1A !== "") {
+    if (linkType1A === "MAIN") rowClass = "main-link";
+    else if (linkType1A === "PRO") rowClass = "pro-link";
+    else if (linkType1A === "DP") rowClass = "dp-link";
   }
 
-  tbody.innerHTML += `<tr class="${rowClass}">
+  tbody.innerHTML += `<tr class="${rowClass1A}">
     <td>${r[0] || ""}</td>
     <td>${r[1] || ""}</td>
     <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
