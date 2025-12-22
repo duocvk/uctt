@@ -533,7 +533,7 @@ function filter_1A() {
   const sectionFilter_1A = document.getElementById("filter-section_1A").value.toUpperCase();
   const linkFilter_1A = document.getElementById("filter-link_1A").value.toUpperCase();
 
-  const tbody_1A = document.getElementById("table_1A").querySelector("tbody_1A");
+  const tbody_1A = document.getElementById("table_1A").querySelector("tbody");
   tbody_1A.innerHTML = "";
 
   let i = 0;
@@ -556,7 +556,7 @@ function filter_1A() {
 
       // render các dòng phụ cho đến khi gặp dòng có Tỉnh mới
       while (i < data_1A.length && (!data_1A[i][0] || data_1A[i][0].trim() === "")) {
-        renderRow-1A(data_1A[i]);
+        renderRow_1A(data_1A[i]);
         i++;
       }
     } else {
@@ -577,7 +577,7 @@ function filter_1A() {
 
 // Hàm render 1 dòng
 function renderRow_1A(r) {
-  const tbody_1A = document.getElementById("table_1A").querySelector("tbody_1A");
+  const tbody_1A = document.getElementById("table_1A").querySelector("tbody");
   const tinhCell_1A = r[0] ? r[0].trim() : "";
   const linkType_1A = r[3] ? r[3].trim().toUpperCase() : "";
 
