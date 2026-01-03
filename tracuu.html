@@ -290,30 +290,29 @@ const SITE_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tu
 
 let siteData = [];
 
-// Load CSV
-function loadSite(){
+// Load dữ liệu CSV
+function loadSite() {
+  if(siteData.length > 0) return; // đã load rồi
   Papa.parse(SITE_CSV, {
     download: true,
     header: true,
     skipEmptyLines: true,
-    complete: r => {
+    complete: (r) => {
       siteData = r.data;
-      renderSite(siteData); // render toàn bộ ban đầu
+      renderSite(siteData);
     }
   });
 }
-
-// Render dữ liệu vào bảng
+// Render table
 function renderSite(data){
   const tbody = document.querySelector("#table-site tbody");
   tbody.innerHTML = "";
 
-  data.forEach((r,i) => {
-    const lat = r["Lat"] || "";
-    const lon = r["Long"] || "";
-    const mapBtn = (lat && lon)
-      ? `<button class="map-btn" onclick="window.open('https://www.google.com/maps?q=${lat},${lon}','_blank')">Map</button>`
-      : "";
+  data.forEach((r,i)=>{
+    const lat = r["Lat"]||"";
+    const lon = r["Long"]||"";
+    const mapBtn = (lat && lon) ? 
+      `<button class="map-btn" onclick="window.open('https://www.google.com/maps?q=${lat},${lon}','_blank')">Map</button>` : "";
 
     tbody.innerHTML += `
       <tr>
@@ -331,8 +330,24 @@ function renderSite(data){
     `<td colspan="6">Tổng: ${data.length}</td>`;
 }
 
-// Autocomplete + lọc ngay khi chọn
+// Filter dữ liệu dựa trên lựa chọn autocomplete
+function filterSite(selectedItem, type){
+  let filtered = siteData;
+
+  if(type==="province") filtered = siteData.filter(r=> (r["Province"]||"").toUpperCase() === selectedItem.toUpperCase());
+  else if(type==="site") filtered = siteData.filter(r=> (r["Site code"]||"").toUpperCase() === selectedItem.toUpperCase());
+  else if(type==="district") filtered = siteData.filter(r=> (r["District"]||"").toUpperCase() === selectedItem.toUpperCase());
+
+  renderSite(filtered);
+
+  // Xóa input sau khi chọn
+  document.getElementById(`filter-site-${type}`).value = "";
+}
+
+// Autocomplete live
 function suggestSite(type){
+  if(siteData.length === 0) return; // chưa load xong
+
   const input = document.getElementById(`filter-site-${type}`);
   const val = input.value.toUpperCase();
   const listDiv = document.getElementById("autocomplete-list");
@@ -344,46 +359,28 @@ function suggestSite(type){
   else if(type==="site") siteData.forEach(r=>{ if(r["Site code"]) items.push(r["Site code"]); });
   else if(type==="district") siteData.forEach(r=>{ if(r["District"]) items.push(r["District"]); });
 
-  [...new Set(items)].forEach(item=>{
+  items = [...new Set(items)];
+
+  items.forEach(item=>{
     if(item.toUpperCase().includes(val)){
       const div = document.createElement("div");
       div.innerHTML = item;
       div.style.padding="4px";
       div.style.cursor="pointer";
       div.onclick = () => {
-        input.value = item;      // chọn item
-        listDiv.innerHTML = "";  // ẩn list
-        filterSite(item, type);  // lọc dữ liệu ngay
+        filterSite(item, type); // filter ngay
+        listDiv.innerHTML = "";  // ẩn gợi ý
       };
       listDiv.appendChild(div);
     }
   });
 }
 
-// Lọc dữ liệu ngay sau khi chọn
-function filterSite(value, type){
-  const filtered = siteData.filter(r=>{
-    if(type==="province") return r["Province"] && r["Province"].toUpperCase().includes(value.toUpperCase());
-    if(type==="site") return r["Site code"] && r["Site code"].toUpperCase().includes(value.toUpperCase());
-    if(type==="district") return r["District"] && r["District"].toUpperCase().includes(value.toUpperCase());
-  });
+// Khi mở panel Site, load CSV
+document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener("click", () => {
+  loadSite();
+});
 
-  renderSite(filtered);
-
-  // Xóa dữ liệu nhập trong filter
-  document.getElementById("filter-site-province").value="";
-  document.getElementById("filter-site-code").value="";
-  document.getElementById("filter-site-district").value="";
-}
-
-// Khi mở panel Site, load CSV nếu chưa có
-const _openPanel = window.openPanel;
-window.openPanel = function(id){
-  _openPanel(id);
-  if(id==="panel-Site" && siteData.length===0){
-    loadSite();
-  }
-};
 </script>
 
 <!-- END================= Panel Site ==================== -->
