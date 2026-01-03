@@ -301,6 +301,10 @@ header {
 const SITE_CSV =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=1561746109";
 
+document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener("click", () => {
+  if(siteData.length===0) loadSite();
+});
+  
 let siteData = [];
 
 /* ================== LOAD ================== */
@@ -370,7 +374,7 @@ function resetSite(){
 const _openPanel = window.openPanel;
 window.openPanel = function(id){
   _openPanel(id);
-  if(id==="panel-1.Site" && siteData.length===0){
+  if(id==="panel-Site" && siteData.length===0){
     loadSite();
   }
 };
