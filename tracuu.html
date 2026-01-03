@@ -247,85 +247,68 @@ header {
 
 <!-- START================= Panel Site ==================== -->
 
-<div id="panel-Site" class="panel" style="display:none">
+<div id="panel-Site" class="panel" style="display:none; position:relative;">
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
-  <h2>Tra cứu Site</h2>
+  <h2>Panel Site</h2>
 
   <!-- Filters -->
-  <div style="margin:10px 0">
+  <div style="margin:10px 0; position:relative;">
     <label>Tỉnh:</label>
-    <input id="filter-site-province" placeholder="Nhập tỉnh...">
+    <input id="filter-site-province" placeholder="Nhập tỉnh..." oninput="suggestSite('province')">
 
     <label style="margin-left:10px">Site:</label>
-    <input id="filter-site-code" placeholder="Nhập site...">
+    <input id="filter-site-code" placeholder="Nhập site..." oninput="suggestSite('site')">
 
     <label style="margin-left:10px">Quận/Huyện:</label>
-    <input id="filter-site-district" placeholder="Nhập quận/huyện...">
+    <input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
 
-    <button onclick="filterSite()">Lọc</button>
-    <button onclick="resetSite()">Reset</button>
+    <div id="autocomplete-list" class="autocomplete-items" 
+         style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;">
+    </div>
   </div>
 
   <!-- Table -->
-  <table id="table-site" border="1" style="width:100%;border-collapse:collapse">
-    <thead>
-      <tr style="background:gold;text-align:center;font-weight:bold">
+  <table id="table-site" border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse;">
+    <thead style="background:#eee;">
+      <tr>
         <th>STT</th>
-        <th>Site Code</th>
-        <th>Site Name</th>
-        <th>Nick Name</th>
+        <th>Site code</th>
+        <th>Site name</th>
+        <th>Nick name</th>
         <th>District</th>
         <th>Map</th>
       </tr>
     </thead>
     <tbody></tbody>
-    <tfoot>
-      <tr id="site-count" style="font-weight:bold;background:#f5f5f5">
-        <td colspan="6">Tổng: 0</td>
-      </tr>
-    </tfoot>
+    <tfoot id="site-count"></tfoot>
   </table>
 </div>
 
-<style>
-  #table-site td, #table-site th { padding:6px 8px }
-  #table-site tbody tr:nth-child(even){ background:#fafafa }
-  .map-btn{
-    background:#007bff;color:#fff;border:none;
-    padding:4px 8px;border-radius:4px;cursor:pointer
-  }
-</style>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
-/* ================== SITE CONFIG ================== */
-const SITE_CSV =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=1561746109";
+const SITE_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=1561746109";
 
-document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener("click", () => {
-  if(siteData.length===0) loadSite();
-});
-  
 let siteData = [];
 
-/* ================== LOAD ================== */
+// Load CSV
 function loadSite(){
-  Papa.parse(SITE_CSV,{
-    download:true,
-    header:true,
-    skipEmptyLines:true,
-    complete:r=>{
+  Papa.parse(SITE_CSV, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: r => {
       siteData = r.data;
-      renderSite(siteData);
+      renderSite(siteData); // render toàn bộ ban đầu
     }
   });
 }
 
-/* ================== RENDER ================== */
+// Render dữ liệu vào bảng
 function renderSite(data){
   const tbody = document.querySelector("#table-site tbody");
   tbody.innerHTML = "";
 
-  data.forEach((r,i)=>{
+  data.forEach((r,i) => {
     const lat = r["Lat"] || "";
     const lon = r["Long"] || "";
     const mapBtn = (lat && lon)
@@ -348,29 +331,52 @@ function renderSite(data){
     `<td colspan="6">Tổng: ${data.length}</td>`;
 }
 
-/* ================== FILTER ================== */
-function filterSite(){
-  const p = document.getElementById("filter-site-province").value.toUpperCase();
-  const s = document.getElementById("filter-site-code").value.toUpperCase();
-  const d = document.getElementById("filter-site-district").value.toUpperCase();
+// Autocomplete + lọc ngay khi chọn
+function suggestSite(type){
+  const input = document.getElementById(`filter-site-${type}`);
+  const val = input.value.toUpperCase();
+  const listDiv = document.getElementById("autocomplete-list");
+  listDiv.innerHTML = "";
+  if(!val) return;
 
+  let items = [];
+  if(type==="province") siteData.forEach(r=>{ if(r["Province"]) items.push(r["Province"]); });
+  else if(type==="site") siteData.forEach(r=>{ if(r["Site code"]) items.push(r["Site code"]); });
+  else if(type==="district") siteData.forEach(r=>{ if(r["District"]) items.push(r["District"]); });
+
+  [...new Set(items)].forEach(item=>{
+    if(item.toUpperCase().includes(val)){
+      const div = document.createElement("div");
+      div.innerHTML = item;
+      div.style.padding="4px";
+      div.style.cursor="pointer";
+      div.onclick = () => {
+        input.value = item;      // chọn item
+        listDiv.innerHTML = "";  // ẩn list
+        filterSite(item, type);  // lọc dữ liệu ngay
+      };
+      listDiv.appendChild(div);
+    }
+  });
+}
+
+// Lọc dữ liệu ngay sau khi chọn
+function filterSite(value, type){
   const filtered = siteData.filter(r=>{
-    return (!p || (r["Province"]||"").toUpperCase().includes(p)) &&
-           (!s || (r["Site code"]||"").toUpperCase().includes(s)) &&
-           (!d || (r["District"]||"").toUpperCase().includes(d));
+    if(type==="province") return r["Province"] && r["Province"].toUpperCase().includes(value.toUpperCase());
+    if(type==="site") return r["Site code"] && r["Site code"].toUpperCase().includes(value.toUpperCase());
+    if(type==="district") return r["District"] && r["District"].toUpperCase().includes(value.toUpperCase());
   });
 
   renderSite(filtered);
+
+  // Xóa dữ liệu nhập trong filter
+  document.getElementById("filter-site-province").value="";
+  document.getElementById("filter-site-code").value="";
+  document.getElementById("filter-site-district").value="";
 }
 
-/* ================== RESET ================== */
-function resetSite(){
-  ["filter-site-province","filter-site-code","filter-site-district"]
-    .forEach(id=>document.getElementById(id).value="");
-  renderSite(siteData);
-}
-
-/* ================== OPEN PANEL ================== */
+// Khi mở panel Site, load CSV nếu chưa có
 const _openPanel = window.openPanel;
 window.openPanel = function(id){
   _openPanel(id);
