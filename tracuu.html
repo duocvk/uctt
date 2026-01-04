@@ -250,10 +250,33 @@ header {
 <div id="panel-Site" class="panel" style="display:none; position:relative;">
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
   <h2>Tra cứu Site</h2>
+.filters-row {
+  display: flex;          /* các input nằm ngang */
+  gap: 15px;              /* khoảng cách giữa các ô */
+  align-items: flex-start; /* label + input thẳng hàng */
+}
+
+.autocomplete-container {
+  position: relative;
+  display: flex;
+  flex-direction: column; /* label trên, input dưới */
+}
+
+.autocomplete-items {
+  position: absolute;
+  top: 100%;   /* ngay dưới input */
+  left: 0;
+  display: flex;       /* gợi ý nằm ngang */
+  flex-wrap: wrap;     /* nếu nhiều thì xuống dòng */
+  border: 1px solid #ccc;
+  background: #fff;
+  z-index: 9999;
+}
 
   <!-- Filters -->
  <!-- Filters -->
-<div style="margin:10px 0;">
+<!-- Filters -->
+<div class="filters-row">
   <div class="autocomplete-container">
     <label>Tỉnh:</label>
     <input id="filter-site-province" placeholder="Nhập tỉnh..." oninput="suggestSite('province')">
@@ -278,6 +301,7 @@ header {
     <div id="autocomplete-site-district" class="autocomplete-items"></div>
   </div>
 </div>
+
 
 
   <!-- Table -->
