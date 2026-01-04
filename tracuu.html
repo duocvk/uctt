@@ -246,32 +246,47 @@ header {
 </div>
 
 <!-- START================= Panel Site ==================== -->
+<style>
+  .filters-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+  }
 
+  .autocomplete-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .autocomplete-items {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #ccc;
+    background: #fff;
+    z-index: 9999;
+  }
+
+  .autocomplete-items div {
+    padding: 4px 8px;
+    cursor: pointer;
+    border-right: 1px solid #eee;
+  }
+
+  .autocomplete-items div:last-child {
+    border-right: none;
+  }
+</style>
+
+
+  
 <div id="panel-Site" class="panel" style="display:none; position:relative;">
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
   <h2>Tra cứu Site</h2>
-.filters-row {
-  display: flex;          /* các input nằm ngang */
-  gap: 15px;              /* khoảng cách giữa các ô */
-  align-items: flex-start; /* label + input thẳng hàng */
-}
 
-.autocomplete-container {
-  position: relative;
-  display: flex;
-  flex-direction: column; /* label trên, input dưới */
-}
-
-.autocomplete-items {
-  position: absolute;
-  top: 100%;   /* ngay dưới input */
-  left: 0;
-  display: flex;       /* gợi ý nằm ngang */
-  flex-wrap: wrap;     /* nếu nhiều thì xuống dòng */
-  border: 1px solid #ccc;
-  background: #fff;
-  z-index: 9999;
-}
 
   <!-- Filters -->
  <!-- Filters -->
