@@ -252,25 +252,33 @@ header {
   <h2>Tra cứu Site</h2>
 
   <!-- Filters -->
-  <div style="margin:10px 0; position:relative;">
-<label>Tỉnh:</label>
-<input id="filter-site-province" placeholder="Nhập tỉnh..." oninput="suggestSite('province')">
-<div id="autocomplete-site-province" class="autocomplete-items"></div>
-
-<label style="margin-left:10px">Site:</label>
-<input id="filter-site-code" placeholder="Nhập site..." oninput="suggestSite('site')">
-<div id="autocomplete-site-site" class="autocomplete-items"></div>
-
-<label style="margin-left:10px">Tên Site:</label>
-<input id="filter-site-sitename" placeholder="Nhập tên site..." oninput="suggestSite('sitename')">
-<div id="autocomplete-site-sitename" class="autocomplete-items"></div>
-
-<label style="margin-left:10px">Quận/Huyện:</label>
-<input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
-<div id="autocomplete-site-district" class="autocomplete-items"></div>
-
-         
+ <!-- Filters -->
+<div style="margin:10px 0;">
+  <div class="autocomplete-container">
+    <label>Tỉnh:</label>
+    <input id="filter-site-province" placeholder="Nhập tỉnh..." oninput="suggestSite('province')">
+    <div id="autocomplete-site-province" class="autocomplete-items"></div>
   </div>
+
+  <div class="autocomplete-container">
+    <label>Site:</label>
+    <input id="filter-site-code" placeholder="Nhập site..." oninput="suggestSite('site')">
+    <div id="autocomplete-site-site" class="autocomplete-items"></div>
+  </div>
+
+  <div class="autocomplete-container">
+    <label>Tên Site:</label>
+    <input id="filter-site-sitename" placeholder="Nhập tên site..." oninput="suggestSite('sitename')">
+    <div id="autocomplete-site-sitename" class="autocomplete-items"></div>
+  </div>
+
+  <div class="autocomplete-container">
+    <label>Quận/Huyện:</label>
+    <input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
+    <div id="autocomplete-site-district" class="autocomplete-items"></div>
+  </div>
+</div>
+
 
   <!-- Table -->
   <table id="table-site" border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse;">
