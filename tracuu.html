@@ -269,8 +269,7 @@ header {
 <input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
 <div id="autocomplete-site-district" class="autocomplete-items"></div>
 
-         style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;">
-    </div>
+         
   </div>
 
   <!-- Table -->
@@ -352,21 +351,28 @@ function filterSite(selectedItem, type){
   else if(type === "sitename") filtered = siteData.filter(r => (r["Site name"] || "").toUpperCase() === selectedItem.toUpperCase());
 
   renderSite(filtered);
-  document.getElementById(`filter-site-${type}`).value = "";
+
+  const inputId = (type === "site") ? "filter-site-code" : `filter-site-${type}`;
+  document.getElementById(inputId).value = "";
 }
+
+  
 
 
 // Autocomplete live
 function suggestSite(type){
   if(siteData.length === 0){
-    loadSite();   // ép load nếu chưa có dữ liệu
+    loadSite();
     return;
   }
 
-  const input = document.getElementById(`filter-site-${type}`);
+  const inputId = (type === "site") ? "filter-site-code" : `filter-site-${type}`;
+  const listDivId = `autocomplete-site-${type}`;
+
+  const input = document.getElementById(inputId);
   const val = input.value.toUpperCase();
-  const listDiv = document.getElementById(`autocomplete-site-${type}`);
-  
+  const listDiv = document.getElementById(listDivId);
+
   listDiv.innerHTML = "";
   if(!val) return;
 
@@ -378,7 +384,7 @@ function suggestSite(type){
     else if(type === "sitename" && r["Site name"]) items.push(r["Site name"]);
   });
 
-  items = [...new Set(items)]; // loại bỏ trùng
+  items = [...new Set(items)];
 
   items.forEach(item => {
     if(item.toUpperCase().includes(val)){
@@ -387,13 +393,16 @@ function suggestSite(type){
       div.style.padding = "4px";
       div.style.cursor = "pointer";
       div.onclick = () => {
-        filterSite(item, type); // lọc
-        listDiv.innerHTML = ""; // ẩn gợi ý
+        filterSite(item, type);
+        listDiv.innerHTML = "";
       };
       listDiv.appendChild(div);
     }
   });
 }
+
+
+
 
 
 //------------  
