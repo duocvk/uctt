@@ -265,7 +265,7 @@ header {
     <label style="margin-left:10px">Quận/Huyện:</label>
     <input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
 
-    <div id="autocomplete-site" class="autocomplete-items" 
+    <div id="autocomplete-site-site" class="autocomplete-items" 
          style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;">
     </div>
   </div>
@@ -362,7 +362,8 @@ function suggestSite(type){
 
   const input = document.getElementById(`filter-site-${type}`);
   const val = input.value.toUpperCase();
-  const listDiv = document.getElementById("autocomplete-site");
+  const listDiv = document.getElementById(`autocomplete-site-${type}`);
+  
   listDiv.innerHTML = "";
   if(!val) return;
 
