@@ -463,6 +463,212 @@ document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener
 </script>
 
 <!-- END================= Panel Site ==================== -->
+
+<!-- START================= Panel Cable ==================== -->
+
+  <!-- Panel Cable -->
+<div id="panel-Cable" class="panel" style="display:none; position:relative;">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
+  <h2>Tra cứu Cable</h2>
+
+  <!-- Filters -->
+  <div class="filters-row">
+    <div class="autocomplete-container">
+      <label>Mã tuyến:</label>
+      <input id="filter-cable-route" placeholder="Nhập mã tuyến..." oninput="suggestCable('route')">
+      <div id="autocomplete-cable-route" class="autocomplete-items"></div>
+    </div>
+
+    <div class="autocomplete-container">
+      <label>Tên tuyến cáp:</label>
+      <input id="filter-cable-name" placeholder="Nhập tên tuyến..." oninput="suggestCable('name')">
+      <div id="autocomplete-cable-name" class="autocomplete-items"></div>
+    </div>
+  </div>
+
+  <!-- Table Cable -->
+  <table id="table-cable" border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse; margin-top:10px;">
+    <thead style="background:#eee;">
+      <tr>
+        <th style="display:none">ID Cable</th>
+        <th>Mã tuyến</th>
+        <th>Tên tuyến cáp</th>
+        <th>Loại cáp</th>
+        <th>Chiều dài</th>
+        <th>Ghi chú</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Table Links -->
+  <h3>Danh sách link trên cáp</h3>
+  <table id="table-cable-links" border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse;">
+    <thead style="background:#eee;">
+      <tr>
+        <th>Link</th>
+        <th>Loại</th>
+        <th>Sợi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<style>
+.filters-row {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.autocomplete-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.autocomplete-items {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid #ccc;
+  background: #fff;
+  z-index: 9999;
+}
+
+.autocomplete-items div {
+  padding: 4px 8px;
+  cursor: pointer;
+  border-right: 1px solid #eee;
+}
+
+.autocomplete-items div:last-child {
+  border-right: none;
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+const CABLE_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=1810625197";
+const CABLE_LINK_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=475464123";
+
+let cableData = [];
+let cableLinkData = [];
+
+// Load dữ liệu Cable
+function loadCable() {
+  if(cableData.length > 0) return;
+  Papa.parse(CABLE_CSV, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: (r) => {
+      cableData = r.data;
+    }
+  });
+}
+
+// Load dữ liệu Link
+function loadCableLinks() {
+  if(cableLinkData.length > 0) return;
+  Papa.parse(CABLE_LINK_CSV, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: (r) => {
+      cableLinkData = r.data;
+    }
+  });
+}
+
+// Render Cable
+function renderCable(row){
+  const tbody = document.querySelector("#table-cable tbody");
+  tbody.innerHTML = `
+    <tr>
+      <td style="display:none">${row["ID Cable"] || ""}</td>
+      <td>${row["Mã tuyến"] || ""}</td>
+      <td>${row["Tên tuyến cáp"] || ""}</td>
+      <td>${row["Loại cáp"] || ""}</td>
+      <td>${row["Chiều dài"] || ""}</td>
+      <td>${row["Ghi chú"] || ""}</td>
+    </tr>
+  `;
+}
+
+// Render Links theo ID Cable
+function renderCableLinks(idCable){
+  const tbody = document.querySelector("#table-cable-links tbody");
+  tbody.innerHTML = "";
+  const links = cableLinkData.filter(r => r["ID Cable"] === idCable);
+  links.forEach(r => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${r["Link"] || ""}</td>
+        <td>${r["Loại"] || ""}</td>
+        <td>${r["Sợi"] || ""}</td>
+      </tr>
+    `;
+  });
+}
+
+// Autocomplete
+function suggestCable(type){
+  if(cableData.length === 0) loadCable();
+  if(cableLinkData.length === 0) loadCableLinks();
+
+  const inputId = (type === "route") ? "filter-cable-route" : "filter-cable-name";
+  const listDivId = (type === "route") ? "autocomplete-cable-route" : "autocomplete-cable-name";
+
+  const input = document.getElementById(inputId);
+  const val = input.value.toUpperCase();
+  const listDiv = document.getElementById(listDivId);
+
+  listDiv.innerHTML = "";
+  if(!val) return;
+
+  let items = [];
+  cableData.forEach(r => {
+    if(type === "route" && r["Mã tuyến"]) items.push(r["Mã tuyến"]);
+    else if(type === "name" && r["Tên tuyến cáp"]) items.push(r["Tên tuyến cáp"]);
+  });
+
+  items = [...new Set(items)];
+
+  items.forEach(item => {
+    if(item.toUpperCase().includes(val)){
+      const div = document.createElement("div");
+      div.innerHTML = item;
+      div.onclick = () => {
+        // tìm đúng row Cable
+        let row;
+        if(type === "route") row = cableData.find(r => r["Mã tuyến"] === item);
+        else row = cableData.find(r => r["Tên tuyến cáp"] === item);
+
+        if(row){
+          renderCable(row);
+          renderCableLinks(row["ID Cable"]);
+        }
+        listDiv.innerHTML = "";
+        input.value = "";
+      };
+      listDiv.appendChild(div);
+    }
+  });
+}
+
+// Khi mở panel Cable, load dữ liệu
+document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListener("click", () => {
+  loadCable();
+  loadCableLinks();
+});
+</script>
+
+
+<!-- END================= Panel Cable ==================== -->
   
 <!-- START ============= PANEL TRỤC 2B ============= -->
 <div id="panel-2B" class="panel">
