@@ -253,19 +253,22 @@ header {
 
   <!-- Filters -->
   <div style="margin:10px 0; position:relative;">
-    <label>Tỉnh:</label>
-    <input id="filter-site-province" placeholder="Nhập tỉnh..." oninput="suggestSite('province')">
+<label>Tỉnh:</label>
+<input id="filter-site-province" placeholder="Nhập tỉnh..." oninput="suggestSite('province')">
+<div id="autocomplete-site-province" class="autocomplete-items"></div>
 
-    <label style="margin-left:10px">Site:</label>
-    <input id="filter-site-code" placeholder="Nhập site..." oninput="suggestSite('site')">
+<label style="margin-left:10px">Site:</label>
+<input id="filter-site-code" placeholder="Nhập site..." oninput="suggestSite('site')">
+<div id="autocomplete-site-site" class="autocomplete-items"></div>
 
-    <label style="margin-left:10px">Tên Site:</label>
-    <input id="filter-site-sitename" placeholder="Nhập tên site..." oninput="suggestSite('sitename')">
+<label style="margin-left:10px">Tên Site:</label>
+<input id="filter-site-sitename" placeholder="Nhập tên site..." oninput="suggestSite('sitename')">
+<div id="autocomplete-site-sitename" class="autocomplete-items"></div>
 
-    <label style="margin-left:10px">Quận/Huyện:</label>
-    <input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
+<label style="margin-left:10px">Quận/Huyện:</label>
+<input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
+<div id="autocomplete-site-district" class="autocomplete-items"></div>
 
-    <div id="autocomplete-site-site" class="autocomplete-items" 
          style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;">
     </div>
   </div>
