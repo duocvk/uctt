@@ -506,6 +506,7 @@ document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener
   <table id="table-cable-links" border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse;">
     <thead style="background:#eee;">
       <tr>
+        <th>STT</th>
         <th>Link</th>
         <th>Loại</th>
         <th>Sợi</th>
@@ -550,7 +551,7 @@ document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener
 }
 </style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+//<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
 const CABLE_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=1810625197";
 const CABLE_LINK_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=475464123";
@@ -600,22 +601,6 @@ function renderCable(row){
 }
 
 // Render Links theo ID Cable
-function renderCableLinks(idCable){
-  const tbody = document.querySelector("#table-cable-links tbody");
-  tbody.innerHTML = "";
-  const links = cableLinkData.filter(r => r["ID Cable"] === idCable);
-  links.forEach(r => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${r["Link"] || ""}</td>
-        <td>${r["Loại"] || ""}</td>
-        <td>${r["Sợi"] || ""}</td>
-      </tr>
-    `;
-  });
-}
-
-// Autocomplete
 function suggestCable(type){
   if(cableData.length === 0) loadCable();
   if(cableLinkData.length === 0) loadCableLinks();
@@ -631,10 +616,19 @@ function suggestCable(type){
   if(!val) return;
 
   let items = [];
-  cableData.forEach(r => {
-    if(type === "route" && r["Mã tuyến"]) items.push(r["Mã tuyến"]);
-    else if(type === "name" && r["Tên tuyến cáp"]) items.push(r["Tên tuyến cáp"]);
-  });
+
+  if(type === "route"){
+    cableData.forEach(r => {
+      if(r["Mã tuyến"] && r["Loại cáp"] && r["Chiều dài"]){
+        const label = `${r["Mã tuyến"]} | ${r["Loại cáp"]} | ${r["Chiều dài"]}`;
+        items.push(label);
+      }
+    });
+  } else {
+    cableData.forEach(r => {
+      if(r["Tên tuyến cáp"]) items.push(r["Tên tuyến cáp"]);
+    });
+  }
 
   items = [...new Set(items)];
 
@@ -643,10 +637,17 @@ function suggestCable(type){
       const div = document.createElement("div");
       div.innerHTML = item;
       div.onclick = () => {
-        // tìm đúng row Cable
         let row;
-        if(type === "route") row = cableData.find(r => r["Mã tuyến"] === item);
-        else row = cableData.find(r => r["Tên tuyến cáp"] === item);
+        if(type === "route"){
+          const [route, typeCable, length] = item.split(" | ");
+          row = cableData.find(r =>
+            r["Mã tuyến"] === route &&
+            r["Loại cáp"] === typeCable &&
+            r["Chiều dài"] === length
+          );
+        } else {
+          row = cableData.find(r => r["Tên tuyến cáp"] === item);
+        }
 
         if(row){
           renderCable(row);
@@ -659,6 +660,23 @@ function suggestCable(type){
     }
   });
 }
+
+function renderCableLinks(idCable){
+  const tbody = document.querySelector("#table-cable-links tbody");
+  tbody.innerHTML = "";
+  const links = cableLinkData.filter(r => r["ID Cable"] === idCable);
+  links.forEach((r, i) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${r["Link"] || ""}</td>
+        <td>${r["Loại"] || ""}</td>
+        <td>${r["Sợi"] || ""}</td>
+      </tr>
+    `;
+  });
+}
+
 
 // Khi mở panel Cable, load dữ liệu
 document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListener("click", () => {
