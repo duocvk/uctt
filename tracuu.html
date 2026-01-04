@@ -249,7 +249,7 @@ header {
 
 <div id="panel-Site" class="panel" style="display:none; position:relative;">
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
-  <h2>Panel Site</h2>
+  <h2>Tra cứu Site</h2>
 
   <!-- Filters -->
   <div style="margin:10px 0; position:relative;">
@@ -257,7 +257,7 @@ header {
     <input id="filter-site-province" placeholder="Nhập tỉnh..." oninput="suggestSite('province')">
 
     <label style="margin-left:10px">Site:</label>
-    <input id="filter-site-code" placeholder="Nhập site..." oninput="suggestSite('filter-site-code')">
+    <input id="filter-site-code" placeholder="Nhập site..." oninput="suggestSite('site')">
 
     <label style="margin-left:10px">Quận/Huyện:</label>
     <input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
@@ -321,7 +321,7 @@ function renderSite(data){
         <td>${r["Province"] || ""}</td>   <!-- ✅ LẤY MÃ TỈNH -->
         <td>${r["Site code"] || ""}</td>
         <td>${r["Site name"] || ""}</td>
-        <td>${r["Nick name"] || ""}</td>
+        <td>${r["Location"] || ""}</td>
         <td>${r["District"] || ""}</td>
         <td style="text-align:center">${mapBtn}</td>
       </tr>
