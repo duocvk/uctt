@@ -262,7 +262,7 @@ header {
     <label style="margin-left:10px">Quận/Huyện:</label>
     <input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
 
-    <div id="autocomplete-list" class="autocomplete-items" 
+    <div id="autocomplete-site" class="autocomplete-items" 
          style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;">
     </div>
   </div>
@@ -308,19 +308,21 @@ function renderSite(data){
   const tbody = document.querySelector("#table-site tbody");
   tbody.innerHTML = "";
 
-  data.forEach((r,i)=>{
-    const lat = r["Lat"]||"";
-    const lon = r["Long"]||"";
-    const mapBtn = (lat && lon) ? 
-      `<button class="map-btn" onclick="window.open('https://www.google.com/maps?q=${lat},${lon}','_blank')">Map</button>` : "";
+  data.forEach((r)=>{
+    const lat = r["Lat"] || "";
+    const lon = r["Long"] || "";
+
+    const mapBtn = (lat && lon)? 
+      `<button onclick="window.open('https://www.google.com/maps?q=${lat},${lon}','_blank')">Map</button>`
+      : "";
 
     tbody.innerHTML += `
       <tr>
-        <td style="text-align:center">${i+1}</td>
-        <td>${r["Site code"]||""}</td>
-        <td>${r["Site name"]||""}</td>
-        <td>${r["Nick name"]||""}</td>
-        <td>${r["District"]||""}</td>
+        <td>${r["Province"] || ""}</td>   <!-- ✅ LẤY MÃ TỈNH -->
+        <td>${r["Site code"] || ""}</td>
+        <td>${r["Site name"] || ""}</td>
+        <td>${r["Nick name"] || ""}</td>
+        <td>${r["District"] || ""}</td>
         <td style="text-align:center">${mapBtn}</td>
       </tr>
     `;
@@ -329,6 +331,10 @@ function renderSite(data){
   document.getElementById("site-count").innerHTML =
     `<td colspan="6">Tổng: ${data.length}</td>`;
 }
+
+
+  //
+ 
 
 // Filter dữ liệu dựa trên lựa chọn autocomplete
 function filterSite(selectedItem, type){
@@ -346,11 +352,17 @@ function filterSite(selectedItem, type){
 
 // Autocomplete live
 function suggestSite(type){
-  if(siteData.length === 0) return; // chưa load xong
+  if(siteData.length === 0){
+    loadSite();   // ép load nếu chưa có dữ liệu
+    return;
+  }
+
+  
+
 
   const input = document.getElementById(`filter-site-${type}`);
   const val = input.value.toUpperCase();
-  const listDiv = document.getElementById("autocomplete-list");
+  const listDiv = document.getElementById("autocomplete-site");
   listDiv.innerHTML = "";
   if(!val) return;
 
@@ -401,7 +413,7 @@ document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener
     <label for="filter-link-2B">Link:</label>
     <input id="filter-link-2B" placeholder="Gõ link..." oninput="suggestAutocomplete('link')">
 
-    <div id="autocomplete-list" class="autocomplete-items" style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;"></div>
+    <div id="autocomplete-list_2B" class="autocomplete-items" style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;"></div>
   </div>
 
   <!-- Table dữ liệu -->
@@ -422,7 +434,7 @@ document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener
   </table>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+// <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
 const csvUrl2B = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=708023040";
 let data2B = [];
@@ -449,7 +461,7 @@ function load2B(){
 function suggestAutocomplete(type){
   const input = document.getElementById(`filter-${type}-2B`);
   const val = input.value.toUpperCase();
-  const listDiv = document.getElementById("autocomplete-list");
+  const listDiv = document.getElementById("autocomplete-list_2B");
   listDiv.innerHTML = "";
   if(!val) return;
 
@@ -639,7 +651,7 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
 </style>
 
 <!-- ===== JS ===== -->
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+//<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
 const csvUrl_1A = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=0";
 let data_1A = [];
