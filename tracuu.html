@@ -259,6 +259,9 @@ header {
     <label style="margin-left:10px">Site:</label>
     <input id="filter-site-code" placeholder="Nhập site..." oninput="suggestSite('site')">
 
+    <label style="margin-left:10px">Tên Site:</label>
+    <input id="filter-site-sitename" placeholder="Nhập tên site..." oninput="suggestSite('sitename')">
+
     <label style="margin-left:10px">Quận/Huyện:</label>
     <input id="filter-site-district" placeholder="Nhập quận/huyện..." oninput="suggestSite('district')">
 
@@ -340,15 +343,15 @@ function renderSite(data){
 function filterSite(selectedItem, type){
   let filtered = siteData;
 
-  if(type==="province") filtered = siteData.filter(r=> (r["Province"]||"").toUpperCase() === selectedItem.toUpperCase());
-  else if(type==="site") filtered = siteData.filter(r=> (r["Site code"]||"").toUpperCase() === selectedItem.toUpperCase());
-  else if(type==="district") filtered = siteData.filter(r=> (r["District"]||"").toUpperCase() === selectedItem.toUpperCase());
+  if(type === "province") filtered = siteData.filter(r => (r["Province"] || "").toUpperCase() === selectedItem.toUpperCase());
+  else if(type === "site") filtered = siteData.filter(r => (r["Site code"] || "").toUpperCase() === selectedItem.toUpperCase());
+  else if(type === "district") filtered = siteData.filter(r => (r["District"] || "").toUpperCase() === selectedItem.toUpperCase());
+  else if(type === "sitename") filtered = siteData.filter(r => (r["Site name"] || "").toUpperCase() === selectedItem.toUpperCase());
 
   renderSite(filtered);
-
-  // Xóa input sau khi chọn
   document.getElementById(`filter-site-${type}`).value = "";
 }
+
 
 // Autocomplete live
 function suggestSite(type){
@@ -357,9 +360,6 @@ function suggestSite(type){
     return;
   }
 
-  
-
-
   const input = document.getElementById(`filter-site-${type}`);
   const val = input.value.toUpperCase();
   const listDiv = document.getElementById("autocomplete-site");
@@ -367,26 +367,33 @@ function suggestSite(type){
   if(!val) return;
 
   let items = [];
-  if(type==="province") siteData.forEach(r=>{ if(r["Province"]) items.push(r["Province"]); });
-  else if(type==="site") siteData.forEach(r=>{ if(r["Site code"]) items.push(r["Site code"]); });
-  else if(type==="district") siteData.forEach(r=>{ if(r["District"]) items.push(r["District"]); });
+  siteData.forEach(r => {
+    if(type === "province" && r["Province"]) items.push(r["Province"]);
+    else if(type === "site" && r["Site code"]) items.push(r["Site code"]);
+    else if(type === "district" && r["District"]) items.push(r["District"]);
+    else if(type === "sitename" && r["Site name"]) items.push(r["Site name"]);
+  });
 
-  items = [...new Set(items)];
+  items = [...new Set(items)]; // loại bỏ trùng
 
-  items.forEach(item=>{
+  items.forEach(item => {
     if(item.toUpperCase().includes(val)){
       const div = document.createElement("div");
       div.innerHTML = item;
-      div.style.padding="4px";
-      div.style.cursor="pointer";
+      div.style.padding = "4px";
+      div.style.cursor = "pointer";
       div.onclick = () => {
-        filterSite(item, type); // filter ngay
-        listDiv.innerHTML = "";  // ẩn gợi ý
+        filterSite(item, type); // lọc
+        listDiv.innerHTML = ""; // ẩn gợi ý
       };
       listDiv.appendChild(div);
     }
   });
 }
+
+
+//------------  
+
 
 // Khi mở panel Site, load CSV
 document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener("click", () => {
