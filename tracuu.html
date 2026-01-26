@@ -557,7 +557,7 @@ document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener
 }
 </style>
 
-//<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
 <script>
 const CABLE_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=1810625197";
 const CABLE_LINK_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=475464123";
@@ -1348,7 +1348,47 @@ const PANELS = {
   "SRT_QNM": { panelId:"panel-SRT_QNM", tableId:"table-SRT_QNM", gid:518743852 },
   "SRT_QNI": { panelId:"panel-SRT_QNI", tableId:"table-SRT_QNI", gid:354037291 }
 };
+// Cache dữ liệu
+const CSV_CACHE = {};
 
+// Mở panel
+function openPanel(panelId){
+  document.querySelectorAll(".panel").forEach(p => p.style.display="none");
+  document.getElementById("dashboard").style.display="none";
+
+  const panel = document.getElementById(panelId);
+  if(panel){
+    panel.style.display="block";
+  }
+}
+
+// Quay lại dashboard
+function backDashboard(){
+  document.querySelectorAll(".panel").forEach(p => p.style.display="none");
+  document.getElementById("dashboard").style.display="block";
+}
+
+// Load CSV theo key
+function loadCSVByKey(key, callback){
+  if(CSV_CACHE[key]){
+    callback(CSV_CACHE[key]);
+    return;
+  }
+
+  const cfg = PANELS[key];
+  if(!cfg) return;
+
+  const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=${cfg.gid}`;
+
+  Papa.parse(url,{
+    download:true,
+    skipEmptyLines:true,
+    complete:(res)=>{
+      CSV_CACHE[key] = res.data;
+      callback(res.data);
+    }
+  });
+}
 // Mở panel
 function openPanel(id){
   document.getElementById('dashboard').style.display='none';
