@@ -909,7 +909,7 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
   </div>
 
   <!-- Table dữ liệu -->
-  <table id="table_1A" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+  <table id="table-1A" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
       <tr>
         <th>Tỉnh</th>
@@ -1098,7 +1098,7 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
   </div>
 
   <!-- Table -->
-  <table id="table_1C" border="1"
+  <table id="table-1C" border="1"
          style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
       <tr>
@@ -1232,9 +1232,13 @@ function renderRow_1C(r){
 
   let cls="";
   if(tinh!==""){
-    if(linkType==="MAIN") cls="main-link";
-    else if(linkType==="PRO") cls="pro-link";
-    else if(linkType==="DP") cls="dp-link";
+    if (linkType === "MAIN") {
+  cls = "main-link";
+} else if (linkType === "PRO") {
+  cls = "pro-link";
+} else {
+  cls = "";
+}
   }
 
   tbody.innerHTML+=`
@@ -1309,13 +1313,13 @@ const PANELS = {
   
 
   // ===== QUỐC GIA =====
-  "2B":      { panelId:"panel-2B",      tableId:"table_2B",      gid:708023040 },
-  "1A":      { panelId:"panel-1A",      tableId:"table_1A",      gid:0 },
-  "1A_NEW":  { panelId:"panel-1AN",  	tableId:"table_1A_new",  gid:1441590793 },
-  "1C":      { panelId:"panel-1C",      tableId:"table_1C",      gid:821612693 },
-  "1C_NEW":  { panelId:"panel-1CN", 	tableId:"table_1C_new",  gid:2067680388 },
-  "1E":      { panelId:"panel-1E",      tableId:"table_1E",      gid:2058026890},
-  "1E_NEW":  { panelId:"panel-1EN", 	tableId:"table_1E_new",  gid:1518163535 },
+  "2B":      { panelId:"panel-2B",      tableId:"table-2B",      gid:708023040 },
+  "1A":      { panelId:"panel-1A",      tableId:"table-1A",      gid:0 },
+  "1A_NEW":  { panelId:"panel-1AN",  	tableId:"table_1AN",  gid:1441590793 },
+  "1C":      { panelId:"panel-1C",      tableId:"table-1C",      gid:821612693 },
+  "1C_NEW":  { panelId:"panel-1CN", 	tableId:"table-1CN",  gid:2067680388 },
+  "1E":      { panelId:"panel-1E",      tableId:"table-1E",      gid:2058026890},
+  "1E_NEW":  { panelId:"panel-1EN", 	tableId:"table-1EN",  gid:1518163535 },
 
   // ===== QUỐC TẾ =====
   "APG": { panelId:"panel-APG", tableId:"table-APG", gid:828291890 },
@@ -1494,5 +1498,75 @@ for(const key in PANELS){
   setupPanel(key);
 }
 </script>
+
+<script>
+/* ================= ENGINE CHUNG ================= */
+
+const CSV_CACHE = {};
+
+function openPanel(panelId){
+  document.querySelectorAll(".panel").forEach(p => p.style.display="none");
+  document.getElementById("dashboard").style.display="none";
+  document.getElementById(panelId).style.display="block";
+}
+
+function backDashboard(){
+  document.querySelectorAll(".panel").forEach(p => p.style.display="none");
+  document.getElementById("dashboard").style.display="block";
+}
+
+function loadCSVByKey(key){
+  const cfg = PANELS[key];
+  if(!cfg) return;
+
+  if(CSV_CACHE[key]){
+    renderTable(cfg.tableId, CSV_CACHE[key]);
+    return;
+  }
+
+  const url =
+    `https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=${cfg.gid}`;
+
+  Papa.parse(url,{
+    download:true,
+    skipEmptyLines:true,
+    complete:(res)=>{
+      CSV_CACHE[key] = res.data;
+      renderTable(cfg.tableId, res.data);
+    }
+  });
+}
+
+function renderTable(tableId, data){
+  const table = document.getElementById(tableId);
+  table.innerHTML = "";
+
+  if(!data || !data.length) return;
+
+  const thead = document.createElement("thead");
+  const trh = document.createElement("tr");
+
+  Object.keys(data[0]).forEach(h=>{
+    const th = document.createElement("th");
+    th.textContent = h;
+    trh.appendChild(th);
+  });
+  thead.appendChild(trh);
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  data.forEach(row=>{
+    const tr = document.createElement("tr");
+    Object.values(row).forEach(v=>{
+      const td = document.createElement("td");
+      td.textContent = v;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+}
+</script>
+  
 </body>
 </html>
