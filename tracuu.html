@@ -1300,7 +1300,16 @@ window.addEventListener('DOMContentLoaded', () => {
 });
   
 //====
-  
+
+  <!-- Panel Container -->
+<div id="panels-container">
+  <!-- Các panel sẽ được tạo tự động bằng JS -->
+</div>
+
+<!-- Thư viện PapaParse -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <script>
 const PANELS = {
   // ===== TRA CỨU CHUNG =====
   "Site":    { panelId:"panel-Site",    tableId:"table-site",    gid:1561746109 },
@@ -1367,7 +1376,91 @@ function logout(){
   sessionStorage.removeItem('login');
   location.reload();
 }
+  // Tạo panel và filter input động
+const panelsContainer = document.getElementById('panels-container');
+for(const key in PANELS){
+  const p = PANELS[key];
+  const div = document.createElement('div');
+  div.id = p.panelId;
+  div.className = 'panel';
+  div.innerHTML = `
+    <h2>${key}</h2>
+    <input type="text" class="filter" placeholder="Gõ để lọc...">
+    <button class="reset-btn">Reset</button>
+    <table id="${p.tableId}"><thead></thead><tbody></tbody></table>
+  `;
+  panelsContainer.appendChild(div);
+}
+
+// Hàm load dữ liệu Google Sheet
+async function loadPanelData(panelKey){
+  const p = PANELS[panelKey];
+  const url = `https://docs.google.com/spreadsheets/d/${p.gid}/export?format=csv`;
+  const response = await fetch(url);
+  const csvText = await response.text();
+  const parsed = Papa.parse(csvText, { header:true });
+  const table = document.getElementById(p.tableId);
   
+  // Clear table
+  table.querySelector('thead').innerHTML = '';
+  table.querySelector('tbody').innerHTML = '';
+
+  if(parsed.data.length===0) return;
+  // Tạo header
+  const headerRow = document.createElement('tr');
+  for(const h of Object.keys(parsed.data[0])){
+    const th = document.createElement('th');
+    th.textContent = h;
+    headerRow.appendChild(th);
+  }
+  table.querySelector('thead').appendChild(headerRow);
+  
+  // Tạo body
+  for(const row of parsed.data){
+    const tr = document.createElement('tr');
+    for(const h of Object.keys(row)){
+      const td = document.createElement('td');
+      td.textContent = row[h];
+      tr.appendChild(td);
+    }
+    table.querySelector('tbody').appendChild(tr);
+  }
+}
+
+// Filter + highlight + reset
+function setupPanel(panelKey){
+  const panel = document.getElementById(PANELS[panelKey].panelId);
+  const input = panel.querySelector('.filter');
+  const resetBtn = panel.querySelector('.reset-btn');
+  const table = panel.querySelector('table');
+
+  input.addEventListener('input', ()=>{
+    const val = input.value.toLowerCase();
+    for(const tr of table.querySelectorAll('tbody tr')){
+      tr.style.display = '';
+      tr.classList.remove('highlight');
+      if(val && !Array.from(tr.cells).some(td=>td.textContent.toLowerCase().includes(val))){
+        tr.style.display = 'none';
+      } else if(val) {
+        tr.classList.add('highlight');
+      }
+    }
+  });
+
+  resetBtn.addEventListener('click', ()=>{
+    input.value = '';
+    for(const tr of table.querySelectorAll('tbody tr')){
+      tr.style.display = '';
+      tr.classList.remove('highlight');
+    }
+  });
+}
+
+// Load tất cả panel và setup
+for(const key in PANELS){
+  loadPanelData(key);
+  setupPanel(key);
+}
 </script>
 </body>
 </html>
