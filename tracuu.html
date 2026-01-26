@@ -183,7 +183,7 @@ header {
       <button class="menu-button menu-qg" onclick="openPanel('panel-1C')">1C (DWB3)</button>
        <button class="menu-button menu-qg" onclick="openPanel('panel-1CN')">1C_New (DWB7)</button>
       <button class="menu-button menu-qg" onclick="openPanel('panel-1E')">1E (DWB5)</button>
-      <button class="menu-button menu-qg" onclick="openPanel('panel-qg.DP')">Dự phòng</button>
+      <button class="menu-button menu-qg" onclick="openPanel('panel-1EN')">1E_NEW (DWB5)</button>
     </div>
   </div>
 
@@ -219,6 +219,7 @@ header {
       <button class="menu-button menu-lh" onclick="openPanel('panel-QBH')">LH_QBH</button>
       <button class="menu-button menu-lh" onclick="openPanel('panel-QTI')">LH_QTI</button>
       <button class="menu-button menu-lh" onclick="openPanel('panel-HUE')">LH_HUE</button>
+      <button class="menu-button menu-lh" onclick="openPanel('panel-DNG')">LH_DNG</button>
       <button class="menu-button menu-lh" onclick="openPanel('panel-QNM')">LH_QNM</button>
       <button class="menu-button menu-lh" onclick="openPanel('panel-QNI')">LH_QNI</button>
       <button class="menu-button menu-lh" onclick="openPanel('panel-BDH')">LH_BDH</button>
@@ -226,14 +227,19 @@ header {
       <button class="menu-button menu-lh" onclick="openPanel('panel-KHA')">LH_KHA</button>
       <button class="menu-button menu-lh" onclick="openPanel('panel-NTN')">LH_NTN</button>
       <button class="menu-button menu-lh" onclick="openPanel('panel-BTN')">LH_BTN</button>
+      <button class="menu-button menu-lh" onclick="openPanel('panel-KTM')">LH_KTM</button>
+      <button class="menu-button menu-lh" onclick="openPanel('panel-GLI')">LH_GLI</button>
+      <button class="menu-button menu-lh" onclick="openPanel('panel-DLK')">LH_DLK</button>
+      <button class="menu-button menu-lh" onclick="openPanel('panel-DCN')">LH_DCN</button>
+      <button class="menu-button menu-lh" onclick="openPanel('panel-LDG')">LH_LDG</button>
         </div>
   </div>
 
   <div class="layer layer-srt">
     <div class="layer-title">5️⃣ Access</div>
     <div class="dashboard">
-      <button class="menu-button menu-srt" onclick="openPanel('panel.srt-QNM')">SRT_QNM</button>
-      <button class="menu-button menu-srt" onclick="openPanel('panel-srt.QNI')">SRT_QNI</button>
+      <button class="menu-button menu-srt" onclick="openPanel('panel-SRT_QNM')">SRT_QNM</button>
+      <button class="menu-button menu-srt" onclick="openPanel('panel-SRT_QNI')">SRT_QNI</button>
       <button class="menu-button menu-srt" onclick="openPanel('panel-srt.DP1')">Dự phòng 1</button>
       <button class="menu-button menu-srt" onclick="openPanel('panel-srt.DP2')">Dự phòng 2</button>
       <button class="menu-button menu-srt" onclick="openPanel('panel-srt.DP3')">Dự phòng 3</button>
@@ -1295,7 +1301,52 @@ window.addEventListener('DOMContentLoaded', () => {
   
 //====
   
+const PANELS = {
+  // ===== TRA CỨU CHUNG =====
+  "Site":    { panelId:"panel-Site",    tableId:"table-site",    gid:1561746109 },
+  "Cable":   { panelId:"panel-Cable",   tableId:"table-cable",   gid:1810625197 },
+  
 
+  // ===== QUỐC GIA =====
+  "2B":      { panelId:"panel-2B",      tableId:"table_2B",      gid:708023040 },
+  "1A":      { panelId:"panel-1A",      tableId:"table_1A",      gid:0 },
+  "1A_NEW":  { panelId:"panel-1AN",  	tableId:"table_1A_new",  gid:1441590793 },
+  "1C":      { panelId:"panel-1C",      tableId:"table_1C",      gid:821612693 },
+  "1C_NEW":  { panelId:"panel-1CN", 	tableId:"table_1C_new",  gid:2067680388 },
+  "1E":      { panelId:"panel-1E",      tableId:"table_1E",      gid:2058026890},
+  "1E_NEW":  { panelId:"panel-1EN", 	tableId:"table_1E_new",  gid:1518163535 },
+
+  // ===== QUỐC TẾ =====
+  "APG": { panelId:"panel-APG", tableId:"table-APG", gid:828291890 },
+  "ADC": { panelId:"panel-ADC", tableId:"table-ADC", gid:1626186967 },
+
+  // ===== LIÊN TỈNH =====
+  "MT1":    { panelId:"panel-MT1",    tableId:"table-MT1",    gid:2021399923 },
+  "MT2":    { panelId:"panel-MT2",    tableId:"table-MT2",    gid:1942552881},
+  "MT3_4":  { panelId:"panel-MT3",    tableId:"table-MT3",  gid:1025372890 },
+
+ // ===== LIÊN HUYỆN =====
+  "LH_QBH": { panelId:"panel-QBH", tableId:"table-QBH", gid:1100474057 },
+  "LH_QTI": { panelId:"panel-QTI", tableId:"table-QTI", gid:1331713119 },
+  "LH_HUE": { panelId:"panel-HUE", tableId:"table-TTH", gid:677247976 },
+  "LH_DNG": { panelId:"panel-DNG", tableId:"table-DNG", gid:2038382093 },
+  "LH_QNM": { panelId:"panel-QNM", tableId:"table-QNM", gid:2054960252},
+  "LH_QNI": { panelId:"panel-QNI", tableId:"table-QNI", gid:122756893 },
+  "LH_BDH": { panelId:"panel-BDH", tableId:"table-BDH", gid:383718227 },
+  "LH_PYN": { panelId:"panel-PYN", tableId:"table-PYN", gid:71053482 },
+  "LH_KHA": { panelId:"panel-KHA", tableId:"table-KHA", gid:1676717993 },
+  "LH_NTN": { panelId:"panel-NTN", tableId:"table-NTN", gid:1516665152},
+  "LH_BTN": { panelId:"panel-BTN", tableId:"table-BTN", gid:825957843 },
+  "LH_KTM": { panelId:"panel-KTM", tableId:"table-KTM", gid:2086905478},
+  "LH_GLI": { panelId:"panel-GLI", tableId:"table-GLI", gid:642648976 },
+  "LH_DLK": { panelId:"panel-DLK", tableId:"table-DLK", gid:864744326 },
+  "LH_DCN": { panelId:"panel-DCN", tableId:"table-DCN", gid:1885484912 },
+  "LH_LDG": { panelId:"panel-LDG", tableId:"table-LDG", gid:1468106731 },
+
+  // ===== ACCESS =====
+  "SRT_QNM": { panelId:"panel-SRT_QNM", tableId:"table-SRT_QNM", gid:518743852 },
+  "SRT_QNI": { panelId:"panel-SRT_QNI", tableId:"table-SRT_QNI", gid:354037291 }
+};
 
 // Mở panel
 function openPanel(id){
