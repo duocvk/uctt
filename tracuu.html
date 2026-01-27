@@ -731,7 +731,7 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
   </table>
 </div>
 
-// <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
 <script>
 const csvUrl2B = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=708023040";
 let data2B = [];
@@ -832,7 +832,7 @@ function filter2B() {
   }, 50);
 
   // Ẩn autocomplete list
-  document.getElementById("autocomplete-list").innerHTML = "";
+  document.getElementById("autocomplete-list_2B").innerHTML = "";
 }
 
 // Hàm render 1 dòng
@@ -928,27 +928,27 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
 
 <!-- ===== CSS ===== -->
 <style>
-  #table_1A thead {
+  #table-1A thead {
     background-color: #004080;
     color: white;
     font-weight: bold;
   }
-  #table_1A .main-link {
+  #table-1A .main-link {
     background-color: #cce5ff; /* xanh dương nhạt */
     font-weight: bold;
   }
-  #table_1A .pro-link {
+  #table-1A .pro-link {
     background-color: #ffe5cc; /* cam nhạt */
     font-weight: bold;
   }
-  #table_1A .dp-link {
+  #table-1A .dp-link {
     background-color: #e5ccff; /* tím nhạt */
     font-weight: bold;
   }
 </style>
 
 <!-- ===== JS ===== -->
-//<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
 <script>
 const csvUrl_1A = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=0";
 let data_1A = [];
@@ -1042,7 +1042,7 @@ function filter_1A() {
 
 // Render 1 dòng
 function renderRow_1A(r){
-  const tbody = document.getElementById("table_1A").querySelector("tbody");
+  const tbody = document.getElementById("table-1A").querySelector("tbody");
   const tinhCell = r[0] ? r[0].trim() : "";
   const linkType = r[3] ? r[3].trim().toUpperCase() : "";
 
@@ -1352,48 +1352,8 @@ const PANELS = {
   "SRT_QNM": { panelId:"panel-SRT_QNM", tableId:"table-SRT_QNM", gid:518743852 },
   "SRT_QNI": { panelId:"panel-SRT_QNI", tableId:"table-SRT_QNI", gid:354037291 }
 };
-// Cache dữ liệu
-const CSV_CACHE = {};
 
-// Mở panel
-function openPanel(panelId){
-  document.querySelectorAll(".panel").forEach(p => p.style.display="none");
-  document.getElementById("dashboard").style.display="none";
 
-  const panel = document.getElementById(panelId);
-  if(panel){
-    panel.style.display="block";
-  }
-}
-
-// Quay lại dashboard
-function backDashboard(){
-  document.querySelectorAll(".panel").forEach(p => p.style.display="none");
-  document.getElementById("dashboard").style.display="block";
-}
-
-// Load CSV theo key
-function loadCSVByKey(key, callback){
-  if(CSV_CACHE[key]){
-    callback(CSV_CACHE[key]);
-    return;
-  }
-
-  const cfg = PANELS[key];
-  if(!cfg) return;
-
-  const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=${cfg.gid}`;
-
-  Papa.parse(url,{
-    download:true,
-    skipEmptyLines:true,
-    complete:(res)=>{
-      CSV_CACHE[key] = res.data;
-      callback(res.data);
-    }
-  });
-}
-// Mở panel
 function openPanel(id){
   document.getElementById('dashboard').style.display='none';
   document.getElementById('app-header').style.display='none';
@@ -1401,7 +1361,6 @@ function openPanel(id){
   document.getElementById(id).style.display='block';
 }
 
-// Quay lại dashboard
 function backDashboard(){
   document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
   document.getElementById('dashboard').style.display='block';
@@ -1412,161 +1371,6 @@ function logout(){
   sessionStorage.removeItem('login');
   location.reload();
 }
-  // Tạo panel và filter input động
-const panelsContainer = document.getElementById('panels-container');
-for(const key in PANELS){
-  const p = PANELS[key];
-  const div = document.createElement('div');
-  div.id = p.panelId;
-  div.className = 'panel';
-  div.innerHTML = `
-    <h2>${key}</h2>
-    <input type="text" class="filter" placeholder="Gõ để lọc...">
-    <button class="reset-btn">Reset</button>
-    <table id="${p.tableId}"><thead></thead><tbody></tbody></table>
-  `;
-  panelsContainer.appendChild(div);
-}
-
-// Hàm load dữ liệu Google Sheet
-async function loadPanelData(panelKey){
-  const p = PANELS[panelKey];
-  const url = `https://docs.google.com/spreadsheets/d/${p.gid}/export?format=csv`;
-  const response = await fetch(url);
-  const csvText = await response.text();
-  const parsed = Papa.parse(csvText, { header:true });
-  const table = document.getElementById(p.tableId);
-  
-  // Clear table
-  table.querySelector('thead').innerHTML = '';
-  table.querySelector('tbody').innerHTML = '';
-
-  if(parsed.data.length===0) return;
-  // Tạo header
-  const headerRow = document.createElement('tr');
-  for(const h of Object.keys(parsed.data[0])){
-    const th = document.createElement('th');
-    th.textContent = h;
-    headerRow.appendChild(th);
-  }
-  table.querySelector('thead').appendChild(headerRow);
-  
-  // Tạo body
-  for(const row of parsed.data){
-    const tr = document.createElement('tr');
-    for(const h of Object.keys(row)){
-      const td = document.createElement('td');
-      td.textContent = row[h];
-      tr.appendChild(td);
-    }
-    table.querySelector('tbody').appendChild(tr);
-  }
-}
-
-// Filter + highlight + reset
-function setupPanel(panelKey){
-  const panel = document.getElementById(PANELS[panelKey].panelId);
-  const input = panel.querySelector('.filter');
-  const resetBtn = panel.querySelector('.reset-btn');
-  const table = panel.querySelector('table');
-
-  input.addEventListener('input', ()=>{
-    const val = input.value.toLowerCase();
-    for(const tr of table.querySelectorAll('tbody tr')){
-      tr.style.display = '';
-      tr.classList.remove('highlight');
-      if(val && !Array.from(tr.cells).some(td=>td.textContent.toLowerCase().includes(val))){
-        tr.style.display = 'none';
-      } else if(val) {
-        tr.classList.add('highlight');
-      }
-    }
-  });
-
-  resetBtn.addEventListener('click', ()=>{
-    input.value = '';
-    for(const tr of table.querySelectorAll('tbody tr')){
-      tr.style.display = '';
-      tr.classList.remove('highlight');
-    }
-  });
-}
-
-// Load tất cả panel và setup
-for(const key in PANELS){
-  loadPanelData(key);
-  setupPanel(key);
-}
-</script>
-
-<script>
-/* ================= ENGINE CHUNG ================= */
-
-const CSV_CACHE = {};
-
-function openPanel(panelId){
-  document.querySelectorAll(".panel").forEach(p => p.style.display="none");
-  document.getElementById("dashboard").style.display="none";
-  document.getElementById(panelId).style.display="block";
-}
-
-function backDashboard(){
-  document.querySelectorAll(".panel").forEach(p => p.style.display="none");
-  document.getElementById("dashboard").style.display="block";
-}
-
-function loadCSVByKey(key){
-  const cfg = PANELS[key];
-  if(!cfg) return;
-
-  if(CSV_CACHE[key]){
-    renderTable(cfg.tableId, CSV_CACHE[key]);
-    return;
-  }
-
-  const url =
-    `https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=${cfg.gid}`;
-
-  Papa.parse(url,{
-    download:true,
-    skipEmptyLines:true,
-    complete:(res)=>{
-      CSV_CACHE[key] = res.data;
-      renderTable(cfg.tableId, res.data);
-    }
-  });
-}
-
-function renderTable(tableId, data){
-  const table = document.getElementById(tableId);
-  table.innerHTML = "";
-
-  if(!data || !data.length) return;
-
-  const thead = document.createElement("thead");
-  const trh = document.createElement("tr");
-
-  Object.keys(data[0]).forEach(h=>{
-    const th = document.createElement("th");
-    th.textContent = h;
-    trh.appendChild(th);
-  });
-  thead.appendChild(trh);
-  table.appendChild(thead);
-
-  const tbody = document.createElement("tbody");
-  data.forEach(row=>{
-    const tr = document.createElement("tr");
-    Object.values(row).forEach(v=>{
-      const td = document.createElement("td");
-      td.textContent = v;
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-  });
-  table.appendChild(tbody);
-}
-</script>
   
 </body>
 </html>
