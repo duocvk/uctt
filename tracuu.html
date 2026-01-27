@@ -1127,9 +1127,9 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
   color:#fff;
   font-weight:bold;
 }
-#table_1C .main-link{ background:#cce5ff; font-weight:bold; }
-#table_1C .pro-link{ background:#ffe5cc; font-weight:bold; }
-#table_1C .dp-link{  background:#e5ccff; font-weight:bold; }
+#table-1C .main-link{ background:#cce5ff; font-weight:bold; }
+#table-1C .pro-link{ background:#ffe5cc; font-weight:bold; }
+#table-1C .dp-link{  background:#e5ccff; font-weight:bold; }
 </style>
 
 <script>
@@ -1237,15 +1237,14 @@ function renderRow_1C(r){
 
   let cls="";
   if(tinh!==""){
-    if (linkType === "MAIN") {
-  cls = "main-link";
-} else if (linkType === "PRO") {
-  cls = "pro-link";
-} else {
-  cls = "";
-}
+   if (linkType === "MAIN") cls = "main-link";
+else if (linkType === "PRO") cls = "pro-link";
+else if (linkType === "DP")  cls = "dp-link";
   }
 
+
+
+  
   tbody.innerHTML+=`
   <tr class="${cls}">
     <td>${r[0]||""}</td>
