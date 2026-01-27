@@ -1121,17 +1121,26 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
     color: white;
     font-weight: bold;
   }
-  #table-1C .main-link { background-color: #cce5ff; font-weight:bold; }
-  #table-1C .pro-link { background-color: #ffe5cc; font-weight:bold; }
-  #table-1C .dp-link { background-color: #e5ccff; font-weight:bold; }
+  #table-1C .main-link {
+    background-color: #cce5ff; /* xanh dương nhạt */
+    font-weight: bold;
+  }
+  #table-1C .pro-link {
+    background-color: #ffe5cc; /* cam nhạt */
+    font-weight: bold;
+  }
+  #table-1C .dp-link {
+    background-color: #e5ccff; /* tím nhạt */
+    font-weight: bold;
+  }
 </style>
 
 <script>
-const csvUrl_1C = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=821612693"; // sửa gid đúng cho 1C
+const csvUrl_1C = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=821612693";
 let data_1C = [];
 
-// Load CSV 1C
-function load_1C() {
+// Load CSV
+function load_1C(){
   Papa.parse(csvUrl_1C, {
     download: true,
     header: false,
@@ -1142,7 +1151,7 @@ function load_1C() {
   });
 }
 
-// Autocomplete 1C
+// Autocomplete
 function suggestAutocomplete_1C(type){
   const input = document.getElementById(`filter-${type}_1C`);
   const val = input.value.toUpperCase();
@@ -1172,7 +1181,7 @@ function suggestAutocomplete_1C(type){
   });
 }
 
-// Filter 1C
+// Filter dữ liệu
 function filter_1C() {
   const tinhFilter = document.getElementById("filter-tinh_1C").value.toUpperCase();
   const sectionFilter = document.getElementById("filter-section_1C").value.toUpperCase();
@@ -1213,11 +1222,11 @@ function filter_1C() {
     document.getElementById("filter-link_1C").value = "";
   }, 50);
 
-  // Ẩn autocomplete list
+  // Ẩn autocomplete
   document.getElementById("autocomplete-list_1C").innerHTML = "";
 }
 
-// Render 1 dòng 1C
+// Render 1 dòng
 function renderRow_1C(r){
   const tbody = document.getElementById("table-1C").querySelector("tbody");
   const tinhCell = r[0] ? r[0].trim() : "";
@@ -1242,7 +1251,7 @@ function renderRow_1C(r){
   </tr>`;
 }
 
-// Khi mở panel 1C
+// Khi mở panel 1C, load CSV
 document.querySelector('[onclick="openPanel(\'panel-1C\')"]').addEventListener("click", load_1C);
 </script>
 
