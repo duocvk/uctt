@@ -255,45 +255,6 @@ header {
 
 
 
-function login() {
-  const u = document.getElementById('username').value.trim().toLowerCase();
-  const p = document.getElementById('password').value.trim();
-
-  if (u === 'duocvk' && p === '120130') {
-    sessionStorage.setItem('login', 'ok');
-
-    document.getElementById('login-overlay').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('app-header').style.display = 'block';
-    document.getElementById('logout-btn').style.display = 'block';
-    document.getElementById('login-error').style.display = 'none';
-  } else {
-    document.getElementById('login-error').style.display = 'block';
-  }
-}
-  
-// Enter đăng nhập
-document.addEventListener('keydown', function(e){
-  if(e.key==='Enter' && document.getElementById('login-overlay').style.display!=='none'){
-    login();
-  }
-});
-
-// ===== FOCUS Ô USER KHI MỞ TRANG =====
-
-//====
-
-window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('username').focus();
-
-  if (sessionStorage.getItem('login') === 'ok') {
-    document.getElementById('login-overlay').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('app-header').style.display = 'block';
-    document.getElementById('logout-btn').style.display = 'block';
-  }
-});
-
  
 <!-- START================= Panel Site ==================== -->
 <style>
@@ -1231,7 +1192,7 @@ function filter_1C(){
   const secF =document.getElementById("filter-section_1C").value.toUpperCase();
   const linkF=document.getElementById("filter-link_1C").value.toUpperCase();
 
-  const tbody=document.querySelector("#table_1C tbody");
+  const tbody=document.querySelector("#table-1C tbody");
   tbody.innerHTML="";
 
   let i=0;
@@ -1270,7 +1231,7 @@ function filter_1C(){
 
 /* ===== RENDER ROW ===== */
 function renderRow_1C(r){
-  const tbody=document.querySelector("#table_1C tbody");
+  const tbody=document.querySelector("#table-1C tbody");
   const tinh=r[0]?r[0].trim():"";
   const linkType=r[3]?r[3].trim().toUpperCase():"";
 
