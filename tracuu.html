@@ -1357,7 +1357,52 @@ const PANELS = {
   "SRT_QNI": { panelId:"panel-SRT_QNI", tableId:"table-SRT_QNI", gid:354037291 }
 };
 
+<script>
 
+function login() {
+  const u = document.getElementById('username').value.trim().toLowerCase();
+  const p = document.getElementById('password').value.trim();
+
+  if (u === 'duocvk' && p === '120130') {
+    sessionStorage.setItem('login', 'ok');
+
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('app-header').style.display = 'block';
+    document.getElementById('logout-btn').style.display = 'block';
+    document.getElementById('login-error').style.display = 'none';
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+  
+// Enter đăng nhập
+document.addEventListener('keydown', function(e){
+  if(e.key==='Enter' && document.getElementById('login-overlay').style.display!=='none'){
+    login();
+  }
+});
+
+// ===== FOCUS Ô USER KHI MỞ TRANG =====
+
+//====
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('username').focus();
+
+  if (sessionStorage.getItem('login') === 'ok') {
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('app-header').style.display = 'block';
+    document.getElementById('logout-btn').style.display = 'block';
+  }
+});
+  
+//====
+  
+
+
+// Mở panel
 function openPanel(id){
   document.getElementById('dashboard').style.display='none';
   document.getElementById('app-header').style.display='none';
@@ -1365,6 +1410,7 @@ function openPanel(id){
   document.getElementById(id).style.display='block';
 }
 
+// Quay lại dashboard
 function backDashboard(){
   document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
   document.getElementById('dashboard').style.display='block';
@@ -1376,5 +1422,6 @@ function logout(){
   location.reload();
 }
   
+
 </body>
 </html>
