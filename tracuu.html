@@ -1079,32 +1079,26 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
 
 <!-- START============= PANEL TRỤC 1C ============= -->
 
-  <div id="panel-1C" class="panel">
+<div id="panel-1C" class="panel">
   <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
   <h2>Trục 1C</h2>
 
   <!-- Filters -->
   <div style="margin:10px 0">
-    <label>Tỉnh:</label>
-    <input id="filter-tinh_1C" placeholder="Gõ tên tỉnh..."
-           oninput="suggestAutocomplete_1C('tinh')">
+    <label for="filter-tinh_1C">Tỉnh:</label>
+    <input id="filter-tinh_1C" placeholder="Gõ tên tỉnh..." oninput="suggestAutocomplete_1C('tinh')">
 
-    <label>Section:</label>
-    <input id="filter-section_1C" placeholder="Gõ section..."
-           oninput="suggestAutocomplete_1C('section')">
+    <label for="filter-section_1C">Section:</label>
+    <input id="filter-section_1C" placeholder="Gõ section..." oninput="suggestAutocomplete_1C('section')">
 
-    <label>Link:</label>
-    <input id="filter-link_1C" placeholder="Gõ link..."
-           oninput="suggestAutocomplete_1C('link')">
+    <label for="filter-link_1C">Link:</label>
+    <input id="filter-link_1C" placeholder="Gõ link..." oninput="suggestAutocomplete_1C('link')">
 
-    <div id="autocomplete-list_1C"
-         style="border:1px solid #ccc;position:absolute;background:#fff;
-                max-height:200px;overflow:auto;z-index:9999"></div>
+    <div id="autocomplete-list_1C" class="autocomplete-items" style="border:1px solid #ccc;position:absolute;background:#fff;max-height:200px;overflow:auto;z-index:9999;"></div>
   </div>
 
   <!-- Table -->
-  <table id="table-1C" border="1"
-         style="width:100%;border-collapse:collapse;margin-top:10px">
+  <table id="table-1C" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
       <tr>
         <th>Tỉnh</th>
@@ -1122,146 +1116,134 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
 </div>
 
 <style>
-#table_1C thead{
-  background:#004080;
-  color:#fff;
-  font-weight:bold;
-}
-#table-1C .main-link{ background:#cce5ff; font-weight:bold; }
-#table-1C .pro-link{ background:#ffe5cc; font-weight:bold; }
-#table-1C .dp-link{  background:#e5ccff; font-weight:bold; }
+  #table-1C thead {
+    background-color: #004080;
+    color: white;
+    font-weight: bold;
+  }
+  #table-1C .main-link { background-color: #cce5ff; font-weight:bold; }
+  #table-1C .pro-link { background-color: #ffe5cc; font-weight:bold; }
+  #table-1C .dp-link { background-color: #e5ccff; font-weight:bold; }
 </style>
 
 <script>
-/* ===== CSV TRỤC 1C ===== */
-const csvUrl_1C =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=821612693";
-
+const csvUrl_1C = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=821612693"; // sửa gid đúng cho 1C
 let data_1C = [];
 
-/* ===== LOAD CSV ===== */
-function load_1C(){
-  Papa.parse(csvUrl_1C,{
-    download:true,
-    header:false,
-    complete:function(results){
+// Load CSV 1C
+function load_1C() {
+  Papa.parse(csvUrl_1C, {
+    download: true,
+    header: false,
+    complete: function(results){
       data_1C = results.data;
-      filter_1C(); // render ngay giống 1A
+      renderTable_1C();
     }
   });
 }
 
-/* ===== AUTOCOMPLETE ===== */
+// Autocomplete 1C
 function suggestAutocomplete_1C(type){
   const input = document.getElementById(`filter-${type}_1C`);
   const val = input.value.toUpperCase();
-  const list = document.getElementById("autocomplete-list_1C");
-  list.innerHTML="";
+  const listDiv = document.getElementById("autocomplete-list_1C");
+  listDiv.innerHTML = "";
   if(!val) return;
 
-  let items=[];
-  if(type==="tinh"){
-    data_1C.forEach(r=>{
-      if(r[0]) r[0].split("-").forEach(t=>items.push(t.trim()));
-    });
-  }else if(type==="section"){
-    data_1C.forEach(r=>{ if(r[1]) items.push(r[1]); });
-  }else if(type==="link"){
-    data_1C.forEach(r=>{ if(r[2]) items.push(r[2]); });
-  }
+  let items = [];
+  if(type==="tinh") data_1C.forEach(r => { if(r[0]) r[0].split("-").forEach(t=>items.push(t.trim())); });
+  else if(type==="section") data_1C.forEach(r => { if(r[1]) items.push(r[1]); });
+  else if(type==="link") data_1C.forEach(r => { if(r[2]) items.push(r[2]); });
 
-  [...new Set(items)].forEach(item=>{
+  const uniqueItems = [...new Set(items)];
+  uniqueItems.forEach(item => {
     if(item.toUpperCase().includes(val)){
-      const div=document.createElement("div");
-      div.innerHTML=item;
-      div.style.padding="4px";
-      div.style.cursor="pointer";
-      div.onclick=()=>{
-        input.value=item;
-        list.innerHTML="";
+      const div = document.createElement("div");
+      div.innerHTML = item;
+      div.style.padding = "4px";
+      div.style.cursor = "pointer";
+      div.addEventListener("click", () => {
+        input.value = item;
+        listDiv.innerHTML = "";
         filter_1C();
-      };
-      list.appendChild(div);
+      });
+      listDiv.appendChild(div);
     }
   });
 }
 
-/* ===== FILTER ===== */
-function filter_1C(){
-  const tinhF=document.getElementById("filter-tinh_1C").value.toUpperCase();
-  const secF =document.getElementById("filter-section_1C").value.toUpperCase();
-  const linkF=document.getElementById("filter-link_1C").value.toUpperCase();
+// Filter 1C
+function filter_1C() {
+  const tinhFilter = document.getElementById("filter-tinh_1C").value.toUpperCase();
+  const sectionFilter = document.getElementById("filter-section_1C").value.toUpperCase();
+  const linkFilter = document.getElementById("filter-link_1C").value.toUpperCase();
 
-  const tbody=document.querySelector("#table-1C tbody");
-  tbody.innerHTML="";
+  const tbody = document.getElementById("table-1C").querySelector("tbody");
+  tbody.innerHTML = "";
 
-  let i=0;
-  while(i<data_1C.length){
-    const r=data_1C[i];
-    const tinh=(r[0]||"").trim().toUpperCase();
-    const sec =(r[1]||"").trim().toUpperCase();
-    const link=(r[2]||"").trim().toUpperCase();
+  let i = 0;
+  while(i < data_1C.length){
+    const r = data_1C[i];
+    const tinhCell = r[0] ? r[0].trim().toUpperCase() : "";
+    const sectionCell = r[1] ? r[1].trim().toUpperCase() : "";
+    const linkCell = r[2] ? r[2].trim().toUpperCase() : "";
 
-    const tinhList=tinh.split("-").map(t=>t.trim());
-    const match=
-      (tinhF==="" || tinhList.some(t=>t.includes(tinhF))) &&
-      (secF===""  || sec.includes(secF)) &&
-      (linkF==="" || link.includes(linkF));
+    const tinhList = tinhCell.split("-").map(t => t.trim());
+    const match = 
+      (tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter))) &&
+      (sectionFilter === "" || sectionCell.includes(sectionFilter)) &&
+      (linkFilter === "" || linkCell.includes(linkFilter));
 
-    if(match && tinh!==""){
-      renderRow_1C(r); i++;
-      while(i<data_1C.length && (!data_1C[i][0] || data_1C[i][0].trim()==="")){
-        renderRow_1C(data_1C[i]); i++;
+    if(match && tinhCell !== ""){
+      renderRow_1C(r);
+      i++;
+      while(i < data_1C.length && (!data_1C[i][0] || data_1C[i][0].trim() === "")){
+        renderRow_1C(data_1C[i]);
+        i++;
       }
-    }else i++;
+    } else {
+      i++;
+    }
   }
 
-
-  // Ẩn autocomplete
-  document.getElementById("autocomplete-list_1C").innerHTML="";
-
-  // ✅ Clear filter sau khi render (BỔ SUNG)
+  // Clear filter sau khi render
   setTimeout(() => {
     document.getElementById("filter-tinh_1C").value = "";
     document.getElementById("filter-section_1C").value = "";
     document.getElementById("filter-link_1C").value = "";
   }, 50);
-  
+
+  // Ẩn autocomplete list
+  document.getElementById("autocomplete-list_1C").innerHTML = "";
 }
 
-/* ===== RENDER ROW ===== */
+// Render 1 dòng 1C
 function renderRow_1C(r){
-  const tbody=document.querySelector("#table-1C tbody");
-  const tinh=r[0]?r[0].trim():"";
-  const linkType=r[3]?r[3].trim().toUpperCase():"";
+  const tbody = document.getElementById("table-1C").querySelector("tbody");
+  const tinhCell = r[0] ? r[0].trim() : "";
+  const linkType = r[3] ? r[3].trim().toUpperCase() : "";
 
-  let cls="";
-  if(tinh!==""){
-   if (linkType === "MAIN") cls = "main-link";
-else if (linkType === "PRO") cls = "pro-link";
-else if (linkType === "DP")  cls = "dp-link";
+  let rowClass = "";
+  if(tinhCell !== ""){
+    if(linkType === "MAIN") rowClass = "main-link";
+    else if(linkType === "PRO") rowClass = "pro-link";
+    else if(linkType === "DP") rowClass = "dp-link";
   }
 
-
-
-  
-  tbody.innerHTML+=`
-  <tr class="${cls}">
-    <td>${r[0]||""}</td>
-    <td>${r[1]||""}</td>
-    <td><a href="${r[2]||""}" target="_blank">${r[2]||""}</a></td>
-    <td>${r[3]||""}</td>
-    <td>${r[4]||""}</td>
-    <td>${r[5]||""}</td>
-    <td>${r[6]||""}</td>
-    <td>${r[7]||""}</td>
+  tbody.innerHTML += `<tr class="${rowClass}">
+    <td>${r[0] || ""}</td>
+    <td>${r[1] || ""}</td>
+    <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
+    <td>${r[3] || ""}</td>
+    <td>${r[4] || ""}</td>
+    <td>${r[5] || ""}</td>
+    <td>${r[6] || ""}</td>
+    <td>${r[7] || ""}</td>
   </tr>`;
 }
 
-/* ===== LOAD KHI MỞ PANEL ===== */
-document
-  .querySelector('[onclick="openPanel(\'panel-1C\')"]')
-  .addEventListener("click", load_1C);
+// Khi mở panel 1C
+document.querySelector('[onclick="openPanel(\'panel-1C\')"]').addEventListener("click", load_1C);
 </script>
 
   <!-- END ============= PANEL TRỤC 1C ============= -->
@@ -1359,7 +1341,7 @@ const PANELS = {
 
 <script>
 
-window.login() {
+function login() {
   const u = document.getElementById('username').value.trim().toLowerCase();
   const p = document.getElementById('password').value.trim();
 
