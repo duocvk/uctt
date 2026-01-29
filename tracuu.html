@@ -129,6 +129,43 @@ header {
   border-radius: 6px;
   cursor: pointer;
 }
+
+  /*=======start CSS chung=======*/
+   .filters-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .autocomplete-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .autocomplete-items {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #ccc;
+    background: #fff;
+    z-index: 9999;
+  }
+
+  .autocomplete-items div {
+    padding: 4px 8px;
+    cursor: pointer;
+    border-right: 1px solid #eee;
+  }
+
+  .autocomplete-items div:last-child {
+    border-right: none;
+  }
+
+  /*=======end CSS chung=======*/
+  
 </style>
 </head>
 <body>
@@ -257,40 +294,6 @@ header {
 
  
 <!-- START================= Panel Site ==================== -->
-<style>
-  .filters-row {
-    display: flex;
-    gap: 15px;
-    align-items: flex-start;
-  }
-
-  .autocomplete-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .autocomplete-items {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    display: flex;
-    flex-wrap: wrap;
-    border: 1px solid #ccc;
-    background: #fff;
-    z-index: 9999;
-  }
-
-  .autocomplete-items div {
-    padding: 4px 8px;
-    cursor: pointer;
-    border-right: 1px solid #eee;
-  }
-
-  .autocomplete-items div:last-child {
-    border-right: none;
-  }
-</style>
 
 
   
@@ -527,40 +530,6 @@ document.querySelector('[onclick="openPanel(\'panel-Site\')"]').addEventListener
   </table>
 </div>
 
-<style>
-.filters-row {
-  display: flex;
-  gap: 15px;
-  align-items: flex-start;
-}
-
-.autocomplete-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.autocomplete-items {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  display: flex;
-  flex-wrap: wrap;
-  border: 1px solid #ccc;
-  background: #fff;
-  z-index: 9999;
-}
-
-.autocomplete-items div {
-  padding: 4px 8px;
-  cursor: pointer;
-  border-right: 1px solid #eee;
-}
-
-.autocomplete-items div:last-child {
-  border-right: none;
-}
-</style>
 
 
 <script>
