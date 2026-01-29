@@ -669,28 +669,35 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
 <!-- END================= Panel Cable ==================== -->
   
 <!-- START ============= PANEL TRỤC 2B ============= -->
-<div id="panel-2B" class="panel">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
-  <h2>Trục 2B</h2>
 
-  <!-- Filters với autocomplete -->
-  <div style="margin:10px 0">
-    <label for="filter-tinh-2B">Tỉnh:</label>
-    <input id="filter-tinh-2B" placeholder="Gõ tên tỉnh..." oninput="suggestAutocomplete('tinh')">
+  <div class="panel trunk-panel" data-panel="2B">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
+  <h2>Trục 2B (DWB2)</h2>
 
-    <label for="filter-section-2B">Section:</label>
-    <input id="filter-section-2B" placeholder="Gõ section..." oninput="suggestAutocomplete('section')">
+  <div class="filters-row">
+    <div class="autocomplete-container">
+      <label>Tỉnh</label>
+      <input class="filter-input" data-col="0" placeholder="Tỉnh">
+      <div class="autocomplete-items"></div>
+    </div>
 
-    <label for="filter-link-2B">Link:</label>
-    <input id="filter-link-2B" placeholder="Gõ link..." oninput="suggestAutocomplete('link')">
+    <div class="autocomplete-container">
+      <label>Section</label>
+      <input class="filter-input" data-col="1" placeholder="Section">
+      <div class="autocomplete-items"></div>
+    </div>
 
-    <div id="autocomplete-list_2B" class="autocomplete-items" style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;"></div>
+    <div class="autocomplete-container">
+      <label>Link</label>
+      <input class="filter-input" data-col="2" placeholder="Link">
+      <div class="autocomplete-items"></div>
+    </div>
   </div>
 
-  <!-- Table dữ liệu -->
-  <table id="table-2B" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+     <table class="trunk-table" border="1"
+       style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
-      <tr>
+       <tr>
         <th>Tỉnh</th>
         <th>Section</th>
         <th>Link</th>
@@ -704,6 +711,8 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
     <tbody></tbody>
   </table>
 </div>
+  
+
 
 
 <script>
@@ -863,29 +872,34 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
 
   <!-- STARR============= PANEL TRỤC 1A ============= -->
 
+  <div class="panel trunk-panel" data-panel="1A">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
+  <h2>Trục 1A (DWB1)</h2>
 
-<div id="panel-1A" class="panel">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
-  <h2>Trục 1A</h2>
+  <div class="filters-row">
+    <div class="autocomplete-container">
+      <label>Tỉnh</label>
+      <input class="filter-input" data-col="0" placeholder="Tỉnh">
+      <div class="autocomplete-items"></div>
+    </div>
 
-  <!-- Filters với autocomplete -->
-  <div style="margin:10px 0">
-    <label for="filter-tinh_1A">Tỉnh:</label>
-    <input id="filter-tinh_1A" placeholder="Gõ tên tỉnh..." oninput="suggestAutocomplete_1A('tinh')">
+    <div class="autocomplete-container">
+      <label>Section</label>
+      <input class="filter-input" data-col="1" placeholder="Section">
+      <div class="autocomplete-items"></div>
+    </div>
 
-    <label for="filter-section_1A">Section:</label>
-    <input id="filter-section_1A" placeholder="Gõ section..." oninput="suggestAutocomplete_1A('section')">
-
-    <label for="filter-link_1A">Link:</label>
-    <input id="filter-link_1A" placeholder="Gõ link..." oninput="suggestAutocomplete_1A('link')">
-
-    <div id="autocomplete-list_1A" class="autocomplete-items" style="border:1px solid #ccc; position:absolute; background:#fff; max-height:200px; overflow:auto; z-index:9999;"></div>
+    <div class="autocomplete-container">
+      <label>Link</label>
+      <input class="filter-input" data-col="2" placeholder="Link">
+      <div class="autocomplete-items"></div>
+    </div>
   </div>
 
-  <!-- Table dữ liệu -->
-  <table id="table-1A" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+     <table class="trunk-table" border="1"
+       style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
-      <tr>
+       <tr>
         <th>Tỉnh</th>
         <th>Section</th>
         <th>Link</th>
@@ -899,6 +913,7 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
     <tbody></tbody>
   </table>
 </div>
+
 
 <!-- ===== CSS ===== -->
 <style>
@@ -1048,28 +1063,34 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
 
 <!-- START============= PANEL TRỤC 1C ============= -->
 
-<div id="panel-1C" class="panel">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại Dashboard</button>
-  <h2>Trục 1C</h2>
+  <div class="panel trunk-panel" data-panel="1C">
+  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
+  <h2>Trục 1C (DWB3)</h2>
 
-  <!-- Filters -->
-  <div style="margin:10px 0">
-    <label for="filter-tinh_1C">Tỉnh:</label>
-    <input id="filter-tinh_1C" placeholder="Gõ tên tỉnh..." oninput="suggestAutocomplete_1C('tinh')">
+  <div class="filters-row">
+    <div class="autocomplete-container">
+      <label>Tỉnh</label>
+      <input class="filter-input" data-col="0" placeholder="Tỉnh">
+      <div class="autocomplete-items"></div>
+    </div>
 
-    <label for="filter-section_1C">Section:</label>
-    <input id="filter-section_1C" placeholder="Gõ section..." oninput="suggestAutocomplete_1C('section')">
+    <div class="autocomplete-container">
+      <label>Section</label>
+      <input class="filter-input" data-col="1" placeholder="Section">
+      <div class="autocomplete-items"></div>
+    </div>
 
-    <label for="filter-link_1C">Link:</label>
-    <input id="filter-link_1C" placeholder="Gõ link..." oninput="suggestAutocomplete_1C('link')">
-
-    <div id="autocomplete-list_1C" class="autocomplete-items" style="border:1px solid #ccc;position:absolute;background:#fff;max-height:200px;overflow:auto;z-index:9999;"></div>
+    <div class="autocomplete-container">
+      <label>Link</label>
+      <input class="filter-input" data-col="2" placeholder="Link">
+      <div class="autocomplete-items"></div>
+    </div>
   </div>
 
-  <!-- Table -->
-  <table id="table-1C" border="1" style="width:100%;border-collapse:collapse;margin-top:10px">
+     <table class="trunk-table" border="1"
+       style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
-      <tr>
+       <tr>
         <th>Tỉnh</th>
         <th>Section</th>
         <th>Link</th>
@@ -1083,6 +1104,8 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
     <tbody></tbody>
   </table>
 </div>
+  
+
 
 <style>
   #table-1C thead {
