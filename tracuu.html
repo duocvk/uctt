@@ -772,86 +772,7 @@ function load2B(){
   });
 }
 
-// Autocomplete gợi ý
-function suggestAutocomplete(type){
-  const input = document.getElementById(`filter-${type}-2B`);
-  const val = input.value.toUpperCase();
-  const listDiv = document.getElementById("autocomplete-list_2B");
-  listDiv.innerHTML = "";
-  if(!val) return;
 
-  // Lấy danh sách unique theo type
-  let items = [];
-  if(type==="tinh") data2B.forEach(r => {
-    if(r[0]) r[0].split("-").forEach(t => items.push(t.trim()));
-  });
-  else if(type==="section") data2B.forEach(r => { if(r[1]) items.push(r[1]); });
-  else if(type==="link") data2B.forEach(r => { if(r[2]) items.push(r[2]); });
-
-  const uniqueItems = [...new Set(items)];
-  uniqueItems.forEach(item => {
-    if(item.toUpperCase().includes(val)){
-      const div = document.createElement("div");
-      div.innerHTML = item;
-      div.style.padding = "4px";
-      div.style.cursor = "pointer";
-      div.addEventListener("click", () => {
-        input.value = item;
-        listDiv.innerHTML = "";
-        filter2B();
-      });
-      listDiv.appendChild(div);
-    }
-  });
-}
-
-// Lọc dữ liệu
-function filter2B() {
-  const tinhFilter = document.getElementById("filter-tinh-2B").value.toUpperCase();
-  const sectionFilter = document.getElementById("filter-section-2B").value.toUpperCase();
-  const linkFilter = document.getElementById("filter-link-2B").value.toUpperCase();
-
-  const tbody = document.getElementById("table-2B").querySelector("tbody");
-  tbody.innerHTML = "";
-
-  let i = 0;
-  while (i < data2B.length) {
-    const r = data2B[i];
-    const tinhCell = r[0] ? r[0].trim().toUpperCase() : "";
-    const sectionCell = r[1] ? r[1].trim().toUpperCase() : "";
-    const linkCell = r[2] ? r[2].trim().toUpperCase() : "";
-
-    const tinhList = tinhCell.split("-").map(t => t.trim());
-    const match =
-      (tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter))) &&
-      (sectionFilter === "" || sectionCell.includes(sectionFilter)) &&
-      (linkFilter === "" || linkCell.includes(linkFilter));
-
-    if (match && tinhCell !== "") {
-      // render dòng chính
-      renderRow(r);
-      i++;
-
-      // render các dòng phụ cho đến khi gặp dòng có Tỉnh mới
-      while (i < data2B.length && (!data2B[i][0] || data2B[i][0].trim() === "")) {
-        renderRow(data2B[i]);
-        i++;
-      }
-    } else {
-      i++;
-    }
-  }
-
-  // Clear filter sau khi render
-  setTimeout(() => {
-    document.getElementById("filter-tinh-2B").value = "";
-    document.getElementById("filter-section-2B").value = "";
-    document.getElementById("filter-link-2B").value = "";
-  }, 50);
-
-  // Ẩn autocomplete list
-  document.getElementById("autocomplete-list_2B").innerHTML = "";
-}
 
 // Hàm render 1 dòng
 function renderRow(r) {
@@ -950,80 +871,7 @@ function load_1A(){
   });
 }
 
-// Autocomplete gợi ý
-function suggestAutocomplete_1A(type){
-  const input = document.getElementById(`filter-${type}_1A`);
-  const val = input.value.toUpperCase();
-  const listDiv = document.getElementById("autocomplete-list_1A");
-  listDiv.innerHTML = "";
-  if(!val) return;
 
-  let items = [];
-  if(type==="tinh") data_1A.forEach(r => { if(r[0]) r[0].split("-").forEach(t=>items.push(t.trim())); });
-  else if(type==="section") data_1A.forEach(r => { if(r[1]) items.push(r[1]); });
-  else if(type==="link") data_1A.forEach(r => { if(r[2]) items.push(r[2]); });
-
-  const uniqueItems = [...new Set(items)];
-  uniqueItems.forEach(item => {
-    if(item.toUpperCase().includes(val)){
-      const div = document.createElement("div");
-      div.innerHTML = item;
-      div.style.padding = "4px";
-      div.style.cursor = "pointer";
-      div.addEventListener("click", () => {
-        input.value = item;
-        listDiv.innerHTML = "";
-        filter_1A();
-      });
-      listDiv.appendChild(div);
-    }
-  });
-}
-
-// Lọc dữ liệu
-function filter_1A() {
-  const tinhFilter = document.getElementById("filter-tinh_1A").value.toUpperCase();
-  const sectionFilter = document.getElementById("filter-section_1A").value.toUpperCase();
-  const linkFilter = document.getElementById("filter-link_1A").value.toUpperCase();
-
-  const tbody = document.getElementById("table_1A").querySelector("tbody");
-  tbody.innerHTML = "";
-
-  let i = 0;
-  while(i < data_1A.length){
-    const r = data_1A[i];
-    const tinhCell = r[0] ? r[0].trim().toUpperCase() : "";
-    const sectionCell = r[1] ? r[1].trim().toUpperCase() : "";
-    const linkCell = r[2] ? r[2].trim().toUpperCase() : "";
-
-    const tinhList = tinhCell.split("-").map(t => t.trim());
-    const match = 
-      (tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter))) &&
-      (sectionFilter === "" || sectionCell.includes(sectionFilter)) &&
-      (linkFilter === "" || linkCell.includes(linkFilter));
-
-    if(match && tinhCell !== ""){
-      renderRow_1A(r);
-      i++;
-      while(i < data_1A.length && (!data_1A[i][0] || data_1A[i][0].trim() === "")){
-        renderRow_1A(data_1A[i]);
-        i++;
-      }
-    } else {
-      i++;
-    }
-  }
-
-  // Clear filter sau khi render
-  setTimeout(() => {
-    document.getElementById("filter-tinh_1A").value = "";
-    document.getElementById("filter-section_1A").value = "";
-    document.getElementById("filter-link_1A").value = "";
-  }, 50);
-
-  // Ẩn autocomplete list
-  document.getElementById("autocomplete-list_1A").innerHTML = "";
-}
 
 // Render 1 dòng
 function renderRow_1A(r){
@@ -1121,80 +969,7 @@ function load_1C(){
   });
 }
 
-// Autocomplete
-function suggestAutocomplete_1C(type){
-  const input = document.getElementById(`filter-${type}_1C`);
-  const val = input.value.toUpperCase();
-  const listDiv = document.getElementById("autocomplete-list_1C");
-  listDiv.innerHTML = "";
-  if(!val) return;
 
-  let items = [];
-  if(type==="tinh") data_1C.forEach(r => { if(r[0]) r[0].split("-").forEach(t=>items.push(t.trim())); });
-  else if(type==="section") data_1C.forEach(r => { if(r[1]) items.push(r[1]); });
-  else if(type==="link") data_1C.forEach(r => { if(r[2]) items.push(r[2]); });
-
-  const uniqueItems = [...new Set(items)];
-  uniqueItems.forEach(item => {
-    if(item.toUpperCase().includes(val)){
-      const div = document.createElement("div");
-      div.innerHTML = item;
-      div.style.padding = "4px";
-      div.style.cursor = "pointer";
-      div.addEventListener("click", () => {
-        input.value = item;
-        listDiv.innerHTML = "";
-        filter_1C();
-      });
-      listDiv.appendChild(div);
-    }
-  });
-}
-
-// Filter dữ liệu
-function filter_1C() {
-  const tinhFilter = document.getElementById("filter-tinh_1C").value.toUpperCase();
-  const sectionFilter = document.getElementById("filter-section_1C").value.toUpperCase();
-  const linkFilter = document.getElementById("filter-link_1C").value.toUpperCase();
-
-  const tbody = document.getElementById("table-1C").querySelector("tbody");
-  tbody.innerHTML = "";
-
-  let i = 0;
-  while(i < data_1C.length){
-    const r = data_1C[i];
-    const tinhCell = r[0] ? r[0].trim().toUpperCase() : "";
-    const sectionCell = r[1] ? r[1].trim().toUpperCase() : "";
-    const linkCell = r[2] ? r[2].trim().toUpperCase() : "";
-
-    const tinhList = tinhCell.split("-").map(t => t.trim());
-    const match = 
-      (tinhFilter === "" || tinhList.some(t => t.includes(tinhFilter))) &&
-      (sectionFilter === "" || sectionCell.includes(sectionFilter)) &&
-      (linkFilter === "" || linkCell.includes(linkFilter));
-
-    if(match && tinhCell !== ""){
-      renderRow_1C(r);
-      i++;
-      while(i < data_1C.length && (!data_1C[i][0] || data_1C[i][0].trim() === "")){
-        renderRow_1C(data_1C[i]);
-        i++;
-      }
-    } else {
-      i++;
-    }
-  }
-
-  // Clear filter sau khi render
-  setTimeout(() => {
-    document.getElementById("filter-tinh_1C").value = "";
-    document.getElementById("filter-section_1C").value = "";
-    document.getElementById("filter-link_1C").value = "";
-  }, 50);
-
-  // Ẩn autocomplete
-  document.getElementById("autocomplete-list_1C").innerHTML = "";
-}
 
 // Render 1 dòng
 function renderRow_1C(r){
@@ -1336,7 +1111,56 @@ const PANELS = {
   "SRT_QNI": { panelId:"panel-SRT_QNI", tableId:"table-SRT_QNI", gid:354037291 }
 };
 
+<script>
+document.addEventListener("input", e => {
+  const input = e.target;
+  if (!input.classList.contains("filter-input")) return;
 
+  const panelKey = input.dataset.panel;
+  const col = parseInt(input.dataset.col);
+  const val = input.value.toUpperCase();
+
+  closeAutocomplete(input);
+  if (!val || !trunkData[panelKey]) {
+    renderTrunk(panelKey);
+    return;
+  }
+
+  const wrap = document.createElement("div");
+  wrap.className = "autocomplete-list";
+
+  const used = new Set();
+  trunkData[panelKey].forEach(r => {
+    const txt = (r[col] || "").toUpperCase();
+    if (txt && txt.includes(val) && !used.has(txt)) {
+      used.add(txt);
+
+      const item = document.createElement("div");
+      item.textContent = txt;
+      item.onclick = () => {
+        input.value = txt;
+        closeAutocomplete(input);
+        renderTrunk(panelKey);
+      };
+      wrap.appendChild(item);
+    }
+  });
+
+  if (wrap.children.length) input.parentNode.appendChild(wrap);
+  else renderTrunk(panelKey);
+});
+
+document.addEventListener("click", e => {
+  if (!e.target.classList.contains("filter-input")) {
+    document.querySelectorAll(".autocomplete-list").forEach(e=>e.remove());
+  }
+});
+
+function closeAutocomplete(input){
+  const el = input.parentNode.querySelector(".autocomplete-list");
+  if (el) el.remove();
+}
+</script>
   
 </script>
 </body>
