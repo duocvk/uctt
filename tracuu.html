@@ -164,6 +164,41 @@ header {
     border-right: none;
   }
 
+.trunk-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.trunk-table thead {
+  background-color: #004080;
+  color: white;
+  font-weight: bold;
+}
+
+.trunk-table th,
+.trunk-table td {
+  border: 1px solid #999;
+  padding: 6px;
+  text-align: left;
+}
+
+/* màu theo loại link */
+.trunk-table .main-link {
+  background-color: #cce5ff;
+  font-weight: bold;
+}
+
+.trunk-table .pro-link {
+  background-color: #ffe5cc;
+  font-weight: bold;
+}
+
+.trunk-table .dp-link {
+  background-color: #e5ccff;
+  font-weight: bold;
+}
+  
   /*=======end CSS chung=======*/
   
 </style>
@@ -847,25 +882,7 @@ function renderRow(r) {
 document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
 </script>
   
-<style>
-  #table-2B thead {
-    background-color: #004080;
-    color: white;
-    font-weight: bold;
-  }
-  #table-2B .main-link {
-    background-color: #cce5ff; /* xanh dương nhạt */
-    font-weight: bold;
-  }
-  #table-2B .pro-link {
-    background-color: #ffe5cc; /* cam nhạt */
-    font-weight: bold;
-  }
-  #table-2B .dp-link {
-    background-color: #e5ccff; /* tím nhạt */
-    font-weight: bold;
-  }
-</style>
+
   
 <!-- END============= PANEL TRỤC 2B ============= -->
 
@@ -915,28 +932,7 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
 </div>
 
 
-<!-- ===== CSS ===== -->
-<style>
-  #table-1A thead {
-    background-color: #004080;
-    color: white;
-    font-weight: bold;
-  }
-  #table-1A .main-link {
-    background-color: #cce5ff; /* xanh dương nhạt */
-    font-weight: bold;
-  }
-  #table-1A .pro-link {
-    background-color: #ffe5cc; /* cam nhạt */
-    font-weight: bold;
-  }
-  #table-1A .dp-link {
-    background-color: #e5ccff; /* tím nhạt */
-    font-weight: bold;
-  }
-</style>
 
-<!-- ===== JS ===== -->
 
 <script>
 const csvUrl_1A = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=0";
@@ -1107,25 +1103,7 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
   
 
 
-<style>
-  #table-1C thead {
-    background-color: #004080;
-    color: white;
-    font-weight: bold;
-  }
-  #table-1C .main-link {
-    background-color: #cce5ff; /* xanh dương nhạt */
-    font-weight: bold;
-  }
-  #table-1C .pro-link {
-    background-color: #ffe5cc; /* cam nhạt */
-    font-weight: bold;
-  }
-  #table-1C .dp-link {
-    background-color: #e5ccff; /* tím nhạt */
-    font-weight: bold;
-  }
-</style>
+
 
 <script>
 const csvUrl_1C = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=821612693";
