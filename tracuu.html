@@ -763,7 +763,7 @@ function load2B(){
     complete: function(results){
       data2B = results.data; // giữ nguyên tất cả dữ liệu để kiểm tra
       trunkData["2B"] = data2B; // ✅ THÊM DÒNG NÀY
-
+      console.log("Data 2B loaded:", data2B.length); // kiểm tra
       // 👉 thêm đoạn log kiểm tra cột Tỉnh
       data2B.forEach((row, idx) => {
         console.log("Row", idx, JSON.stringify(row[0]));
@@ -870,6 +870,7 @@ function load_1A(){
     complete: function(results){
       data_1A = results.data;
       trunkData["1A"] = data1A; // ✅ THÊM DÒNG NÀY
+     console.log("Data 1A loaded:", data_1A.length); // kiểm tra
        renderTrunk("1A");
     }
   });
@@ -970,6 +971,7 @@ function load_1C(){
     complete: function(results){
       data_1C = results.data;
       trunkData["1C"] = data1C;
+      console.log("Data 1C loaded:", data_1C.length); // kiểm tra
       renderTrunk("1C");
       }
   });
