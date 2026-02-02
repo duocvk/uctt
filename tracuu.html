@@ -705,8 +705,8 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
   
 <!-- START ============= PANEL TRỤC 2B ============= -->
 
-  <div class="panel trunk-panel" data-panel="2B">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
+  <div id="panel-2B" class="panel trunk-panel" data-panel="2B">
+   <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
   <h2>Trục 2B (DWB2)</h2>
 
   <div class="filters-row">
@@ -810,8 +810,8 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
 
   <!-- STARR============= PANEL TRỤC 1A ============= -->
 
-  <div class="panel trunk-panel" data-panel="1A">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
+  <div id="panel-1A" class="panel trunk-panel" data-panel="1A">
+    <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
   <h2>Trục 1A (DWB1)</h2>
 
   <div class="filters-row">
@@ -907,8 +907,8 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
 
 <!-- START============= PANEL TRỤC 1C ============= -->
 
-  <div class="panel trunk-panel" data-panel="1C">
-  <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
+  <div id="panel-1C" class="panel trunk-panel" data-panel="1C">
+   <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
   <h2>Trục 1C (DWB3)</h2>
 
   <div class="filters-row">
@@ -1112,6 +1112,15 @@ const PANELS = {
 };
 </script>
 <script>
+
+/* ====== FIX TẠM BƯỚC 3 (BẮT BUỘC) ====== */
+const trunkData = {};
+function renderTrunk(panelKey){
+  // tạm thời chưa làm gì
+}
+
+/* ====== AUTOCOMPLETE TRUNK ====== */
+  
 document.addEventListener("input", e => {
   const input = e.target;
   if (!input.classList.contains("filter-input")) return;
