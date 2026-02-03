@@ -800,7 +800,21 @@ function renderRow(r) {
     <td>${r[7] || ""}</td>
   </tr>`;
 }
- 
+
+ // ===== DÁN ĐÚNG CHỖ: NGAY SAU renderRow =====
+  function renderTrunk(panelKey) {
+    if (!trunkData[panelKey]) return;
+
+    const table = document.getElementById(`table-${panelKey}`);
+    if (!table) return;
+
+    const tbody = table.querySelector("tbody");
+    tbody.innerHTML = "";
+
+    trunkData[panelKey].forEach(r => renderRow(r));
+  }
+
+  
 // Gọi load khi mở panel
 document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
 </script>
