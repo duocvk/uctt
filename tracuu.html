@@ -747,7 +747,7 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
   </table>
 </div>
   
-<--xóa script đoạn này---->
+
 
 
   
@@ -967,67 +967,7 @@ const PANELS = {
   "SRT_QNI": { panelId:"panel-SRT_QNI", tableId:"table-SRT_QNI", gid:354037291 }
 };
 </script>
-<script>
 
-/* ====== FIX TẠM BƯỚC 3 (BẮT BUỘC) ====== */
-const trunkData = {};
-function renderTrunk(panelKey){
-  // tạm thời chưa làm gì
-}
-
-/* ====== AUTOCOMPLETE TRUNK ====== */
-  
-document.addEventListener("input", e => {
-  const input = e.target;
-  if (!input.classList.contains("filter-input")) return;
-
-  const panelKey = input.dataset.panel;
-  const col = parseInt(input.dataset.col);
-  const val = input.value.toUpperCase();
-
-  closeAutocomplete(input);
-  if (!val || !trunkData[panelKey]) {
-    renderTrunk(panelKey);
-    return;
-  }
-
-  const wrap = document.createElement("div");
-  wrap.className = "autocomplete-list";
-
-  const used = new Set();
-  trunkData[panelKey].forEach(r => {
-    const txt = (r[col] || "").toUpperCase();
-    if (txt && txt.includes(val) && !used.has(txt)) {
-      used.add(txt);
-
-      const item = document.createElement("div");
-      item.textContent = txt;
-      item.onclick = () => {
-        input.value = txt;
-        closeAutocomplete(input);
-        renderTrunk(panelKey);
-      };
-      wrap.appendChild(item);
-    }
-  });
-
-  if (wrap.children.length) input.parentNode.appendChild(wrap);
-  else renderTrunk(panelKey);
-});
-
-document.addEventListener("click", e => {
-  if (!e.target.classList.contains("filter-input")) {
-    document.querySelectorAll(".autocomplete-list").forEach(e=>e.remove());
-  }
-});
-
-function closeAutocomplete(input){
-  const el = input.parentNode.querySelector(".autocomplete-list");
-  if (el) el.remove();
-}
-
-  
-</script>
 
 <script>
 /* =========================
@@ -1091,29 +1031,7 @@ const TRUNK_ENGINE = {
   }
 };
 
-/* =========================
-   FILTER MỖI LẦN 1 ĐIỀU KIỆN
-========================= */
 
-document.addEventListener("input", async e => {
-
-  const input = e.target;
-  if(!input.classList.contains("filter-input")) return;
-
-  const panelKey = input.dataset.panel;
-  const col = parseInt(input.dataset.col);
-  const value = input.value.trim();
-
-  if(!value) return;
-
-  await TRUNK_ENGINE.load(panelKey);
-
-  const result = TRUNK_ENGINE.filter(panelKey, col, value);
-
-  TRUNK_ENGINE.render(panelKey, result);
-
-  input.value = ""; // clear sau khi filter
-});
 </script>
 
   
