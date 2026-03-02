@@ -1113,7 +1113,31 @@ if(col === 0){
 
 } else {
 
-  result = TRUNK_ENGINE.filter(panelKey, col, item);
+  result = [];
+const allRows = TRUNK_ENGINE.data[panelKey];
+
+for(let i = 0; i < allRows.length; i++){
+
+  const cellValue = (allRows[i][col] || "").toString().trim();
+
+  if(cellValue.includes(item)){
+
+    let j = i;
+
+    for(; j < allRows.length; j++){
+
+      const nextCell = (allRows[j][col] || "").toString().trim();
+
+      if(j !== i && nextCell && !nextCell.includes(item)){
+        break;
+      }
+
+      result.push(allRows[j]);
+    }
+
+    i = j - 1; // tránh trùng
+  }
+}
 }
 
 TRUNK_ENGINE.render(panelKey, result);
