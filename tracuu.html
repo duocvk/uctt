@@ -1086,28 +1086,26 @@ if(col === 0){
   result = [];
   const allRows = TRUNK_ENGINE.data[panelKey];
 
-  const startIndex = allRows.findIndex(r =>
-    (r[0] || "").includes(item)
-  );
-
-  if(startIndex === -1) return;
-
-  for(let i = startIndex; i < allRows.length; i++){
+  for(let i = 0; i < allRows.length; i++){
 
     const provinceCell = (allRows[i][0] || "").trim();
 
-    if(i === startIndex){
-      result.push(allRows[i]);
-      continue;
-    }
+    if(provinceCell.includes(item)){
 
-    if(!provinceCell.includes(item)){
-      break;
-    }
+      // lấy block bắt đầu từ đây
+      for(let j = i; j < allRows.length; j++){
 
-    result.push(allRows[i]);
+        const nextProvince = (allRows[j][0] || "").trim();
+
+        if(j !== i && nextProvince && !nextProvince.includes(item)){
+          break;
+        }
+
+        result.push(allRows[j]);
+      }
+
+    }
   }
-
 } else {
 
   result = TRUNK_ENGINE.filter(panelKey, col, item);
