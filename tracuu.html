@@ -1031,6 +1031,52 @@ const TRUNK_ENGINE = {
   }
 };
 
+  /* =========================
+   AUTOCOMPLETE TRUNK PRO
+========================= */
+
+async function suggestTrunk(input){
+
+  const panelKey = input.dataset.panel;
+  const col = parseInt(input.dataset.col);
+  const value = input.value.trim().toUpperCase();
+
+  const container = input.parentElement;
+  const listDiv = container.querySelector(".autocomplete-items");
+
+  listDiv.innerHTML = "";
+  if(!value) return;
+
+  await TRUNK_ENGINE.load(panelKey);
+
+  const rows = TRUNK_ENGINE.data[panelKey] || [];
+
+  let items = rows.map(r => r[col] || "");
+  items = [...new Set(items)].filter(v => v.toUpperCase().includes(value));
+
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.textContent = item;
+
+    div.onclick = () => {
+      const result = TRUNK_ENGINE.filter(panelKey, col, item);
+      TRUNK_ENGINE.render(panelKey, result);
+      input.value = "";
+      listDiv.innerHTML = "";
+    };
+
+    listDiv.appendChild(div);
+  });
+}
+
+/* =========================
+   BẮT SỰ KIỆN INPUT CHO TRUNK
+========================= */
+
+document.addEventListener("input", e => {
+  if(!e.target.classList.contains("filter-input")) return;
+  suggestTrunk(e.target);
+});
 
 </script>
 
