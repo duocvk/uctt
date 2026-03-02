@@ -1092,8 +1092,9 @@ if(col === 0){
 
     if(provinceCell.includes(item)){
 
-      // lấy block bắt đầu từ đây
-      for(let j = i; j < allRows.length; j++){
+      let j = i;
+
+      for(; j < allRows.length; j++){
 
         const nextProvince = (allRows[j][0] || "").trim();
 
@@ -1104,8 +1105,12 @@ if(col === 0){
         result.push(allRows[j]);
       }
 
+      // 🔥 QUAN TRỌNG: nhảy qua block vừa lấy
+      i = j - 1;
     }
   }
+
+}
 } else {
 
   result = TRUNK_ENGINE.filter(panelKey, col, item);
