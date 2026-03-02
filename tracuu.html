@@ -1051,16 +1051,69 @@ async function suggestTrunk(input){
 
   const rows = TRUNK_ENGINE.data[panelKey] || [];
 
-  let items = rows.map(r => r[col] || "");
-  items = [...new Set(items)].filter(v => v.toUpperCase().includes(value));
+let items;
+
+if(col === 0){
+
+  const provinces = new Set();
+
+  rows.forEach(r => {
+    const cell = (r[0] || "").trim();
+    if(!cell) return;
+
+    const parts = cell.split("-");
+    parts.forEach(p => provinces.add(p.trim()));
+  });
+
+  items = [...provinces];
+
+} else {
+  items = rows.map(r => r[col] || "");
+}
+
+items = [...new Set(items)]
+  .filter(v => v.toUpperCase().includes(value));
 
   items.forEach(item => {
     const div = document.createElement("div");
     div.textContent = item;
 
     div.onclick = () => {
-      const result = TRUNK_ENGINE.filter(panelKey, col, item);
-      TRUNK_ENGINE.render(panelKey, result);
+    let result;
+
+if(col === 0){
+
+  result = [];
+  const allRows = TRUNK_ENGINE.data[panelKey];
+
+  const startIndex = allRows.findIndex(r =>
+    (r[0] || "").includes(item)
+  );
+
+  if(startIndex === -1) return;
+
+  for(let i = startIndex; i < allRows.length; i++){
+
+    const provinceCell = (allRows[i][0] || "").trim();
+
+    if(i === startIndex){
+      result.push(allRows[i]);
+      continue;
+    }
+
+    if(!provinceCell.includes(item)){
+      break;
+    }
+
+    result.push(allRows[i]);
+  }
+
+} else {
+
+  result = TRUNK_ENGINE.filter(panelKey, col, item);
+}
+
+TRUNK_ENGINE.render(panelKey, result);
       input.value = "";
       listDiv.innerHTML = "";
     };
