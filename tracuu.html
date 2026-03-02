@@ -712,24 +712,24 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
   <div class="filters-row">
     <div class="autocomplete-container">
       <label>Tỉnh</label>
-      <input class="filter-input" data-col="0" placeholder="Tỉnh">
+      <input class="filter-input" data-panel="2B" data-col="0" placeholder="Tỉnh">
       <div class="autocomplete-items"></div>
     </div>
 
     <div class="autocomplete-container">
       <label>Section</label>
-      <input class="filter-input" data-col="1" placeholder="Section">
+      <input class="filter-input" data-panel="2B" data-col="1" placeholder="Section">
       <div class="autocomplete-items"></div>
     </div>
 
     <div class="autocomplete-container">
       <label>Link</label>
-      <input class="filter-input" data-col="2" placeholder="Link">
+      <input class="filter-input" data-panel="2B" data-col="2" placeholder="Link">
       <div class="autocomplete-items"></div>
     </div>
   </div>
 
-     <table class="trunk-table" border="1"
+     <<table id="table-2B" class="trunk-table" border="1"
        style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
        <tr>
@@ -833,24 +833,24 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
   <div class="filters-row">
     <div class="autocomplete-container">
       <label>Tỉnh</label>
-      <input class="filter-input" data-col="0" placeholder="Tỉnh">
+      <input class="filter-input" data-panel="1A" data-col="0" placeholder="Tỉnh">
       <div class="autocomplete-items"></div>
     </div>
 
     <div class="autocomplete-container">
       <label>Section</label>
-      <input class="filter-input" data-col="1" placeholder="Section">
+      <input class="filter-input" data-panel="1A" data-col="1" placeholder="Section">
       <div class="autocomplete-items"></div>
     </div>
 
     <div class="autocomplete-container">
       <label>Link</label>
-      <input class="filter-input" data-col="2" placeholder="Link">
+      <input class="filter-input" data-panel="1A" data-col="2" placeholder="Link">
       <div class="autocomplete-items"></div>
     </div>
   </div>
 
-     <table class="trunk-table" border="1"
+     <table id="table-1A" class="trunk-table" border="1"
        style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
        <tr>
@@ -933,24 +933,24 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
   <div class="filters-row">
     <div class="autocomplete-container">
       <label>Tỉnh</label>
-      <input class="filter-input" data-col="0" placeholder="Tỉnh">
+      <input class="filter-input" data-panel="1C" data-col="0" placeholder="Tỉnh">
       <div class="autocomplete-items"></div>
     </div>
 
     <div class="autocomplete-container">
       <label>Section</label>
-      <input class="filter-input" data-col="1" placeholder="Section">
+      <input class="filter-input" data-panel="1C" data-col="1" placeholder="Section">
       <div class="autocomplete-items"></div>
     </div>
 
     <div class="autocomplete-container">
       <label>Link</label>
-      <input class="filter-input" data-col="2" placeholder="Link">
+      <input class="filter-input" data-panel="1C" data-col="2" placeholder="Link">
       <div class="autocomplete-items"></div>
     </div>
   </div>
 
-     <table class="trunk-table" border="1"
+     <table id="table-1C" class="trunk-table" border="1"
        style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
        <tr>
@@ -1194,5 +1194,94 @@ function closeAutocomplete(input){
 
   
 </script>
+
+<script>
+/* =========================
+   TRUNK ENGINE CHUNG
+========================= */
+
+const TRUNK_ENGINE = {
+  data: {},
+
+  async load(panelKey){
+    if(this.data[panelKey]) return;
+
+    const panel = PANELS[panelKey];
+    if(!panel) return;
+
+    const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=${panel.gid}`;
+
+    const res = await fetch(url);
+    const text = await res.text();
+
+    this.data[panelKey] = text
+      .split("\n")
+      .map(r => r.split(","));
+  },
+
+  filter(panelKey, col, value){
+    const rows = this.data[panelKey] || [];
+    return rows.filter(r =>
+      (r[col] || "").toUpperCase().includes(value.toUpperCase())
+    );
+  },
+
+  render(panelKey, rows){
+    const table = document.getElementById(`table-${panelKey}`);
+    if(!table) return;
+
+    const tbody = table.querySelector("tbody");
+    tbody.innerHTML = "";
+
+    rows.forEach(r => {
+      const linkType = (r[3] || "").trim().toUpperCase();
+      let rowClass = "";
+
+      if(linkType === "MAIN") rowClass = "main-link";
+      else if(linkType === "PRO") rowClass = "pro-link";
+      else if(linkType === "DP") rowClass = "dp-link";
+
+      tbody.innerHTML += `
+        <tr class="${rowClass}">
+          <td>${r[0]||""}</td>
+          <td>${r[1]||""}</td>
+          <td><a href="${r[2]||""}" target="_blank">${r[2]||""}</a></td>
+          <td>${r[3]||""}</td>
+          <td>${r[4]||""}</td>
+          <td>${r[5]||""}</td>
+          <td>${r[6]||""}</td>
+          <td>${r[7]||""}</td>
+        </tr>
+      `;
+    });
+  }
+};
+
+/* =========================
+   FILTER MỖI LẦN 1 ĐIỀU KIỆN
+========================= */
+
+document.addEventListener("input", async e => {
+
+  const input = e.target;
+  if(!input.classList.contains("filter-input")) return;
+
+  const panelKey = input.dataset.panel;
+  const col = parseInt(input.dataset.col);
+  const value = input.value.trim();
+
+  if(!value) return;
+
+  await TRUNK_ENGINE.load(panelKey);
+
+  const result = TRUNK_ENGINE.filter(panelKey, col, value);
+
+  TRUNK_ENGINE.render(panelKey, result);
+
+  input.value = ""; // clear sau khi filter
+});
+</script>
+
+  
 </body>
 </html>
