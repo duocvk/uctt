@@ -729,7 +729,7 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
     </div>
   </div>
 
-     <<table id="table-2B" class="trunk-table" border="1"
+     <table id="table-2B" class="trunk-table" border="1"
        style="width:100%;border-collapse:collapse;margin-top:10px">
     <thead>
        <tr>
@@ -747,77 +747,9 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
   </table>
 </div>
   
+<--xóa script đoạn này---->
 
 
-
-<script>
-  const trunkData = {}; // <- thêm dòng này
-const csvUrl_2B = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=708023040";
-let data2B = [];
-
-// Load dữ liệu CSV
-function load2B(){
-  Papa.parse(csvUrl_2B, {
-    download: true,
-    header: false,
-    complete: function(results){
-      data2B = results.data; // giữ nguyên tất cả dữ liệu để kiểm tra
-      trunkData["2B"] = data2B; // ✅ THÊM DÒNG NÀY
-      console.log("Data 2B loaded:", data2B.length); // kiểm tra
-      // 👉 thêm đoạn log kiểm tra cột Tỉnh
-      data2B.forEach((row, idx) => {
-        console.log("Row", idx, JSON.stringify(row[0]));
-      });
-      renderTrunk("2B"); // ✅ thêm luôn để render lần đầu
-     
-    }
-  });
-}
-
-
-
-// Hàm render 1 dòng
-function renderRow(r) {
-  const tbody = document.getElementById("table-2B").querySelector("tbody");
-  const tinhCell = r[0] ? r[0].trim() : "";
-  const linkType = r[3] ? r[3].trim().toUpperCase() : "";
-
-  let rowClass = "";
-  if (tinhCell !== "") {
-    if (linkType === "MAIN") rowClass = "main-link";
-    else if (linkType === "PRO") rowClass = "pro-link";
-    else if (linkType === "DP") rowClass = "dp-link";
-  }
-
-  tbody.innerHTML += `<tr class="${rowClass}">
-    <td>${r[0] || ""}</td>
-    <td>${r[1] || ""}</td>
-    <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
-    <td>${r[3] || ""}</td>
-    <td>${r[4] || ""}</td>
-    <td>${r[5] || ""}</td>
-    <td>${r[6] || ""}</td>
-    <td>${r[7] || ""}</td>
-  </tr>`;
-}
-
- // ===== DÁN ĐÚNG CHỖ: NGAY SAU renderRow =====
-  function renderTrunk(panelKey) {
-    if (!trunkData[panelKey]) return;
-
-    const table = document.getElementById(`table-${panelKey}`);
-    if (!table) return;
-
-    const tbody = table.querySelector("tbody");
-    tbody.innerHTML = "";
-
-    trunkData[panelKey].forEach(r => renderRow(r));
-  }
-
-  
-// Gọi load khi mở panel
-document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("click", load2B);
-</script>
   
 
   
@@ -870,56 +802,6 @@ document.querySelector('[onclick="openPanel(\'panel-2B\')"]').addEventListener("
 
 
 
-
-<script>
-  const trunkData = {}; // <- thêm dòng này
-const csvUrl_1A = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=0";
-let data_1A = [];
-
-// Load dữ liệu CSV
-function load_1A(){
-  Papa.parse(csvUrl_1A, {
-    download: true,
-    header: false,
-    complete: function(results){
-      data_1A = results.data;
-      trunkData["1A"] = data1A; // ✅ THÊM DÒNG NÀY
-     console.log("Data 1A loaded:", data_1A.length); // kiểm tra
-       renderTrunk("1A");
-    }
-  });
-}
-
-
-
-// Render 1 dòng
-function renderRow_1A(r){
-  const tbody = document.getElementById("table-1A").querySelector("tbody");
-  const tinhCell = r[0] ? r[0].trim() : "";
-  const linkType = r[3] ? r[3].trim().toUpperCase() : "";
-
-  let rowClass = "";
-  if(tinhCell !== ""){
-    if(linkType === "MAIN") rowClass = "main-link";
-    else if(linkType === "PRO") rowClass = "pro-link";
-    else if(linkType === "DP") rowClass = "dp-link";
-  }
-
-  tbody.innerHTML += `<tr class="${rowClass}">
-    <td>${r[0] || ""}</td>
-    <td>${r[1] || ""}</td>
-    <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
-    <td>${r[3] || ""}</td>
-    <td>${r[4] || ""}</td>
-    <td>${r[5] || ""}</td>
-    <td>${r[6] || ""}</td>
-    <td>${r[7] || ""}</td>
-  </tr>`;
-}
-
-// Khi mở panel 1A thì load CSV
-document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("click", load_1A);
-</script>
   
 <!-- END============= PANEL TRỤC 1A ============= -->
 
@@ -972,55 +854,7 @@ document.querySelector('[onclick="openPanel(\'panel-1A\')"]').addEventListener("
 
 
 
-<script>
-  const trunkData = {}; // <- thêm dòng này
-const csvUrl_1C = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=821612693";
-let data_1C = [];
 
-// Load CSV
-function load_1C(){
-  Papa.parse(csvUrl_1C, {
-    download: true,
-    header: false,
-    complete: function(results){
-      data_1C = results.data;
-      trunkData["1C"] = data1C;
-      console.log("Data 1C loaded:", data_1C.length); // kiểm tra
-      renderTrunk("1C");
-      }
-  });
-}
-
-
-
-// Render 1 dòng
-function renderRow_1C(r){
-  const tbody = document.getElementById("table-1C").querySelector("tbody");
-  const tinhCell = r[0] ? r[0].trim() : "";
-  const linkType = r[3] ? r[3].trim().toUpperCase() : "";
-
-  let rowClass = "";
-  if(tinhCell !== ""){
-    if(linkType === "MAIN") rowClass = "main-link";
-    else if(linkType === "PRO") rowClass = "pro-link";
-    else if(linkType === "DP") rowClass = "dp-link";
-  }
-
-  tbody.innerHTML += `<tr class="${rowClass}">
-    <td>${r[0] || ""}</td>
-    <td>${r[1] || ""}</td>
-    <td><a href="${r[2] || ""}" target="_blank">${r[2] || ""}</a></td>
-    <td>${r[3] || ""}</td>
-    <td>${r[4] || ""}</td>
-    <td>${r[5] || ""}</td>
-    <td>${r[6] || ""}</td>
-    <td>${r[7] || ""}</td>
-  </tr>`;
-}
-
-// Khi mở panel 1C, load CSV
-document.querySelector('[onclick="openPanel(\'panel-1C\')"]').addEventListener("click", load_1C);
-</script>
 
   <!-- END ============= PANEL TRỤC 1C ============= -->
   
