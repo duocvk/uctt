@@ -1099,14 +1099,28 @@ items = [...new Set(items)]
     const div = document.createElement("div");
     div.textContent = item;
 
-   div.onclick = () => {
+  div.onclick = () => {
 
   const allRows = TRUNK_ENGINE.data[panelKey];
 
-  const result = allRows.filter(r => {
-    const cell = (r[col] || "").toString().trim().toUpperCase();
-    return cell.includes(item.toUpperCase());
-  });
+  let result;
+
+  if(col === 0){
+
+    result = allRows.filter(r => {
+      const provinceCell = (r[0] || "").toUpperCase();
+      const parts = provinceCell.split("-").map(p => p.trim());
+      return parts.includes(item.toUpperCase());
+    });
+
+  } else {
+
+    result = allRows.filter(r => {
+      const cell = (r[col] || "").toString().trim().toUpperCase();
+      return cell.includes(item.toUpperCase());
+    });
+
+  }
 
   TRUNK_ENGINE.render(panelKey, result);
 
