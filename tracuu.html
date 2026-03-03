@@ -988,9 +988,13 @@ const TRUNK_ENGINE = {
     const res = await fetch(url);
     const text = await res.text();
 
-    this.data[panelKey] = text
-      .split("\n")
-      .map(r => r.split(","));
+this.data[panelKey] = text
+  .trim()
+  .split("\n")
+  .map(row => {
+    const matches = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+    return matches ? matches.map(cell => cell.replace(/^"|"$/g, "")) : [];
+  });
   },
 
   filter(panelKey, col, value){
