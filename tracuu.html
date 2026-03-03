@@ -988,13 +988,30 @@ const TRUNK_ENGINE = {
     const res = await fetch(url);
     const text = await res.text();
 
-this.data[panelKey] = text
+// Parse CSV
+let parsed = text
   .trim()
   .split("\n")
   .map(row => {
     const matches = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-    return matches ? matches.map(cell => cell.replace(/^"|"$/g, "")) : [];
+    return matches
+      ? matches.map(cell => cell.replace(/^"|"$/g, "").trim())
+      : [];
   });
+
+// 🔥 Lan tỉnh xuống các dòng trống
+let currentProvince = "";
+
+parsed = parsed.map(r => {
+  if (r[0]) {
+    currentProvince = r[0];
+  } else {
+    r[0] = currentProvince;
+  }
+  return r;
+});
+
+this.data[panelKey] = parsed;
   },
 
   filter(panelKey, col, value){
