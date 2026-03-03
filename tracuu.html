@@ -1082,24 +1082,20 @@ items = [...new Set(items)]
     const div = document.createElement("div");
     div.textContent = item;
 
-    div.onclick = () => {
-    let result;
-
-div.onclick = () => {
+   div.onclick = () => {
 
   const allRows = TRUNK_ENGINE.data[panelKey];
 
-  let result = allRows.filter(r => {
-    const cell = (r[col] || "").toString().trim();
-    return cell.includes(item);
+  const result = allRows.filter(r => {
+    const cell = (r[col] || "").toString().trim().toUpperCase();
+    return cell.includes(item.toUpperCase());
   });
 
   TRUNK_ENGINE.render(panelKey, result);
 
-TRUNK_ENGINE.render(panelKey, result);
-      input.value = "";
-      listDiv.innerHTML = "";
-    };
+  input.value = "";
+  listDiv.innerHTML = "";
+};
 
     listDiv.appendChild(div);
   });
