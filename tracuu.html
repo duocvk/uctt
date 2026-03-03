@@ -1012,36 +1012,73 @@ this.data[panelKey] = parsed;
     );
   },
 
-  render(panelKey, rows){
-    const table = document.getElementById(`table-${panelKey}`);
-    if(!table) return;
+ render(panelKey, rows){
+  const table = document.getElementById(`table-${panelKey}`);
+  if(!table) return;
 
-    const tbody = table.querySelector("tbody");
-    tbody.innerHTML = "";
+  const tbody = table.querySelector("tbody");
+  tbody.innerHTML = "";
 
-    rows.forEach(r => {
-      const linkType = (r[3] || "").trim().toUpperCase();
-      let rowClass = "";
+  let currentHeader = null;
 
-      if(linkType === "MAIN") rowClass = "main-link";
-      else if(linkType === "PRO") rowClass = "pro-link";
-      else if(linkType === "DP") rowClass = "dp-link";
+  rows.forEach(r => {
 
+    const province = (r[0] || "").trim();
+
+    // ===== HEADER BLOCK =====
+    if(province){
+
+      currentHeader = {
+        province: r[0] || "",
+        section: r[1] || "",
+        link: r[2] || "",
+        type: r[3] || "",
+        totalLength: r[6] || ""
+      };
+
+      const linkType = (currentHeader.type || "").trim().toUpperCase();
+      let rowClass = "header-row";
+
+      if(linkType === "MAIN") rowClass += " main-link";
+      else if(linkType === "PRO") rowClass += " pro-link";
+      else if(linkType === "DP") rowClass += " dp-link";
+
+      // Render dòng tổng
       tbody.innerHTML += `
         <tr class="${rowClass}">
-          <td>${r[0]||""}</td>
-          <td>${r[1]||""}</td>
-          <td><a href="${r[2]||""}" target="_blank">${r[2]||""}</a></td>
-          <td>${r[3]||""}</td>
+          <td>${currentHeader.province}</td>
+          <td>${currentHeader.section}</td>
+          <td><a href="${currentHeader.link}" target="_blank">${currentHeader.link}</a></td>
+          <td>${currentHeader.type}</td>
+          <td></td>
+          <td></td>
+          <td>${currentHeader.totalLength}</td>
+          <td></td>
+        </tr>
+      `;
+
+      return;
+    }
+
+    // ===== DETAIL BLOCK =====
+    if(currentHeader){
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${currentHeader.province}</td>
+          <td>${currentHeader.section}</td>
+          <td><a href="${currentHeader.link}" target="_blank">${currentHeader.link}</a></td>
+          <td>${currentHeader.type}</td>
           <td>${r[4]||""}</td>
           <td>${r[5]||""}</td>
           <td>${r[6]||""}</td>
           <td>${r[7]||""}</td>
         </tr>
       `;
-    });
-  }
-};
+    }
+
+  });
+}
 
   /* =========================
    AUTOCOMPLETE TRUNK PRO
