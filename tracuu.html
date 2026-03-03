@@ -991,7 +991,7 @@ const TRUNK_ENGINE = {
 // Parse CSV
 let parsed = text
   .trim()
-  .split("\n")
+  .split(/\r?\n/)
   .map(row => {
     const matches = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
     return matches
