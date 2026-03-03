@@ -1085,64 +1085,16 @@ items = [...new Set(items)]
     div.onclick = () => {
     let result;
 
-if(col === 0){
+div.onclick = () => {
 
-  result = [];
   const allRows = TRUNK_ENGINE.data[panelKey];
 
-  for(let i = 0; i < allRows.length; i++){
+  let result = allRows.filter(r => {
+    const cell = (r[col] || "").toString().trim();
+    return cell.includes(item);
+  });
 
-    const provinceCell = (allRows[i][0] || "").trim();
-
-    if(provinceCell.includes(item)){
-
-      let j = i;
-
-      for(; j < allRows.length; j++){
-
-        const nextProvince = (allRows[j][0] || "").trim();
-
-        if(j !== i && nextProvince && !nextProvince.includes(item)){
-          break;
-        }
-
-        result.push(allRows[j]);
-      }
-
-      // 🔥 QUAN TRỌNG: nhảy qua block vừa lấy
-      i = j - 1;
-    }
-  }
-
-
-} else {
-
-  result = [];
-const allRows = TRUNK_ENGINE.data[panelKey];
-
-for(let i = 0; i < allRows.length; i++){
-
-  const cellValue = (allRows[i][col] || "").toString().trim();
-
-  if(cellValue.includes(item)){
-
-    let j = i;
-
-    for(; j < allRows.length; j++){
-
-      const nextCell = (allRows[j][col] || "").toString().trim();
-
-      if(j !== i && nextCell && !nextCell.includes(item)){
-        break;
-      }
-
-      result.push(allRows[j]);
-    }
-
-    i = j - 1; // tránh trùng
-  }
-}
-}
+  TRUNK_ENGINE.render(panelKey, result);
 
 TRUNK_ENGINE.render(panelKey, result);
       input.value = "";
