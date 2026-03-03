@@ -1090,27 +1090,29 @@ items = [...new Set(items)]
     const div = document.createElement("div");
     div.textContent = item;
 
-  div.onclick = () => {
+ div.onclick = () => {
 
   const allRows = TRUNK_ENGINE.data[panelKey];
   let result = [];
 
-  if(col === 0){
+  for(let i = 0; i < allRows.length; i++){
 
-    for(let i = 0; i < allRows.length; i++){
+    const provinceCell = (allRows[i][0] || "").trim().toUpperCase();
 
-      const provinceCell = (allRows[i][0] || "").toUpperCase();
+    // Nếu là dòng header (có tỉnh)
+    if(provinceCell){
+
       const parts = provinceCell.split("-").map(p => p.trim());
 
       if(parts.includes(item.toUpperCase())){
 
+        // Lấy nguyên block
         let j = i;
 
         for(; j < allRows.length; j++){
 
-          const nextProvince = (allRows[j][0] || "").trim();
-
-          if(j !== i && nextProvince){
+          // Nếu gặp header mới (cột 0 có dữ liệu) và không phải dòng đầu
+          if(j !== i && (allRows[j][0] || "").trim()){
             break;
           }
 
@@ -1120,14 +1122,6 @@ items = [...new Set(items)]
         i = j - 1;
       }
     }
-
-  } else {
-
-    result = allRows.filter(r => {
-      const cell = (r[col] || "").toString().trim().toUpperCase();
-      return cell.includes(item.toUpperCase());
-    });
-
   }
 
   TRUNK_ENGINE.render(panelKey, result);
