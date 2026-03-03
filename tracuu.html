@@ -999,17 +999,8 @@ let parsed = text
       : [];
   });
 
-// 🔥 Lan tỉnh xuống các dòng trống
-let currentProvince = "";
 
-parsed = parsed.map(r => {
-  if (r[0]) {
-    currentProvince = r[0];
-  } else {
-    r[0] = currentProvince;
-  }
-  return r;
-});
+
 
 this.data[panelKey] = parsed;
   },
@@ -1102,16 +1093,33 @@ items = [...new Set(items)]
   div.onclick = () => {
 
   const allRows = TRUNK_ENGINE.data[panelKey];
-
-  let result;
+  let result = [];
 
   if(col === 0){
 
-    result = allRows.filter(r => {
-      const provinceCell = (r[0] || "").toUpperCase();
+    for(let i = 0; i < allRows.length; i++){
+
+      const provinceCell = (allRows[i][0] || "").toUpperCase();
       const parts = provinceCell.split("-").map(p => p.trim());
-      return parts.includes(item.toUpperCase());
-    });
+
+      if(parts.includes(item.toUpperCase())){
+
+        let j = i;
+
+        for(; j < allRows.length; j++){
+
+          const nextProvince = (allRows[j][0] || "").trim();
+
+          if(j !== i && nextProvince){
+            break;
+          }
+
+          result.push(allRows[j]);
+        }
+
+        i = j - 1;
+      }
+    }
 
   } else {
 
