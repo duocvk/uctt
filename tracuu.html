@@ -1141,7 +1141,7 @@ items = [...new Set(items)]
 
       const parts = provinceCell.split("-").map(p => p.trim());
 
-      if(parts.includes(item.toUpperCase())){
+      if(parts.map(p => p.toUpperCase()).includes(item.toUpperCase())){
 
         // Lấy nguyên block
         let j = i;
