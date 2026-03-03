@@ -1132,33 +1132,40 @@ items = [...new Set(items)]
   const allRows = TRUNK_ENGINE.data[panelKey];
   let result = [];
 
-  for(let i = 0; i < allRows.length; i++){
+  if(col === 0){
 
-    const provinceCell = (allRows[i][0] || "").trim().toUpperCase();
+    for(let i = 0; i < allRows.length; i++){
 
-    // Nếu là dòng header (có tỉnh)
-    if(provinceCell){
+      const provinceCell = (allRows[i][0] || "").trim().toUpperCase();
 
-      const parts = provinceCell.split("-").map(p => p.trim());
+      if(provinceCell){
 
-      if(parts.map(p => p.toUpperCase()).includes(item.toUpperCase())){
+        const parts = provinceCell.split("-").map(p => p.trim());
 
-        // Lấy nguyên block
-        let j = i;
+        if(parts.map(p => p.toUpperCase()).includes(item.toUpperCase())){
 
-        for(; j < allRows.length; j++){
+          let j = i;
 
-          // Nếu gặp header mới (cột 0 có dữ liệu) và không phải dòng đầu
-          if(j !== i && (allRows[j][0] || "").trim()){
-            break;
+          for(; j < allRows.length; j++){
+
+            if(j !== i && (allRows[j][0] || "").trim()){
+              break;
+            }
+
+            result.push(allRows[j]);
           }
 
-          result.push(allRows[j]);
+          i = j - 1;
         }
-
-        i = j - 1;
       }
     }
+
+  } else {
+
+    // ✅ Filter theo đúng cột
+    result = allRows.filter(r =>
+      (r[col] || "").toUpperCase().includes(item.toUpperCase())
+    );
   }
 
   TRUNK_ENGINE.render(panelKey, result);
