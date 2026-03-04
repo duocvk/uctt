@@ -1103,18 +1103,13 @@ async function suggestTrunk(input){
 let items;
 
 if(col === 0){
-
   const provinces = new Set();
-
   rows.forEach(r => {
     const cell = (r[0] || "").trim();
-    if(!cell) return;
-
-    const parts = cell.split("-");
-    parts.forEach(p => provinces.add(p.trim()));
+    if(cell) provinces.add(cell);   // ← bỏ split("-"), lấy nguyên cột A
   });
-
   items = [...provinces];
+}
 
 } else {
   items = rows.map(r => r[col] || "");
@@ -1133,32 +1128,23 @@ items = [...new Set(items)]
   let result = [];
 
   if(col === 0){
+  for(let i = 0; i < allRows.length; i++){
+    const provinceCell = (allRows[i][0] || "").trim();
 
-    for(let i = 0; i < allRows.length; i++){
+    if(provinceCell.toUpperCase() === item.toUpperCase()){
+      // Lấy dòng header này
+      result.push(allRows[i]);
 
-      const provinceCell = (allRows[i][0] || "").trim().toUpperCase();
-
-      if(provinceCell){
-
-        const parts = provinceCell.split("-").map(p => p.trim());
-
-        if(parts.map(p => p.toUpperCase()).includes(item.toUpperCase())){
-
-          let j = i;
-
-          for(; j < allRows.length; j++){
-
-            if(j !== i && (allRows[j][0] || "").trim()){
-              break;
-            }
-
-            result.push(allRows[j]);
-          }
-
-          i = j - 1;
-        }
+      // Lấy tiếp các dòng detail phía sau (cột A rỗng)
+      let j = i + 1;
+      while(j < allRows.length && !(allRows[j][0] || "").trim()){
+        result.push(allRows[j]);
+        j++;
       }
+      i = j - 1;
     }
+  }
+}
 
   } else {
 
