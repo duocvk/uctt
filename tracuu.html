@@ -1106,9 +1106,14 @@ if(col === 0){
   const provinces = new Set();
   rows.forEach(r => {
     const cell = (r[0] || "").trim();
-    if(cell) provinces.add(cell);   // ← bỏ split("-"), lấy nguyên cột A
+    if(!cell) return;                    // bỏ qua dòng trống
+    cell.split("-").forEach(p => {
+      const t = p.trim();
+      if(t) provinces.add(t);           // tách từng tỉnh
+    });
   });
   items = [...provinces];
+
 
 
 } else {
@@ -1129,13 +1134,15 @@ items = [...new Set(items)]
 
   if(col === 0){
   for(let i = 0; i < allRows.length; i++){
-    const provinceCell = (allRows[i][0] || "").trim();
+    const cell = (allRows[i][0] || "").trim();
+    if(!cell) continue;
 
-    if(provinceCell.toUpperCase() === item.toUpperCase()){
-      // Lấy dòng header này
-      result.push(allRows[i]);
+    // Kiểm tra cell có chứa tỉnh được chọn không
+    const parts = cell.split("-").map(p => p.trim().toUpperCase());
+    if(parts.includes(item.toUpperCase())){
+      result.push(allRows[i]);          // lấy dòng header
 
-      // Lấy tiếp các dòng detail phía sau (cột A rỗng)
+      // Lấy các dòng detail (cột A rỗng) phía sau
       let j = i + 1;
       while(j < allRows.length && !(allRows[j][0] || "").trim()){
         result.push(allRows[j]);
