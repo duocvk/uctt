@@ -1106,14 +1106,14 @@ if(col === 0){
   const provinces = new Set();
   rows.forEach(r => {
     const cell = (r[0] || "").trim();
-    if(!cell) return;                    // bỏ qua dòng trống
+    if(!cell) return;
+    if(!(r[3] || "").trim()) return;   // ← THÊM: chỉ lấy dòng header (có cột Loại)
     cell.split("-").forEach(p => {
       const t = p.trim();
-      if(t) provinces.add(t);           // tách từng tỉnh
+      if(t) provinces.add(t);
     });
   });
   items = [...provinces];
-
 
 
 } else {
@@ -1144,10 +1144,10 @@ items = [...new Set(items)]
 
       // Lấy các dòng detail (cột A rỗng) phía sau
       let j = i + 1;
-      while(j < allRows.length && !(allRows[j][0] || "").trim()){
-        result.push(allRows[j]);
-        j++;
-      }
+      while(j < allRows.length && !((allRows[j] || [])[0] || "").trim()){
+  result.push(allRows[j]);
+  j++;
+}
       i = j - 1;
     }
   }
