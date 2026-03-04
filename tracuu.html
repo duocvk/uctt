@@ -1109,7 +1109,7 @@ if(col === 0){
     if(cell) provinces.add(cell);   // ← bỏ split("-"), lấy nguyên cột A
   });
   items = [...provinces];
-}
+
 
 } else {
   items = rows.map(r => r[col] || "");
@@ -1144,7 +1144,7 @@ items = [...new Set(items)]
       i = j - 1;
     }
   }
-}
+
 
   } else {
 
