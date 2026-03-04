@@ -979,201 +979,129 @@ const TRUNK_ENGINE = {
 
   async load(panelKey){
     if(this.data[panelKey]) return;
-
     const panel = PANELS[panelKey];
     if(!panel) return;
-
     const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=${panel.gid}`;
-
     const res = await fetch(url);
     const text = await res.text();
-
-// Parse CSV
-let parsed = text
-  .trim()
-  .split(/\r?\n/)
-  .map(row => {
-    const matches = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-    return matches
-      ? matches.map(cell => cell.replace(/^"|"$/g, "").trim())
-      : [];
-  });
-
-
-
-
-this.data[panelKey] = parsed;
+    let parsed = text.trim().split(/\r?\n/).map(row => {
+      const matches = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+      return matches ? matches.map(cell => cell.replace(/^"|"$/g, "").trim()) : [];
+    });
+    parsed.shift(); // bỏ dòng header CSV
+    this.data[panelKey] = parsed;
   },
 
-  filter(panelKey, col, value){
-    const rows = this.data[panelKey] || [];
-    return rows.filter(r =>
-      (r[col] || "").toUpperCase().includes(value.toUpperCase())
-    );
-  },
+  render(panelKey, rows){
+    const table = document.getElementById(`table-${panelKey}`);
+    if(!table) return;
+    const tbody = table.querySelector("tbody");
+    tbody.innerHTML = "";
 
- render(panelKey, rows){
-  const table = document.getElementById(`table-${panelKey}`);
-  if(!table) return;
+    rows.forEach(r => {
+      const isHeader = !(r[4] || "").trim(); // cột E trống = header
 
-  const tbody = table.querySelector("tbody");
-  tbody.innerHTML = "";
+      if(isHeader){
+        const linkType = (r[3] || "").trim().toUpperCase();
+        let rowClass = "";
+        if(linkType === "MAIN") rowClass = "main-link";
+        else if(linkType === "PRO") rowClass = "pro-link";
+        else if(linkType === "DP") rowClass = "dp-link";
 
-  let currentHeader = null;
-
-  rows.forEach(r => {
-
-    const province = (r[0] || "").trim();
-
-    // ===== HEADER BLOCK =====
-    if(province){
-
-      currentHeader = {
-        province: r[0] || "",
-        section: r[1] || "",
-        link: r[2] || "",
-        type: r[3] || "",
-        totalLength: r[6] || ""
-      };
-
-      const linkType = (currentHeader.type || "").trim().toUpperCase();
-      let rowClass = "header-row";
-
-      if(linkType === "MAIN") rowClass += " main-link";
-      else if(linkType === "PRO") rowClass += " pro-link";
-      else if(linkType === "DP") rowClass += " dp-link";
-
-      // Render dòng tổng
-      tbody.innerHTML += `
-        <tr class="${rowClass}">
-          <td>${currentHeader.province}</td>
-          <td>${currentHeader.section}</td>
-          <td><a href="${currentHeader.link}" target="_blank">${currentHeader.link}</a></td>
-          <td>${currentHeader.type}</td>
-          <td></td>
-          <td></td>
-          <td>${currentHeader.totalLength}</td>
-          <td></td>
-        </tr>
-      `;
-
-      return;
-    }
-
-    // ===== DETAIL BLOCK =====
-    if(currentHeader){
-
-      tbody.innerHTML += `
-        <tr>
-          <td>${currentHeader.province}</td>
-          <td>${currentHeader.section}</td>
-          <td><a href="${currentHeader.link}" target="_blank">${currentHeader.link}</a></td>
-          <td>${currentHeader.type}</td>
-          <td>${r[4]||""}</td>
-          <td>${r[5]||""}</td>
-          <td>${r[6]||""}</td>
-          <td>${r[7]||""}</td>
-        </tr>
-      `;
-    }
-
-  });
-}
-    };
-  /* =========================
-   AUTOCOMPLETE TRUNK PRO
-========================= */
+        tbody.innerHTML += `
+          <tr class="${rowClass}">
+            <td>${r[0]||""}</td>
+            <td>${r[1]||""}</td>
+            <td><a href="${r[2]||""}" target="_blank">${r[2]||""}</a></td>
+            <td>${r[3]||""}</td>
+            <td></td>
+            <td></td>
+            <td>${r[6]||""}</td>
+            <td></td>
+          </tr>`;
+      } else {
+        tbody.innerHTML += `
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>${r[4]||""}</td>
+            <td>${r[5]||""}</td>
+            <td>${r[6]||""}</td>
+            <td>${r[7]||""}</td>
+          </tr>`;
+      }
+    });
+  }
+};
 
 async function suggestTrunk(input){
-
   const panelKey = input.dataset.panel;
   const col = parseInt(input.dataset.col);
   const value = input.value.trim().toUpperCase();
-
   const container = input.parentElement;
   const listDiv = container.querySelector(".autocomplete-items");
-
   listDiv.innerHTML = "";
   if(!value) return;
 
   await TRUNK_ENGINE.load(panelKey);
-
   const rows = TRUNK_ENGINE.data[panelKey] || [];
 
-let items;
+  // Chỉ lấy dòng header để gợi ý
+  const headerRows = rows.filter(r => !(r[4] || "").trim());
 
-if(col === 0){
-  const provinces = new Set();
-  rows.forEach(r => {
-    const cell = (r[0] || "").trim();
-    if(!cell) return;
-    if(!(r[3] || "").trim()) return;   // ← THÊM: chỉ lấy dòng header (có cột Loại)
-    cell.split("-").forEach(p => {
-      const t = p.trim();
-      if(t) provinces.add(t);
+  let items;
+  if(col === 0){
+    const provinces = new Set();
+    headerRows.forEach(r => {
+      (r[0]||"").split("-").forEach(p => { if(p.trim()) provinces.add(p.trim()); });
     });
-  });
-  items = [...provinces];
+    items = [...provinces];
+  } else {
+    items = headerRows.map(r => r[col] || "");
+  }
 
-
-} else {
-  items = rows.map(r => r[col] || "");
-}
-
-items = [...new Set(items)]
-  .filter(v => v.toUpperCase().includes(value));
+  items = [...new Set(items)].filter(v => v.toUpperCase().includes(value));
 
   items.forEach(item => {
     const div = document.createElement("div");
     div.textContent = item;
+    div.onclick = () => {
+      const allRows = TRUNK_ENGINE.data[panelKey];
+      let result = [];
 
- div.onclick = () => {
+      for(let i = 0; i < allRows.length; i++){
+        const r = allRows[i];
+        const isHeader = !(r[4] || "").trim();
+        if(!isHeader) continue; // bỏ qua dòng detail
 
-  const allRows = TRUNK_ENGINE.data[panelKey];
-  let result = [];
+        let match = false;
+        if(col === 0){
+          const parts = (r[0]||"").split("-").map(p => p.trim().toUpperCase());
+          match = parts.includes(item.toUpperCase());
+        } else {
+          match = (r[col]||"").toUpperCase().includes(item.toUpperCase());
+        }
 
-  if(col === 0){
-  for(let i = 0; i < allRows.length; i++){
-    const cell = (allRows[i][0] || "").trim();
-    if(!cell) continue;
+        if(match){
+          result.push(r); // dòng header
+          // Lấy các dòng detail phía sau
+          let j = i + 1;
+          while(j < allRows.length && !!(allRows[j][4] || "").trim()){
+            result.push(allRows[j]);
+            j++;
+          }
+        }
+      }
 
-    // Kiểm tra cell có chứa tỉnh được chọn không
-    const parts = cell.split("-").map(p => p.trim().toUpperCase());
-    if(parts.includes(item.toUpperCase())){
-      result.push(allRows[i]);          // lấy dòng header
-
-      // Lấy các dòng detail (cột A rỗng) phía sau
-      let j = i + 1;
-      while(j < allRows.length && !((allRows[j] || [])[0] || "").trim()){
-  result.push(allRows[j]);
-  j++;
-}
-      i = j - 1;
-    }
-  }
-
-
-  } else {
-
-    // ✅ Filter theo đúng cột
-    result = allRows.filter(r =>
-      (r[col] || "").toUpperCase().includes(item.toUpperCase())
-    );
-  }
-
-  TRUNK_ENGINE.render(panelKey, result);
-
-  input.value = "";
-  listDiv.innerHTML = "";
-};
-
+      TRUNK_ENGINE.render(panelKey, result);
+      input.value = "";
+      listDiv.innerHTML = "";
+    };
     listDiv.appendChild(div);
   });
 }
-
-/* =========================
-   BẮT SỰ KIỆN INPUT CHO TRUNK
-========================= */
 
 document.addEventListener("input", e => {
   if(!e.target.classList.contains("filter-input")) return;
