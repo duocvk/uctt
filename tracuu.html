@@ -984,11 +984,21 @@ const TRUNK_ENGINE = {
     const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vTB-HYIO9ky0tuYDvhnRNwN3mY8tDlp3hTyg3OcVUMgct_Lotow5IEdYWkDVt5nkVgFIILglkSvS4Dh/pub?output=csv&gid=${panel.gid}`;
     const res = await fetch(url);
     const text = await res.text();
-    let parsed = text.trim().split(/\r?\n/).map(row => {
-      const matches = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-      return matches ? matches.map(cell => cell.replace(/^"|"$/g, "").trim()) : [];
-    });
-    parsed.shift(); // bỏ dòng header CSV
+   let parsed = text.trim().split(/\r?\n/).map(row => {
+  const result = [];
+  let current = "";
+  let inQuote = false;
+  for(let i = 0; i < row.length; i++){
+    const ch = row[i];
+    if(ch === '"') { inQuote = !inQuote; }
+    else if(ch === ',' && !inQuote) { result.push(current.trim()); current = ""; }
+    else { current += ch; }
+  }
+  result.push(current.trim());
+  return result;
+});
+parsed.shift();
+    
     this.data[panelKey] = parsed;
   },
 
@@ -999,7 +1009,7 @@ const TRUNK_ENGINE = {
     tbody.innerHTML = "";
 
     rows.forEach(r => {
-      const isHeader = !(r[4] || "").trim(); // cột E trống = header
+      const isHeader = !(r[4] || "").trim();
 
       if(isHeader){
         const linkType = (r[3] || "").trim().toUpperCase();
