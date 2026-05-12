@@ -950,6 +950,53 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
   
 <!-- END============= PANEL TRỤC APG ============= -->
   
+<!-- START ============= PANEL TRỤC ADC ============= -->
+
+  <div id="panel-ADC" class="panel trunk-panel" data-panel="ADC">
+   <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
+  <h2>Trục ADC (DWI2)</h2>
+
+  <div class="filters-row">
+    <div class="autocomplete-container">
+      <label>Tỉnh</label>
+      <input class="filter-input" data-panel="ADC" data-col="0" placeholder="Tỉnh">
+      <div class="autocomplete-items"></div>
+    </div>
+
+    <div class="autocomplete-container">
+      <label>Section</label>
+      <input class="filter-input" data-panel="ADC" data-col="1" placeholder="Section">
+      <div class="autocomplete-items"></div>
+    </div>
+
+    <div class="autocomplete-container">
+      <label>Link</label>
+      <input class="filter-input" data-panel="ADC" data-col="2" placeholder="Link">
+      <div class="autocomplete-items"></div>
+    </div>
+  </div>
+
+     <table id="table-ADC" class="trunk-table" border="1"
+       style="width:100%;border-collapse:collapse;margin-top:10px">
+    <thead>
+       <tr>
+        <th>Tỉnh</th>
+        <th>Section</th>
+        <th>Link</th>
+        <th>Loại Link</th>
+        <th>Tuyến cáp</th>
+        <th>Loại cáp</th>
+        <th>Chiều dài</th>
+        <th>Sợi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+  
+<!-- END============= PANEL TRỤC ADC ============= -->
+
+
   
 <script>
 
