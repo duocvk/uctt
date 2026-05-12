@@ -1184,7 +1184,7 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
 
   <div id="panel-QNI" class="panel trunk-panel" data-panel="QNI">
    <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
-  <h2>Liên huyện QNM </h2>
+  <h2>Liên huyện QNI </h2>
 
   <div class="filters-row">
     <div class="autocomplete-container">
@@ -1225,6 +1225,53 @@ document.querySelector('[onclick="openPanel(\'panel-Cable\')"]').addEventListene
 </div>
   
 <!-- END============= PANEL LH QNI ============= -->
+
+  <!-- START ============= PANEL SRT QNM ============= -->
+
+  <div id="panel-SRT_QNM" class="panel trunk-panel" data-panel="SRT_QNM">
+   <button class="back-btn" onclick="backDashboard()">← Quay lại</button>
+  <h2>Access QNM </h2>
+
+  <div class="filters-row">
+    <div class="autocomplete-container">
+      <label>Tỉnh</label>
+      <input class="filter-input" data-panel="SRT_QNM" data-col="0" placeholder="Tỉnh">
+      <div class="autocomplete-items"></div>
+    </div>
+
+    <div class="autocomplete-container">
+      <label>Section</label>
+      <input class="filter-input" data-panel="SRT_QNM" data-col="1" placeholder="Section">
+      <div class="autocomplete-items"></div>
+    </div>
+
+    <div class="autocomplete-container">
+      <label>Link</label>
+      <input class="filter-input" data-panel="SRT_QNM" data-col="2" placeholder="Link">
+      <div class="autocomplete-items"></div>
+    </div>
+  </div>
+
+     <table id="table-SRT_QNM" class="trunk-table" border="1"
+       style="width:100%;border-collapse:collapse;margin-top:10px">
+    <thead>
+       <tr>
+        <th>Tỉnh</th>
+        <th>Section</th>
+        <th>Link</th>
+        <th>Loại Link</th>
+        <th>Tuyến cáp</th>
+        <th>Loại cáp</th>
+        <th>Chiều dài</th>
+        <th>Sợi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+  
+<!-- END============= PANEL SRT QNM ============= -->
+
 
   
 <script>
