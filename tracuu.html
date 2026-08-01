@@ -1471,7 +1471,8 @@ parsed.shift();
 
 async function suggestTrunk(input){
   const panelKey = input.dataset.panel;
-  const col = parseInt(input.dataset.col);
+  const colRaw = input.dataset.col;
+  const col = (colRaw === "node") ? "node" : parseInt(colRaw);
   const value = input.value.trim().toUpperCase();
   const container = input.parentElement;
   const listDiv = container.querySelector(".autocomplete-items");
@@ -1491,6 +1492,14 @@ async function suggestTrunk(input){
       (r[0]||"").split("-").forEach(p => { if(p.trim()) provinces.add(p.trim()); });
     });
     items = [...provinces];
+
+  } else if(col === "node"){
+    const nodes = new Set();
+    headerRows.forEach(r => {
+      (r[2]||"").split("-").forEach(n => { if(n.trim()) nodes.add(n.trim()); });
+    });
+    items = [...nodes];
+    
   } else {
     items = headerRows.map(r => r[col] || "");
   }
@@ -1513,6 +1522,11 @@ async function suggestTrunk(input){
         if(col === 0){
           const parts = (r[0]||"").split("-").map(p => p.trim().toUpperCase());
           match = parts.includes(item.toUpperCase());
+
+        } else if(col === "node"){
+          const parts = (r[2]||"").split("-").map(p => p.trim().toUpperCase());
+          match = parts.includes(item.toUpperCase());
+          
         } else {
           match = (r[col]||"").toUpperCase().includes(item.toUpperCase());
         }
